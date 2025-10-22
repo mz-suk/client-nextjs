@@ -5,8 +5,15 @@ import { logger } from '../lib/logger';
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 
+const getBaseURL = () => {
+  if (typeof window === 'undefined') {
+    return `http://localhost:${process.env.PORT || 3000}${env.API_URL}`;
+  }
+  return env.API_URL;
+};
+
 export const apiClient = axios.create({
-  baseURL: env.API_URL,
+  baseURL: getBaseURL(),
   timeout: env.API_TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
