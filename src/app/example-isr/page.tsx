@@ -1,6 +1,7 @@
 import { getNations, NationListISR } from '@/features/nation-list';
+import { revalidateConfig } from '@/shared/config';
 
-export const revalidate = 60;
+export const revalidate = revalidateConfig.dynamic;
 
 export default async function ExampleIsrPage() {
   const nations = await getNations();
