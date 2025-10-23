@@ -8,8 +8,7 @@
     "build": "next build --turbopack",
     "build:prod": "NODE_ENV=production next build --turbopack",
     "start": "next start --port 4000",
-    "lint": "tsc --noEmit && eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "tsc --noEmit && eslint . --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "prepare": "husky"
   },
@@ -34,6 +33,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
+      "tsc --noEmit --skipLibCheck",
       "eslint --fix",
       "prettier --write"
     ],
