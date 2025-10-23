@@ -8,11 +8,11 @@ const nextConfig: NextConfig = {
   },
 
   async rewrites() {
-    if (isDev) {
+    if (isDev && process.env.API_TARGET_URL) {
       return [
         {
           source: '/api/proxy/:path*',
-          destination: `${process.env.API_TARGET_URL || 'http://localhost:3001/api'}/:path*`,
+          destination: `${process.env.API_TARGET_URL}/:path*`,
         },
       ];
     }

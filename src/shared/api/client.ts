@@ -7,13 +7,17 @@ const RETRY_DELAY = 1000;
 
 const getBaseURL = () => {
   if (typeof window === 'undefined') {
-    return `http://localhost:${process.env.PORT || 3000}${env.API_URL}`;
+    if (isDev && env.API_TARGET_URL) {
+      return env.API_TARGET_URL;
+    }
+    return env.API_URL;
   }
+
   return env.API_URL;
 };
 
 export const apiClient = axios.create({
-  baseURL: isDev ? getBaseURL() : env.API_URL,
+  baseURL: getBaseURL(),
   timeout: env.API_TIMEOUT,
   headers: {
     'Content-Type': 'application/json',

@@ -23,9 +23,18 @@ pnpm install
 
 ### 2. 환경변수 설정
 
-환경변수 파일이 이미 설정되어 있습니다:
+다음 환경변수 파일들을 생성하세요:
 
-**프로덕션 (.env)**
+**개발 환경 (.env.development)**
+
+```bash
+NEXT_PUBLIC_API_URL=/api/proxy
+API_TARGET_URL=https://dev-api.incheondfs.kr
+NEXT_PUBLIC_API_TIMEOUT=30000
+NEXT_PUBLIC_FEATURE_DEBUG=true
+```
+
+**프로덕션 (.env.production 또는 .env)**
 
 ```bash
 NEXT_PUBLIC_API_URL=https://dev-api.incheondfs.kr
@@ -33,13 +42,11 @@ NEXT_PUBLIC_API_TIMEOUT=30000
 NEXT_PUBLIC_FEATURE_DEBUG=false
 ```
 
-**개발 (.env.development)**
-
-```bash
-NEXT_PUBLIC_API_URL=/api/proxy
-API_TARGET_URL=https://dev-api.incheondfs.kr
-NEXT_PUBLIC_FEATURE_DEBUG=true
-```
+> **동작 방식**
+>
+> - 개발 환경 클라이언트: `/api/proxy` 사용 (CORS 해결)
+> - 개발 환경 서버: `API_TARGET_URL` 직접 사용 (프록시 우회)
+> - 프로덕션: `NEXT_PUBLIC_API_URL` 직접 사용
 
 ### 3. 개발 서버 실행
 
