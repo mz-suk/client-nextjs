@@ -70,13 +70,6 @@ apiClient.interceptors.response.use(
 );
 
 export async function fetchAPI<T>(endpoint: string, config?: AxiosRequestConfig): Promise<T> {
-  console.log('[ENV] 환경변수 로드 완료:');
-  console.log('  NODE_ENV:', process.env.NODE_ENV);
-  console.log('  API_URL:', env.API_URL);
-  console.log('  API_TIMEOUT:', env.API_TIMEOUT);
-  console.log('  FEATURE_DEBUG:', env.FEATURE_DEBUG);
-  console.log('  API_TARGET_URL:', env.API_TARGET_URL);
-
   const response = await apiClient.request<T>({
     url: endpoint,
     ...config,

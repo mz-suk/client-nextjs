@@ -5,9 +5,10 @@ import styles from './NationListISR.module.css';
 interface NationListISRProps {
   nations: Nation[];
   timestamp: string;
+  buildTime: number;
 }
 
-export function NationListISR({ nations, timestamp }: NationListISRProps) {
+export function NationListISR({ nations, timestamp, buildTime }: NationListISRProps) {
   return (
     <div className={styles.container}>
       <h1>ISR 예제 페이지</h1>
@@ -21,6 +22,9 @@ export function NationListISR({ nations, timestamp }: NationListISRProps) {
         </p>
         <p>
           <strong>페이지 생성 시간:</strong> {timestamp}
+        </p>
+        <p>
+          <strong>빌드 타임스탬프:</strong> {buildTime}
         </p>
         <p className={styles.note}>이 페이지는 {revalidateConfig.dynamic}초마다 백그라운드에서 재생성됩니다.</p>
       </div>
