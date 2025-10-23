@@ -11,6 +11,7 @@ Next.js 15 기반의 ISR 지원 클라이언트 애플리케이션 (FSD 아키�
 - ✅ **개발 환경 프록시** 설정 (CORS 해결)
 - ✅ **보안 헤더** 자동 적용
 - ✅ **디버그 로깅** 시스템
+- ✨ **Apidog MCP 통합** - AI 기반 API 자동화
 
 ## 시작하기
 
@@ -141,6 +142,7 @@ pnpm format       # Prettier 포맷팅
 - **FSD** - Feature-Sliced Design 아키텍처
 - **ESLint + Prettier** - 코드 품질
 - **Husky + lint-staged** - Git hooks
+- **Apidog MCP** - AI 기반 API 코드 생성
 
 ## 예제 페이지
 
@@ -154,10 +156,62 @@ pnpm format       # Prettier 포맷팅
 - [ENV_GUIDE.md](./docs/ENV_GUIDE.md) - 환경변수 상세 가이드
 - [ISR_GUIDE.md](./docs/ISR_GUIDE.md) - ISR 사용 가이드
 - [API_EXAMPLES.md](./docs/API_EXAMPLES.md) - 실제 API 사용 예제
+- **[MCP_SETUP.md](./docs/MCP_SETUP.md)** - Apidog MCP 설정 가이드 ⭐
+- [API_GROUPS.md](./docs/API_GROUPS.md) - API 그룹 목록
+
+## Apidog MCP - AI 기반 API 자동화 🚀
+
+인천 면세점 API와 연결된 MCP 서버를 통해 AI가 자동으로 코드를 생성합니다.
+
+### 빠른 시작
+
+1. **검증 스크립트 실행**
+
+   ```bash
+   ./scripts/test-mcp.sh
+   ```
+
+2. **Cursor 재시작**
+   - 완전히 종료 후 재시작
+
+3. **AI에게 요청**
+   ```
+   "incheondfs-common API의 모든 엔드포인트를 보여줘"
+   "장바구니 추가 API 함수를 features/cart 구조로 만들어줘"
+   ```
+
+### 연결된 API 그룹
+
+- ✅ `incheondfs-common` - 공통 API (국가, 통화 등)
+- ✅ `incheondfs-goods` - 상품 API
+- ✅ `incheondfs-cart` - 장바구니 API
+- ✅ `incheondfs-order` - 주문 API
+- ✅ `incheondfs-member` - 회원 API
+- ✅ `incheondfs-auth` - 인증 API
+
+자세한 사용법은 **[MCP_SETUP.md](./docs/MCP_SETUP.md)** 참조
 
 ## 새 기능 추가 방법
 
-### 1. 엔티티 정의
+### 방법 1: MCP를 사용한 자동 생성 (권장) ⭐
+
+AI에게 직접 요청:
+
+```
+"incheondfs-goods API의 상품 상세 조회 기능을
+features/product-detail 구조로 만들어줘 (api, types, ui 포함)"
+```
+
+AI가 자동으로:
+
+- OpenAPI 스펙 확인
+- TypeScript 타입 생성
+- API 호출 함수 생성
+- 에러 핸들링 추가
+
+### 방법 2: 수동 생성
+
+#### 1. 엔티티 정의
 
 ```typescript
 // entities/product/model/types.ts
@@ -167,7 +221,7 @@ export interface Product {
 }
 ```
 
-### 2. Feature 생성
+#### 2. Feature 생성
 
 ```typescript
 // features/product-list/api/getProducts.ts
@@ -179,7 +233,7 @@ export async function getProducts(): Promise<Product[]> {
 }
 ```
 
-### 3. 페이지에서 사용
+#### 3. 페이지에서 사용
 
 ```typescript
 // app/products/page.tsx

@@ -5,3 +5,11 @@ export interface Nation {
   natnNm: string;
   abrv: string;
 }
+
+export interface NationSearchParams {
+  keyword?: string;
+}
+
+export interface NationListParams {
+  keyword?: string;
+}

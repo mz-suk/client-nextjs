@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "incheondfs-common": {
+      "command": "npx",
+      "args": ["-y", "apidog-mcp-server@latest", "--oas=https://dev-api.incheondfs.kr/v3/api-docs/common"],
+      "description": "인천 면세점 공통 API (국가, 통화 등)"
+    },
+    "incheondfs-goods": {
+      "command": "npx",
+      "args": ["-y", "apidog-mcp-server@latest", "--oas=https://dev-api.incheondfs.kr/v3/api-docs/goods"],
+      "description": "인천 면세점 상품 API"
+    },
+    "incheondfs-cart": {
+      "command": "npx",
+      "args": ["-y", "apidog-mcp-server@latest", "--oas=https://dev-api.incheondfs.kr/v3/api-docs/cart"],
+      "description": "인천 면세점 장바구니 API"
+    },
+    "incheondfs-order": {
+      "command": "npx",
+      "args": ["-y", "apidog-mcp-server@latest", "--oas=https://dev-api.incheondfs.kr/v3/api-docs/order"],
+      "description": "인천 면세점 주문 API"
+    },
+    "incheondfs-member": {
+      "command": "npx",
+      "args": ["-y", "apidog-mcp-server@latest", "--oas=https://dev-api.incheondfs.kr/v3/api-docs/member"],
+      "description": "인천 면세점 회원 API"
+    },
+    "incheondfs-auth": {
+      "command": "npx",
+      "args": ["-y", "apidog-mcp-server@latest", "--oas=https://dev-api.incheondfs.kr/v3/api-docs/auth"],
+      "description": "인천 면세점 인증 API"
+    }
+  }
+}
