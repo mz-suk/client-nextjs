@@ -1,1 +1,1 @@
-export { getNations, getNationsClient } from './getNations';
+export { getNations } from './getNations';

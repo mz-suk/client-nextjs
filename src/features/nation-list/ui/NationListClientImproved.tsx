@@ -1,31 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import type { Nation } from '@/entities/nation';
-import { getNationsClient } from '../api';
+import { useNations } from '../hooks';
 import styles from './NationList.module.css';
 
-export function NationListClient() {
-  const [nations, setNations] = useState<Nation[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchNations = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getNationsClient();
-      setNations(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '알 수 없는 오류');
-    } finally {
-      setLoading(false);
-    }
-  };
+export function NationListClientImproved() {
+  const { nations, isLoading, error, refetch } = useNations();
 
   return (
     <div className={styles.container}>
-      <h1>API 사용 예제</h1>
+      <h1>CSR with SWR 예제 (개선)</h1>
 
       <div className={styles.apiInfo}>
         <p>
@@ -35,19 +18,19 @@ export function NationListClient() {
           <strong>메서드:</strong> GET
         </p>
         <p>
-          <strong>설명:</strong> 국가 목록 조회
+          <strong>설명:</strong> useNations 커스텀 훅 사용
         </p>
       </div>
 
       <div className={styles.actions}>
-        <button onClick={fetchNations} disabled={loading} className={styles.button}>
-          {loading ? '로딩 중...' : '국가 목록 가져오기'}
+        <button onClick={() => refetch()} disabled={isLoading} className={styles.button}>
+          {isLoading ? '로딩 중...' : '국가 목록 가져오기'}
         </button>
       </div>
 
       {error && (
         <div className={styles.error}>
-          <strong>에러:</strong> {error}
+          <strong>에러:</strong> {error instanceof Error ? error.message : '알 수 없는 오류'}
         </div>
       )}
 
@@ -79,13 +62,12 @@ export function NationListClient() {
       )}
 
       <div className={styles.info}>
-        <h3>적용된 기술:</h3>
+        <h3>커스텀 훅의 장점:</h3>
         <ul>
-          <li>자동 재시도 로직 (최대 3회, 지수 백오프)</li>
-          <li>타임아웃 설정 (30초)</li>
-          <li>Accept-Language: ko 헤더 자동 적용</li>
-          <li>타입 안전 API 호출</li>
-          <li>에러 핸들링 및 디버그 로깅</li>
+          <li>1줄로 데이터 페칭: useNations() 호출만으로 완성</li>
+          <li>로직 재사용: 여러 컴포넌트에서 동일한 로직 공유</li>
+          <li>타입 안전: TypeScript 완벽 지원</li>
+          <li>테스트 용이: 훅을 독립적으로 테스트 가능</li>
         </ul>
       </div>
     </div>

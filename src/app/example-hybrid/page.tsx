@@ -1,8 +1,6 @@
-import { getNations, NationListISR } from '@/features/nation-list';
+import { getNations, NationListWithSWRImproved } from '@/features/nation-list';
 
-export const revalidate = 60;
-
-export default async function ExampleIsrPage() {
+export default async function ExampleHybridPage() {
   const nations = await getNations();
   const buildTime = new Date();
   const timestamp = buildTime.toLocaleString('ko-KR', {
@@ -15,5 +13,5 @@ export default async function ExampleIsrPage() {
     hour12: false,
   });
 
-  return <NationListISR nations={nations} timestamp={timestamp} buildTime={buildTime.getTime()} />;
+  return <NationListWithSWRImproved initialNations={nations} timestamp={timestamp} buildTime={buildTime.getTime()} />;
 }

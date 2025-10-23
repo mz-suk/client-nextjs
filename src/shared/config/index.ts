@@ -1,2 +1,3 @@
 export { env, isDev, isProd, isTest } from './env';
-export { revalidateConfig, type RevalidateTime } from './revalidate';
+export { cacheConfig } from './revalidate';
+export { swrConfig, swrConfigCSR, swrConfigSSG } from './swr';

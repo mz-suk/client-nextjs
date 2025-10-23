@@ -10,12 +10,3 @@ export async function getNations(): Promise<Nation[]> {
     return [];
   }
 }
-
-export async function getNationsClient(): Promise<Nation[]> {
-  try {
-    const response = await fetchAPI<ApiResponse<Nation[]>>('/common/search/nations');
-    return response.result || [];
-  } catch {
-    return [];
-  }
-}

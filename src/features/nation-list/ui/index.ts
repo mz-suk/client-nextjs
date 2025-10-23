@@ -1,2 +1,3 @@
-export { NationListClient } from './NationListClient';
-export { NationListISR } from './NationListISR';
+export { NationListClientImproved } from './NationListClientImproved';
+export { NationListSSG } from './NationListSSG';
+export { NationListWithSWRImproved } from './NationListWithSWRImproved';
