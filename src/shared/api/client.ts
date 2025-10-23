@@ -1,5 +1,5 @@
 import axios, { type AxiosError, type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios';
-import { env } from '../config/env';
+import { env, isDev } from '../config/env';
 import { logger } from '../lib/logger';
 
 const MAX_RETRIES = 3;
@@ -13,7 +13,7 @@ const getBaseURL = () => {
 };
 
 export const apiClient = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: isDev ? getBaseURL() : env.API_URL,
   timeout: env.API_TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
