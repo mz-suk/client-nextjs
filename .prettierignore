@@ -1,9 +1,19 @@
+# Dependencies
 node_modules
+
+# Build outputs
 .next
 out
 build
 dist
-*.config.*
+
+# TypeScript
+*.tsbuildinfo
+
+# Lock files
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# Config files (생성된 파일만)
+next-env.d.ts
