@@ -1,313 +1,290 @@
-# 📋 프로젝트 최종 검토 요약
+# 최종 검토 요약
 
-**작성일**: 2025-10-24  
-**목적 재정의**: 서버 없는 SSG+CSR 하이브리드로 최고의 사용성
-
----
-
-## 🎯 프로젝트 핵심 목적
-
-```
-✅ 서버 없음 (Serverless/Static Only)
-✅ SSG (빌드 시 HTML) + CSR (클라이언트 자동 업데이트)
-✅ Hybrid 패턴 최우선
-✅ 외부 REST API 연동
-✅ CDN 정적 배포
-```
+> 서버 없는 SSG+CSR 하이브리드 템플릿 최종 완성
 
 ---
 
-## ✅ 주요 수정 사항
+## ✅ 완료된 작업
 
-### 1. next.config.ts
+### 1. 환경변수 상수화 ⚡
 
-**변경:**
-
-- API 프록시에 "개발 환경 전용" 명시 추가
-- 정적 배포에서는 작동하지 않음을 명확히 표시
-
-### 2. RENDERING.md (전면 재작성)
-
-**제거:**
-
-- ❌ ISR (Incremental Static Regeneration) - 서버 필요
-- ❌ On-Demand Revalidation - 서버 필요
-- ❌ Server Actions 관련 내용
-
-**강화:**
-
-- ⭐ Hybrid (SSG + CSR) 패턴을 최우선으로 강조
-- 📝 동작 흐름 상세 설명
-- 💡 실전 예제 추가 (전자상거래, 블로그, 대시보드)
-- 🎯 의사결정 트리 제공
-
-**라인 수:** 697줄 → 550줄 (간소화)
-
-### 3. README.md
-
-**변경:**
-
-- 프로젝트 소개를 "서버 없는 Hybrid 패턴" 중심으로 재작성
-- 핵심 컨셉 다이어그램 추가
-- 렌더링 전략 우선순위 명확화 (Hybrid ⭐⭐⭐, SSG ⭐⭐, CSR ⭐)
-
-### 4. DEPLOYMENT.md (전면 재작성)
-
-**제거:**
-
-- ❌ Docker 배포 (162줄) - 서버 필요
-- ❌ PM2 배포 (105줄) - 서버 필요
-
-**추가:**
-
-- ✅ Netlify 배포 상세 가이드
-- ✅ GitHub Pages 배포 상세 가이드
-- ✅ CORS 문제 해결 방법
-- ✅ 정적 배포 전용 최적화
-
-**라인 수:** 697줄 → 450줄 (간소화 + 정확화)
-
-### 5. PROJECT_PLAN.md
-
-**변경:**
-
-- "서버 없는 정적 배포 전제" 명시
-- ISR, API Routes 사용 불가 명시
-- Hybrid 패턴 최적화 강조
-
----
-
-## 📊 현재 프로젝트 구성
-
-### 핵심 기술 스택
-
-| 항목                 | 기술                  | 용도                  | 우선순위 |
-| -------------------- | --------------------- | --------------------- | -------- |
-| **프레임워크**       | Next.js 15 + React 19 | SSG + CSR             | ⭐⭐⭐   |
-| **렌더링**           | Hybrid (SSG + CSR)    | 빠른 로딩 + 실시간    | ⭐⭐⭐   |
-| **데이터 페칭**      | SWR                   | 경량, 하이브리드 최적 | ⭐⭐⭐   |
-| **자동 최적화**      | React Compiler v1.0   | CSR 성능 향상         | ⭐⭐⭐   |
-| **고급 데이터 페칭** | TanStack Query        | 복잡한 케이스         | ⭐⭐     |
-| **UI 상태 관리**     | Zustand               | 테마, 모달 등         | ⭐⭐     |
-| **최신 패턴**        | React 19 use()        | 교육용                | ⭐       |
-
-### 예제 페이지 구성
-
-| 페이지                    | 패턴   | 설명           | 우선순위    |
-| ------------------------- | ------ | -------------- | ----------- |
-| `/example-hybrid`         | Hybrid | SSG + SWR      | ⭐⭐⭐ 권장 |
-| `/example-ssg`            | SSG    | 순수 정적      | ⭐⭐        |
-| `/example-api-usage`      | CSR    | SWR CSR        | ⭐          |
-| `/example-tanstack-query` | CSR    | TanStack Query | ⭐          |
-| `/example-zustand`        | CSR    | Zustand        | ⭐          |
-| `/example-react19`        | CSR    | React 19 use() | ⭐          |
-
----
-
-## 🎯 완벽히 맞는 부분 (유지)
-
-✅ **Hybrid 패턴** - 핵심! 빠른 로딩 + 실시간  
-✅ **SWR** - 경량, 하이브리드 최적  
-✅ **React Compiler** - CSR 자동 최적화  
-✅ **TanStack Query** - 복잡한 케이스 대응  
-✅ **Zustand** - UI 상태 관리  
-✅ **FSD 아키텍처** - 확장 가능한 구조  
-✅ **Plop.js 제너레이터** - 생산성 향상  
-✅ **TypeScript + Zod** - 타입 안전성
-
----
-
-## ⚠️ 주의사항
-
-### 1. CORS 문제
-
-**문제**: 정적 배포는 서버 프록시를 사용할 수 없음
-
-**해결**:
-
-- ✅ API 서버에서 CORS 허용 (권장)
-- ✅ Vercel/Netlify Serverless Functions 사용
-- ❌ 개발 환경 프록시는 프로덕션에서 작동 안 함
-
-### 2. 환경변수
-
-**중요**: 정적 배포는 **빌드 시**에만 환경변수를 읽음
-
-```bash
-# 빌드 시 필요
-NEXT_PUBLIC_API_URL=https://api.example.com
-
-# 런타임 접근 불가!
-# 서버 환경변수는 정적 배포에서 사용 불가
-```
-
-### 3. 이미지 최적화
-
-**Vercel/Netlify**: 자동 지원  
-**GitHub Pages**: `unoptimized: true` 필요
-
-### 4. 서버 기능
-
-**사용 불가:**
-
-- ❌ ISR (Incremental Static Regeneration)
-- ❌ Server Actions
-- ❌ API Routes (빌드 시)
-- ❌ Middleware
-
-**대안:**
-
-- ✅ Vercel/Netlify Serverless Functions
-- ✅ 외부 API 직접 호출 (CORS 필요)
-
----
-
-## 📦 추가 권장 사항
-
-### 1. SSG 동적 라우트 예제 추가
-
-**현재**: 리스트만 있음 (`/users`)  
-**추가 권장**: 상세 페이지 (`/users/[id]`)
+**파일**: `src/shared/config/constants.ts`
 
 ```typescript
-// app/users/[id]/page.tsx
+export const API_CONFIG = {
+  BASE_URL: env.API_URL,
+  TIMEOUT: env.API_TIMEOUT,
+  ACCEPT_LANGUAGE: env.API_ACCEPT_LANGUAGE || 'ko-KR',
+} as const;
+
+export const FEATURES = {
+  DEBUG: env.FEATURE_DEBUG,
+} as const;
+```
+
+**효과**:
+
+- 빌드 시 환경변수를 상수로 변환
+- 런타임 변경 불가 (정적 배포 특성에 적합)
+- 타입 안전성 향상 (`as const`)
+
+---
+
+### 2. SSG 동적 라우트 예제 📄
+
+**파일**:
+
+- `src/app/example-ssg/[id]/page.tsx`
+- `src/entities/user/model/types.ts`
+- `src/features/user-list/api/getUser.ts`
+
+**구현**:
+
+```typescript
+// 빌드 시 10개 사용자 페이지 생성
 export async function generateStaticParams() {
   const users = await getUsers();
-  return users.map(user => ({ id: user.id.toString() }));
-}
-
-export default async function UserPage({ params }) {
-  const user = await getUser(Number(params.id));
-  return <UserDetail user={user} />;
+  return users.slice(0, 10).map(user => ({
+    id: user.id.toString(),
+  }));
 }
 ```
 
-**효과**: SSG 동적 라우트 패턴 학습
+**빌드 결과**:
 
-### 2. .env.example 상세화
-
-**현재**: 기본적인 변수만  
-**추가 권장**: 주석으로 설명 추가
-
-```bash
-# 외부 API URL (CORS 허용 필요)
-NEXT_PUBLIC_API_URL=https://jsonplaceholder.typicode.com
-
-# API 타임아웃 (밀리초)
-NEXT_PUBLIC_API_TIMEOUT=30000
-
-# 디버그 로그 활성화 (개발: true, 프로덕션: false)
-NEXT_PUBLIC_FEATURE_DEBUG=false
-
-# 선택적: Accept-Language 헤더
-NEXT_PUBLIC_API_ACCEPT_LANGUAGE=ko-KR
 ```
-
-### 3. CONTRIBUTING.md 추가
-
-**목적**: 템플릿 사용자를 위한 기여 가이드
-
-```markdown
-# 기여 가이드
-
-## 새 기능 추가 시
-
-1. FSD 아키텍처 준수
-2. Hybrid 패턴 우선 적용
-3. 코드 제너레이터 활용 (`pnpm generate:feature`)
-4. 빌드 검증 (`pnpm lint && pnpm build`)
+● /example-ssg/[id]  (10개 정적 페이지 생성)
+  ├ /example-ssg/1
+  ├ /example-ssg/2
+  └ [+8 more paths]
 ```
 
 ---
 
-## 🚀 배포 가능 플랫폼
+### 3. 가이드 문서 간략화 📚
 
-| 플랫폼               | 난이도 | 추천도 | 특징                               |
-| -------------------- | ------ | ------ | ---------------------------------- |
-| **Vercel**           | 쉬움   | ⭐⭐⭐ | Next.js 최적화, 이미지 자동 최적화 |
-| **Netlify**          | 쉬움   | ⭐⭐   | Form 처리, 분할 테스팅             |
-| **GitHub Pages**     | 보통   | ⭐     | 무료, 이미지 최적화 불가           |
-| **Cloudflare Pages** | 보통   | ⭐⭐   | 빠른 CDN, 무제한 대역폭            |
+| 문서                | 이전  | 이후  | 감소율 |
+| ------------------- | ----- | ----- | ------ |
+| RENDERING.md        | 597줄 | 149줄 | 75%    |
+| DATA_FETCHING.md    | 783줄 | 143줄 | 82%    |
+| ARCHITECTURE.md     | 724줄 | 160줄 | 78%    |
+| STATE_MANAGEMENT.md | 672줄 | 135줄 | 80%    |
 
----
+**원칙**:
 
-## 📊 성능 지표
-
-### 빌드 결과
-
-```
-Route (app)                Size  First Load JS
-├ ○ /                       0 B         190 kB
-├ ○ /example-hybrid         0 B         282 kB  ← Hybrid 예제
-├ ○ /example-ssg            0 B         282 kB
-├ ○ /example-zustand    4.21 kB         195 kB
-```
-
-**평가:**
-
-- ✅ First Load JS: 188 KB (우수)
-- ✅ 8개 페이지 정적 생성
-- ✅ React Compiler 활성화 (`✓ reactCompiler`)
-
-### Lighthouse 예상 점수
-
-- **Performance**: 95+ (Hybrid/SSG)
-- **Accessibility**: 90+
-- **Best Practices**: 95+
-- **SEO**: 100 (Hybrid/SSG)
+- 핵심 사용법만 남김
+- 긴 설명은 공식 문서 링크로 대체
+- 실용적인 코드 예제 중심
 
 ---
 
-## 💡 사용자 학습 경로
+### 4. AWS/Amplify 배포 가이드 ☁️
 
-**템플릿 사용자가 1시간 안에 시작할 수 있는 경로:**
+**추가 내용**:
 
+- AWS S3 + CloudFront 정적 호스팅
+- AWS Amplify Git 연동 자동 배포
+- Amplify vs S3+CloudFront 비교표
+
+**배포 플랫폼 비교**:
+
+| 플랫폼                | 난이도 | 추천도 | 특징                      |
+| --------------------- | ------ | ------ | ------------------------- |
+| **Vercel**            | ⭐     | ⭐⭐⭐ | Next.js 최적화, 자동 배포 |
+| **AWS Amplify**       | ⭐⭐   | ⭐⭐   | Git 연동, PR 미리보기     |
+| **AWS S3+CloudFront** | ⭐⭐⭐ | ⭐⭐   | 완전 제어, 저렴한 비용    |
+| **Netlify**           | ⭐     | ⭐⭐   | Form 처리, 분할 테스팅    |
+| **GitHub Pages**      | ⭐⭐   | ⭐     | 무료, 간단                |
+
+---
+
+### 5. 성능 최적화 ⚡
+
+#### DNS Prefetch & Preconnect
+
+**파일**: `src/app/layout.tsx`
+
+```typescript
+<head>
+  <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL} />
+  <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_API_URL} />
+</head>
 ```
-1. README (5분)
-   ↓
-2. 예제 페이지 확인 (10분)
-   - /example-hybrid 중점 확인
-   ↓
-3. ARCHITECTURE.md (10분)
-   - FSD 구조 이해
-   ↓
-4. 첫 기능 생성 (20분)
-   - pnpm generate:feature
-   ↓
-5. 배포 (15분)
-   - Vercel 연동
+
+**효과**: API 호스트로 초기 연결 시간 단축
+
+---
+
+### 6. 보안 헤더 강화 🔒
+
+**파일**: `next.config.ts`
+
+```typescript
+headers: [
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+  {
+    key: 'Content-Security-Policy',
+    value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; ...",
+  },
+];
+```
+
+**적용된 보안 정책**:
+
+- CSP (Content Security Policy)
+- Permissions Policy
+- XSS 방어
+- Clickjacking 방어
+
+---
+
+### 7. SEO 최적화 가이드 🔍
+
+**파일**: `docs/DEPLOYMENT.md`
+
+**추가 내용**:
+
+- `robots.txt` 생성 가이드 (정적/동적)
+- `sitemap.xml` 생성 가이드 (정적/동적)
+- Next.js Metadata API 활용법
+
+**동적 생성 예제**:
+
+```typescript
+// app/robots.ts
+export default function robots() {
+  return {
+    rules: { userAgent: '*', allow: '/' },
+    sitemap: 'https://your-domain.com/sitemap.xml',
+  };
+}
+
+// app/sitemap.ts
+export default async function sitemap() {
+  const users = await getUsers();
+  return users.map(user => ({
+    url: `https://your-domain.com/users/${user.id}`,
+    lastModified: new Date(),
+  }));
+}
 ```
 
 ---
 
-## 🎓 결론
+### 8. 기여 가이드 추가 🤝
 
-### ✅ 달성한 것
+**파일**: `docs/CONTRIBUTING.md`
 
-1. **목적 명확화**: 서버 없는 Hybrid 패턴 중심
-2. **문서 간소화**: 697줄 → 450줄 (DEPLOYMENT)
-3. **우선순위 명확**: Hybrid ⭐⭐⭐ > SSG ⭐⭐ > CSR ⭐
-4. **정확성 향상**: 서버 기능 제거, 정적 배포 중심
-5. **검증 완료**: `pnpm lint` ✅, `pnpm build` ✅
+**내용**:
 
-### 🎯 프로젝트 강점
-
-- **빠른 시작**: 5분 안에 개발 서버 실행
-- **확장 가능**: FSD + 코드 제너레이터
-- **최신 기술**: React Compiler, React 19, Next.js 15
-- **최적화**: 자동 메모이제이션, 번들 분석
-- **프로덕션 레디**: Vercel/Netlify 즉시 배포 가능
-
-### 🔮 향후 개선 (선택)
-
-1. SSG 동적 라우트 예제 추가
-2. `.env.example` 상세화
-3. CONTRIBUTING.md 추가
-4. E2E 테스트 예제 (Playwright)
-5. Storybook 통합 (선택적)
+- 개발 환경 설정
+- 코드 작성 규칙 (FSD, 커밋 컨벤션)
+- PR 절차
+- 코드 제너레이터 사용법
 
 ---
 
-**상태**: ✅ 프로덕션 배포 준비 완료!
+## 📊 최종 빌드 결과
 
-**다음 단계**: Vercel 배포 또는 GitHub 저장소 퍼블릭 공개
+```
+✓ Compiled successfully in 2.4s
+✓ Generating static pages (21/21)
+
+Route (app)                         Size  First Load JS
+├ ○ /                                0 B         191 kB
+├ ○ /example-ssg                     0 B         282 kB
+├ ● /example-ssg/[id]                0 B         191 kB (10개)
+└ ... (기타 페이지)
+
+First Load JS shared by all         188 kB
+```
+
+---
+
+## 🎯 핵심 개선사항
+
+### 환경변수 관리
+
+- ✅ 빌드 시 상수로 변환
+- ✅ `.env.example` 상세 주석 추가
+- ✅ Zod 검증으로 타입 안전성
+
+### 렌더링 전략
+
+- ✅ Hybrid (SSG + CSR) 우선 권장
+- ✅ SSG 동적 라우트 실전 예제
+- ✅ 문서 간략화로 빠른 학습
+
+### 성능 최적화
+
+- ✅ DNS Prefetch/Preconnect
+- ✅ React Compiler 자동 메모이제이션
+- ✅ 보안 헤더 강화 (CSP, Permissions Policy)
+
+### 배포 옵션
+
+- ✅ AWS S3 + CloudFront
+- ✅ AWS Amplify
+- ✅ Vercel, Netlify, GitHub Pages
+
+### 개발 경험
+
+- ✅ 간결한 문서 (평균 80% 분량 감소)
+- ✅ 실용적인 코드 예제
+- ✅ 공식 문서 링크로 상세 안내
+
+---
+
+## 🚀 사용자 시작 가능 시간
+
+1. **설치**: 2분
+2. **문서 숙지**: 10분 (ARCHITECTURE.md)
+3. **첫 기능 개발**: 20분 (코드 제너레이터 활용)
+
+**총 소요 시간: 약 30분** ⏱️
+
+---
+
+## 📝 남은 작업 (선택사항)
+
+### 1. 완전 정적 배포 (필요 시)
+
+GitHub Pages/AWS S3 완전 정적 배포용:
+
+```typescript
+// next.config.ts
+{
+  output: 'export',
+  images: { unoptimized: true },
+}
+```
+
+### 2. 프로젝트별 커스터마이징
+
+- 도메인 특화 Entity/Feature 추가
+- API 엔드포인트 변경
+- 디자인 시스템 적용
+
+---
+
+## 🎉 완성도
+
+| 항목      | 상태 | 비고                       |
+| --------- | ---- | -------------------------- |
+| 코드 품질 | ✅   | Lint/Type 체크 통과        |
+| 빌드      | ✅   | 21개 페이지 정적 생성      |
+| 문서화    | ✅   | 간결하고 실용적            |
+| 성능      | ✅   | 188KB First Load JS        |
+| 보안      | ✅   | CSP, 보안 헤더 적용        |
+| SEO       | ✅   | robots/sitemap 가이드      |
+| 배포      | ✅   | 5개 플랫폼 가이드          |
+| 개발 경험 | ✅   | 코드 제너레이터, 30분 시작 |
+
+---
+
+**🎊 프로젝트 완성! 프로덕션 배포 준비 완료!**
+
+> 이 템플릿은 서버 없는 Next.js 15 + React 19 프로젝트의 모범 사례를 담고 있습니다.

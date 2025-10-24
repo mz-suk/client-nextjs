@@ -708,6 +708,109 @@ pnpm add -D @lhci/cli
 
 ---
 
+## 🔍 SEO 최적화
+
+### robots.txt 생성
+
+```txt
+# public/robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap 위치
+Sitemap: https://your-domain.com/sitemap.xml
+
+# 크롤링 제외 (선택)
+Disallow: /api/
+Disallow: /_next/
+```
+
+### sitemap.xml 생성
+
+**방법 1: 정적 파일**
+
+```xml
+<!-- public/sitemap.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://your-domain.com</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://your-domain.com/about</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>
+```
+
+**방법 2: 동적 생성 (Next.js)**
+
+```typescript
+// app/sitemap.ts
+import type { MetadataRoute } from 'next';
+import { getUsers } from '@/features/user-list/api';
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const users = await getUsers();
+
+  const userUrls = users.map(user => ({
+    url: `https://your-domain.com/users/${user.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
+  return [
+    {
+      url: 'https://your-domain.com',
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 1,
+    },
+    ...userUrls,
+  ];
+}
+```
+
+### robots.ts (동적 생성)
+
+```typescript
+// app/robots.ts
+import type { MetadataRoute } from 'next';
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: ['/api/', '/_next/'],
+    },
+    sitemap: 'https://your-domain.com/sitemap.xml',
+  };
+}
+```
+
+### 확인 방법
+
+```bash
+# 로컬 확인
+open http://localhost:3000/robots.txt
+open http://localhost:3000/sitemap.xml
+
+# 프로덕션 확인
+curl https://your-domain.com/robots.txt
+curl https://your-domain.com/sitemap.xml
+```
+
+📚 **상세 문서**: [Next.js Metadata](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap)
+
+---
+
 ## 🔄 CI/CD 파이프라인
 
 ### GitHub Actions (Vercel)

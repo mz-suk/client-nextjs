@@ -31,7 +31,9 @@ Hybrid Pattern                    →  최고의 사용성 🎯
 - **🔄 실시간 업데이트** - SWR/TanStack Query로 백그라운드 자동 갱신
 - **🏗️ 확장 가능한 구조** - Feature-Sliced Design (FSD) 아키텍처
 - **🛡️ 타입 안전성** - TypeScript strict + Zod 환경변수 검증
-- **📦 최적화 도구** - Bundle Analyzer, 이미지 최적화, 보안 헤더
+- **🔒 보안 강화** - CSP, Permissions-Policy 등 보안 헤더 적용
+- **⚡ 성능 최적화** - DNS Prefetch, Preconnect로 API 연결 최적화
+- **📦 최적화 도구** - Bundle Analyzer, 이미지 최적화
 - **🚀 빠른 개발** - Plop.js 코드 제너레이터 + Turbopack
 
 ---
@@ -136,12 +138,20 @@ pnpm generate:feature
 **2. 페이지에서 사용**
 
 ```typescript
-// app/products/page.tsx
-import { ProductList } from '@/features/product-list';
+// app/products/page.tsx (Server Component)
+import { getProducts, ProductListHybrid } from '@/features/product-list';
 
-export default function ProductsPage() {
-  return <ProductList />;
+export default async function ProductsPage() {
+  const products = await getProducts();
+  return <ProductListHybrid initialProducts={products} />;
 }
+
+// 또는 Client Component로만 (CSR)
+// 'use client';
+// import { ProductList } from '@/features/product-list/ui';
+// export default function ProductsPage() {
+//   return <ProductList />;
+// }
 ```
 
 > 📖 **상세 가이드:** [GENERATOR.md](./docs/GENERATOR.md)
@@ -155,7 +165,8 @@ import { useUsers } from '@/features/user-list';
 
 function Component() {
   const { users, isLoading, error } = useUsers();
-  // ...
+  // initialData가 있는 경우 (Hybrid 패턴)
+  // const { users, isLoading, error } = useUsers({ initialData });
 }
 ```
 
@@ -165,8 +176,8 @@ function Component() {
 import { useUsersQuery } from '@/features/user-list';
 
 function Component() {
-  const { data: users, isLoading, error } = useUsersQuery();
-  // ...
+  const { data, isLoading, error } = useUsersQuery();
+  const users = data || [];
 }
 ```
 
@@ -178,11 +189,28 @@ function Component() {
 
 ```typescript
 import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
-export const useStore = create(set => ({
-  count: 0,
-  increment: () => set(state => ({ count: state.count + 1 })),
-}));
+interface CounterState {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+  reset: () => void;
+}
+
+export const useCounterStore = create<CounterState>()(
+  devtools(
+    persist(
+      set => ({
+        count: 0,
+        increment: () => set(state => ({ count: state.count + 1 })),
+        decrement: () => set(state => ({ count: state.count - 1 })),
+        reset: () => set({ count: 0 }),
+      }),
+      { name: 'counter-storage' }
+    )
+  )
+);
 ```
 
 > 📖 **상세 가이드:** [STATE_MANAGEMENT.md](./docs/STATE_MANAGEMENT.md)
@@ -369,6 +397,31 @@ MIT License
 
 ---
 
+## 🔍 SEO 설정
+
+### robots.txt / sitemap.xml
+
+Next.js는 동적 생성을 지원합니다:
+
+```typescript
+// app/robots.ts
+export default function robots() {
+  return {
+    rules: { userAgent: '*', allow: '/' },
+    sitemap: 'https://your-domain.com/sitemap.xml',
+  };
+}
+
+// app/sitemap.ts
+export default async function sitemap() {
+  return [{ url: 'https://your-domain.com', lastModified: new Date() }];
+}
+```
+
+> 📖 **상세 가이드:** [DEPLOYMENT.md - SEO 최적화](./docs/DEPLOYMENT.md#-seo-최적화)
+
+---
+
 ## 🆘 문제 해결
 
 ### CORS 에러
@@ -409,7 +462,7 @@ A: 기본적으로 활성화되어 있으며, 자동으로 최적화합니다. �
 A: `pnpm generate:feature` 명령어로 자동 생성하거나, [GENERATOR.md](./docs/GENERATOR.md)를 참고하세요.
 
 **Q: 환경변수는 어떻게 관리하나요?**  
-A: `.env.example`을 복사하여 `.env` 파일을 만들고, Zod로 자동 검증됩니다. 빌드 시 상수로 변환되어 사용됩니다 (`shared/config/constants.ts`).
+A: `.env.example`을 복사하여 `.env` 파일을 만들고, Zod로 자동 검증됩니다 (`shared/config/env.ts`). 검증된 환경변수는 `shared/config/constants.ts`에서 애플리케이션 상수로 변환되어 사용됩니다.
 
 ---
 
