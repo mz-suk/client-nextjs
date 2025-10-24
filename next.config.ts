@@ -54,10 +54,10 @@ let nextConfig: NextConfig = {
                 "default-src 'self'",
                 "img-src 'self' data: https:",
                 "font-src 'self' data:",
-                `connect-src 'self' ${API_CONFIG.BASE_URL || 'https:'}`,
+                `connect-src 'self' ${API_CONFIG.BASE_URL || 'https:'} ws: wss:`,
               ];
               const cspDev = [...cspBase, "script-src 'self' 'unsafe-eval' 'unsafe-inline'", "style-src 'self' 'unsafe-inline'"];
-              const cspProd = [...cspBase, "script-src 'self'", "style-src 'self' 'unsafe-inline'"];
+              const cspProd = [...cspBase, "script-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline'"];
               return (isDev ? cspDev : cspProd).join('; ');
             })(),
           },

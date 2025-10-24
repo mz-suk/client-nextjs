@@ -5,7 +5,7 @@
  * 런타임에는 변경 불가능 (정적 배포 특성)
  */
 
-import { env, parsed } from './env';
+import { env } from './env';
 
 /**
  * API 관련 상수
@@ -28,8 +28,8 @@ export const APP_METADATA = {
 /**
  * 빌드 플래그
  */
-export const isAnalyze = parsed.ANALYZE;
-export const isDev = parsed.NODE_ENV === 'development';
+export const isAnalyze = env.ANALYZE;
+export const isDev = env.NODE_ENV === 'development';
 export const isDebug = env.FEATURE_DEBUG;
 
 /**

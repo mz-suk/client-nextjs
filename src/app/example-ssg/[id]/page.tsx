@@ -1,6 +1,6 @@
-import { getUsers, getUser } from '@/features/user-list/api';
-import { Suspense } from 'react';
+import { getUser, getUsers } from '@/features/user-list/api';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 // SSG: 빌드 시 정적 페이지 생성 대상 지정
 export async function generateStaticParams() {
@@ -13,8 +13,9 @@ export async function generateStaticParams() {
 }
 
 // SSG: 빌드 시 데이터 페칭
-export default async function UserDetailPage({ params }: { params: { id: string } }) {
-  const user = await getUser(Number(params.id));
+export default async function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const user = await getUser(Number(id));
 
   return (
     <main style={{ padding: '2rem' }}>

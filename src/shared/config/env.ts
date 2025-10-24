@@ -2,8 +2,13 @@ import { z } from 'zod';
 
 // 환경변수 스키마 정의
 const envSchema = z.object({
-  // 필수 환경변수
-  NEXT_PUBLIC_API_URL: z.string().url('유효한 URL 형식이 아닙니다').min(1, 'API_URL은 필수입니다'),
+  // 필수 환경변수 (상대 경로 또는 절대 URL 허용)
+  NEXT_PUBLIC_API_URL: z
+    .string()
+    .min(1, 'API_URL은 필수입니다')
+    .refine(val => val.startsWith('/') || val.startsWith('http://') || val.startsWith('https://'), {
+      message: '유효한 URL 또는 절대 경로 형식이 아닙니다',
+    }),
 
   // 옵션 환경변수 (기본값 포함)
   NEXT_PUBLIC_API_TIMEOUT: z.coerce.number().min(1000, '타임아웃은 최소 1000ms 이상이어야 합니다').default(30000),
@@ -56,4 +61,6 @@ export const env = {
   FEATURE_DEBUG: parsed.NEXT_PUBLIC_FEATURE_DEBUG,
   API_TARGET_URL: typeof window === 'undefined' ? parsed.API_TARGET_URL : undefined,
   API_ACCEPT_LANGUAGE: parsed.NEXT_PUBLIC_API_ACCEPT_LANGUAGE,
+  ANALYZE: parsed.ANALYZE,
+  NODE_ENV: parsed.NODE_ENV,
 } as const;
