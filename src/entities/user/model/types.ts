@@ -1,8 +1,10 @@
 export interface User {
   id: number;
   name: string;
-  username: string;
   email: string;
+  username: string;
+  phone: string;
+  website: string;
   address: {
     street: string;
     suite: string;
@@ -13,15 +15,9 @@ export interface User {
       lng: string;
     };
   };
-  phone: string;
-  website: string;
   company: {
     name: string;
     catchPhrase: string;
     bs: string;
   };
-}
-
-export interface UserSearchParams {
-  keyword?: string;
 }

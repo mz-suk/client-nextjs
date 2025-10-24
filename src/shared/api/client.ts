@@ -1,4 +1,5 @@
 import axios, { type AxiosError, type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios';
+import { API_CONFIG } from '../config/constants';
 import { env, isDev } from '../config/env';
 import { logger } from '../lib/logger';
 
@@ -6,14 +7,10 @@ const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 
 const getBaseURL = () => {
-  if (typeof window === 'undefined') {
-    if (isDev && env.API_TARGET_URL) {
-      return env.API_TARGET_URL;
-    }
-    return env.API_URL;
+  if (typeof window === 'undefined' && isDev && env.API_TARGET_URL) {
+    return env.API_TARGET_URL;
   }
-
-  return env.API_URL;
+  return API_CONFIG.BASE_URL;
 };
 
 const getDefaultHeaders = () => {
@@ -22,8 +19,8 @@ const getDefaultHeaders = () => {
     accept: '*/*',
   };
 
-  if (env.API_ACCEPT_LANGUAGE) {
-    headers['Accept-Language'] = env.API_ACCEPT_LANGUAGE;
+  if (API_CONFIG.ACCEPT_LANGUAGE) {
+    headers['Accept-Language'] = API_CONFIG.ACCEPT_LANGUAGE;
   }
 
   return headers;
@@ -31,7 +28,7 @@ const getDefaultHeaders = () => {
 
 export const apiClient = axios.create({
   baseURL: getBaseURL(),
-  timeout: env.API_TIMEOUT,
+  timeout: API_CONFIG.TIMEOUT,
   headers: getDefaultHeaders(),
 });
 

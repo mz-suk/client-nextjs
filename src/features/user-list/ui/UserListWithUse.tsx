@@ -1,12 +1,21 @@
 'use client';
 
-import { use, useMemo } from 'react';
+import { use } from 'react';
 import { getUsers } from '../api';
 import styles from './UserList.module.css';
 
+// Promise를 컴포넌트 외부에서 생성하여 재사용
+let cachedPromise: Promise<Awaited<ReturnType<typeof getUsers>>> | null = null;
+
+function getUsersPromise() {
+  if (!cachedPromise) {
+    cachedPromise = getUsers();
+  }
+  return cachedPromise;
+}
+
 export function UserListWithUse() {
-  const userPromise = useMemo(() => getUsers(), []);
-  const users = use(userPromise);
+  const users = use(getUsersPromise());
 
   return (
     <div className={styles.container}>

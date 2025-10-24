@@ -24,6 +24,7 @@ let nextConfig: NextConfig = {
   // 실험적 기능
   experimental: {
     optimizePackageImports: ['react-icons', 'lucide-react'],
+    reactCompiler: true,
   },
 
   async rewrites() {

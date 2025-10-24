@@ -1,4 +1,5 @@
 import type { User } from '@/entities/user';
+import Link from 'next/link';
 import styles from './UserList.module.css';
 
 interface UserListSSGProps {
@@ -31,13 +32,13 @@ export function UserListSSG({ users, timestamp }: UserListSSGProps) {
           <h2>사용자 목록 ({users.length})</h2>
           <div className={styles.grid}>
             {users.map(user => (
-              <div key={user.id} className={styles.card}>
+              <Link key={user.id} href={`/example-ssg/${user.id}`} className={styles.card}>
                 <div className={styles.code}>{user.id}</div>
                 <div className={styles.nameKo}>{user.name}</div>
                 <div className={styles.nameEn}>@{user.username}</div>
                 <div className={styles.email}>{user.email}</div>
                 <div className={styles.company}>{user.company.name}</div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
