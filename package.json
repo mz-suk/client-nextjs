@@ -15,7 +15,9 @@
     "generate:component": "plop component",
     "generate:hook": "plop hook",
     "generate:page": "plop page",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "gf": "git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -d",
+    "gfl": "git branch | grep -v '^*' | xargs git branch -D"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.5",
