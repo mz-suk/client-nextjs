@@ -1,14 +1,13 @@
 import axios, { type AxiosError, type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios';
-import { API_CONFIG } from '../config/constants';
-import { env, isDev } from '../config/env';
+import { API_CONFIG, isDev, SERVER_CONFIG } from '../config/constants';
 import { logger } from '../lib/logger';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 
 const getBaseURL = () => {
-  if (typeof window === 'undefined' && isDev && env.API_TARGET_URL) {
-    return env.API_TARGET_URL;
+  if (typeof window === 'undefined' && isDev && SERVER_CONFIG.API_TARGET_URL) {
+    return SERVER_CONFIG.API_TARGET_URL;
   }
   return API_CONFIG.BASE_URL;
 };

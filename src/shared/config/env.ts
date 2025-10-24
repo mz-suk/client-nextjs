@@ -20,6 +20,11 @@ const envSchema = z.object({
   API_TARGET_URL: z.string().url().optional(),
 
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  ANALYZE: z
+    .string()
+    .optional()
+    .default('false')
+    .transform(val => val === 'true'),
 });
 
 // 환경변수 파싱 및 검증
@@ -32,6 +37,7 @@ function parseEnv() {
       NEXT_PUBLIC_API_ACCEPT_LANGUAGE: process.env.NEXT_PUBLIC_API_ACCEPT_LANGUAGE,
       API_TARGET_URL: process.env.API_TARGET_URL,
       NODE_ENV: process.env.NODE_ENV,
+      ANALYZE: process.env.ANALYZE,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -42,7 +48,7 @@ function parseEnv() {
   }
 }
 
-const parsed = parseEnv();
+export const parsed = parseEnv();
 
 export const env = {
   API_URL: parsed.NEXT_PUBLIC_API_URL,
@@ -51,7 +57,3 @@ export const env = {
   API_TARGET_URL: typeof window === 'undefined' ? parsed.API_TARGET_URL : undefined,
   API_ACCEPT_LANGUAGE: parsed.NEXT_PUBLIC_API_ACCEPT_LANGUAGE,
 } as const;
-
-export const isDev = parsed.NODE_ENV === 'development';
-export const isProd = parsed.NODE_ENV === 'production';
-export const isTest = parsed.NODE_ENV === 'test';

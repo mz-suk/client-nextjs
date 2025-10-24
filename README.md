@@ -247,7 +247,6 @@ export const useCounterStore = create<CounterState>()(
 | -------------------------------------------- | ------------------------- |
 | [🛠️ GENERATOR.md](./docs/GENERATOR.md)       | Plop.js 코드 제너레이터   |
 | [📊 PERFORMANCE.md](./docs/PERFORMANCE.md)   | 성능 최적화 기법          |
-| [✅ VERIFICATION.md](./docs/VERIFICATION.md) | React Compiler 확인 방법  |
 | [🚀 DEPLOYMENT.md](./docs/DEPLOYMENT.md)     | 배포 가이드               |
 | [📋 PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) | 프로젝트 계획 및 히스토리 |
 

@@ -5,7 +5,7 @@
  * 런타임에는 변경 불가능 (정적 배포 특성)
  */
 
-import { env } from './env';
+import { env, parsed } from './env';
 
 /**
  * API 관련 상수
@@ -17,19 +17,26 @@ export const API_CONFIG = {
 } as const;
 
 /**
- * 기능 플래그
- */
-export const FEATURES = {
-  DEBUG: env.FEATURE_DEBUG,
-} as const;
-
-/**
  * 애플리케이션 메타데이터
  */
 export const APP_METADATA = {
   NAME: 'Next.js Template',
   DESCRIPTION: '서버 없는 SSG+CSR 하이브리드 템플릿',
-  VERSION: '1.0.0',
+  VERSION: '0.1.0',
+} as const;
+
+/**
+ * 빌드 플래그
+ */
+export const isAnalyze = parsed.ANALYZE;
+export const isDev = parsed.NODE_ENV === 'development';
+export const isDebug = env.FEATURE_DEBUG;
+
+/**
+ * 서버 전용 설정
+ */
+export const SERVER_CONFIG = {
+  API_TARGET_URL: env.API_TARGET_URL,
 } as const;
 
 /**

@@ -1,7 +1,5 @@
 import type { NextConfig } from 'next';
-
-const isDev = process.env.NODE_ENV === 'development';
-const isAnalyze = process.env.ANALYZE === 'true';
+import { API_CONFIG, isAnalyze, isDebug, isDev, SERVER_CONFIG } from './src/shared/config/constants';
 
 let nextConfig: NextConfig = {
   eslint: {
@@ -18,21 +16,21 @@ let nextConfig: NextConfig = {
 
   // 프로덕션 빌드 최적화
   compiler: {
-    removeConsole: !isDev,
+    removeConsole: !isDebug,
   },
 
   // 실험적 기능
   experimental: {
-    optimizePackageImports: ['react-icons', 'lucide-react'],
+    optimizePackageImports: ['lucide-react'],
     reactCompiler: true,
   },
 
   async rewrites() {
-    if (isDev && process.env.API_TARGET_URL) {
+    if (isDev && SERVER_CONFIG.API_TARGET_URL) {
       return [
         {
           source: '/api/proxy/:path*',
-          destination: `${process.env.API_TARGET_URL}/:path*`,
+          destination: `${SERVER_CONFIG.API_TARGET_URL}/:path*`,
         },
       ];
     }
@@ -51,14 +49,17 @@ let nextConfig: NextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
           {
             key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https:",
-              "font-src 'self' data:",
-              `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'https:'}`,
-            ].join('; '),
+            value: (() => {
+              const cspBase = [
+                "default-src 'self'",
+                "img-src 'self' data: https:",
+                "font-src 'self' data:",
+                `connect-src 'self' ${API_CONFIG.BASE_URL || 'https:'}`,
+              ];
+              const cspDev = [...cspBase, "script-src 'self' 'unsafe-eval' 'unsafe-inline'", "style-src 'self' 'unsafe-inline'"];
+              const cspProd = [...cspBase, "script-src 'self'", "style-src 'self' 'unsafe-inline'"];
+              return (isDev ? cspDev : cspProd).join('; ');
+            })(),
           },
         ],
       },

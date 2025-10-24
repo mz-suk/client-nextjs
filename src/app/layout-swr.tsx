@@ -1,7 +1,8 @@
 import { API_CONFIG } from '@/shared/config';
-import { QueryProvider } from '@/shared/providers';
+import { swrConfig } from '@/shared/config/swr';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { SWRConfig } from 'swr';
 import './globals.css';
 
 const geistSans = Geist({
@@ -32,7 +33,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href={API_CONFIG.BASE_URL} />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <QueryProvider>{children}</QueryProvider>
+        <SWRConfig value={swrConfig}>{children}</SWRConfig>
       </body>
     </html>
   );
