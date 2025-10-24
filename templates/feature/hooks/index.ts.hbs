@@ -1,0 +1,18 @@
+{{#if (eq stateManagement 'SWR')}}
+  export * from './use{{pascalCase name}}s';
+  {{#if includeDetail}}
+    export * from './use{{pascalCase name}}';
+  {{/if}}
+{{/if}}
+{{#if (eq stateManagement 'TanStack Query')}}
+  export * from './use{{pascalCase name}}sQuery';
+  {{#if includeDetail}}
+    export * from './use{{pascalCase name}}Query';
+  {{/if}}
+{{/if}}
+{{#if (eq stateManagement '둘 다')}}
+  export * from './use{{pascalCase name}}s'; export * from './use{{pascalCase name}}sQuery';
+  {{#if includeDetail}}
+    export * from './use{{pascalCase name}}'; export * from './use{{pascalCase name}}Query';
+  {{/if}}
+{{/if}}

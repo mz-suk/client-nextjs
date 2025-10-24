@@ -1,11 +1,11 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useMemo } from 'react';
 import { getUsers } from '../api';
 import styles from './UserList.module.css';
 
 export function UserListWithUse() {
-  const [userPromise] = useState(() => getUsers());
+  const userPromise = useMemo(() => getUsers(), []);
   const users = use(userPromise);
 
   return (

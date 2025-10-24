@@ -1,0 +1,14 @@
+'use client';
+
+import type { {{pascalCase name}} } from '@/entities/{{camelCase name}}';
+import { useQuery } from '@tanstack/react-query';
+import { get{{pascalCase name}} } from '../api';
+
+export function use{{pascalCase name}}Query(id: number, enabled = true) {
+  return useQuery<{{pascalCase name}}>({
+    queryKey: ['{{camelCase name}}s', id],
+    queryFn: () => get{{pascalCase name}}(id),
+    enabled: enabled && id > 0,
+  });
+}
+

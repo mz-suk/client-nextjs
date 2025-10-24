@@ -1,0 +1,14 @@
+import type { {{pascalCase name}} } from '@/entities/{{camelCase name}}';
+import { fetchAPI } from '@/shared/api';
+import { logger } from '@/shared/lib';
+
+export async function get{{pascalCase name}}(id: number): Promise<{{pascalCase name}}> {
+  try {
+    const data = await fetchAPI<{{pascalCase name}}>(`{{endpoint}}/${ id }`);
+    return data;
+  } catch (error) {
+    logger.error('get{{pascalCase name}} 에러:', error);
+    throw error;
+  }
+}
+

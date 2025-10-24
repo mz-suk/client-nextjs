@@ -1,0 +1,29 @@
+'use client';
+
+import type { {{pascalCase name}} } from '@/entities/{{camelCase name}}';
+import useSWR from 'swr';
+import { get{{pascalCase name}} } from '../api';
+
+export interface Use{{pascalCase name}}Options {
+  initialData?: {{pascalCase name}};
+}
+
+export function use{{pascalCase name}}(id: number, options?: Use{{pascalCase name}}Options) {
+  const { initialData } = options || {};
+
+  const { data, error, isLoading, mutate } = useSWR<{{pascalCase name}}>(
+    id ? `{{endpoint}}/${ id }` : null,
+    () => get{{pascalCase name}}(id),
+    {
+      fallbackData: initialData,
+    }
+  );
+
+  return {
+    {{camelCase name}}: data,
+    isLoading,
+    error,
+    refetch: mutate,
+  };
+}
+

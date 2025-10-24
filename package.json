@@ -11,7 +11,13 @@
     "start": "next start --port 4000",
     "lint": "tsc --noEmit && eslint . --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "generate": "plop",
+    "generate:feature": "plop feature",
+    "generate:component": "plop component",
+    "generate:hook": "plop hook",
+    "generate:page": "plop page",
+    "analyze": "ANALYZE=true pnpm build"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.5",
@@ -21,10 +27,12 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "swr": "^2.3.6",
+    "zod": "^4.1.12",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@next/bundle-analyzer": "^16.0.0",
     "@types/node": "^24.8.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
@@ -32,6 +40,7 @@
     "eslint-config-next": "15.5.6",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.4",
+    "plop": "^4.0.4",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
   },
@@ -47,5 +56,6 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
-  }
+  },
+  "packageManager": "pnpm@10.14.0"
 }
