@@ -2,33 +2,44 @@
   "name": "client-nextjs",
   "version": "0.1.0",
   "private": true,
-  "description": "Next.js 15 + TypeScript 기반 인천 면세점 클라이언트 애플리케이션",
+  "description": "Next.js 15 + React 19 + TypeScript 기반 범용 프로젝트 템플릿",
   "scripts": {
     "dev": "next dev --turbopack",
-    "dev:prod": "NODE_ENV=production next dev --turbopack",
     "build": "next build --turbopack",
-    "build:prod": "NODE_ENV=production next build --turbopack",
-    "start": "next start --port 4000",
+    "start": "pnpm build && next start --port 4000",
     "lint": "tsc --noEmit && eslint . --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "generate": "plop",
+    "generate:feature": "plop feature",
+    "generate:component": "plop component",
+    "generate:hook": "plop hook",
+    "generate:page": "plop page",
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.5",
+    "@tanstack/react-query-devtools": "^5.90.2",
     "axios": "^1.12.2",
     "next": "15.5.6",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "swr": "^2.3.6"
+    "swr": "^2.3.6",
+    "zod": "^4.1.12",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@next/bundle-analyzer": "^16.0.0",
     "@types/node": "^24.8.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "eslint": "^9.38.0",
     "eslint-config-next": "15.5.6",
+    "eslint-plugin-react-hooks": "^7.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.4",
+    "plop": "^4.0.4",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
   },
@@ -44,5 +55,6 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
-  }
+  },
+  "packageManager": "pnpm@10.14.0"
 }

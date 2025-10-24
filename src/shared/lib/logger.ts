@@ -1,9 +1,9 @@
-import { env } from '../config/env';
+import { isDebug } from '../config/constants';
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'api';
 
 class Logger {
-  private isEnabled = env.FEATURE_DEBUG;
+  private isEnabled = isDebug;
 
   private log(level: LogLevel, ...args: unknown[]) {
     if (!this.isEnabled && level !== 'error') return;

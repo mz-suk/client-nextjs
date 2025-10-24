@@ -1,17 +1,8 @@
-import { getNations, NationListSSG } from '@/features/nation-list';
+import { getUsers, UserListSSG } from '@/features/user-list';
 
 export default async function ExampleSsgPage() {
-  const nations = await getNations();
-  const buildTime = new Date();
-  const timestamp = buildTime.toLocaleString('ko-KR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  });
+  const users = await getUsers();
+  const timestamp = new Date().toLocaleString('ko-KR');
 
-  return <NationListSSG nations={nations} timestamp={timestamp} buildTime={buildTime.getTime()} />;
+  return <UserListSSG users={users} timestamp={timestamp} />;
 }

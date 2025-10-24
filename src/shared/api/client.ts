@@ -1,29 +1,34 @@
 import axios, { type AxiosError, type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios';
-import { env, isDev } from '../config/env';
+import { API_CONFIG, isDev, SERVER_CONFIG } from '../config/constants';
 import { logger } from '../lib/logger';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 
 const getBaseURL = () => {
-  if (typeof window === 'undefined') {
-    if (isDev && env.API_TARGET_URL) {
-      return env.API_TARGET_URL;
-    }
-    return env.API_URL;
+  if (typeof window === 'undefined' && isDev && SERVER_CONFIG.API_TARGET_URL) {
+    return SERVER_CONFIG.API_TARGET_URL;
+  }
+  return API_CONFIG.BASE_URL;
+};
+
+const getDefaultHeaders = () => {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    accept: '*/*',
+  };
+
+  if (API_CONFIG.ACCEPT_LANGUAGE) {
+    headers['Accept-Language'] = API_CONFIG.ACCEPT_LANGUAGE;
   }
 
-  return env.API_URL;
+  return headers;
 };
 
 export const apiClient = axios.create({
   baseURL: getBaseURL(),
-  timeout: env.API_TIMEOUT,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept-Language': 'ko',
-    accept: '*/*',
-  },
+  timeout: API_CONFIG.TIMEOUT,
+  headers: getDefaultHeaders(),
 });
 
 apiClient.interceptors.request.use(
