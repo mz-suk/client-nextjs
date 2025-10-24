@@ -2,7 +2,7 @@
   "name": "client-nextjs",
   "version": "0.1.0",
   "private": true,
-  "description": "Next.js 15 + TypeScript 기반 인천 면세점 클라이언트 애플리케이션",
+  "description": "Next.js 15 + React 19 + TypeScript 기반 범용 프로젝트 템플릿",
   "scripts": {
     "dev": "next dev --turbopack",
     "dev:prod": "NODE_ENV=production next dev --turbopack",
@@ -14,11 +14,14 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.5",
+    "@tanstack/react-query-devtools": "^5.90.2",
     "axios": "^1.12.2",
     "next": "15.5.6",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "swr": "^2.3.6"
+    "swr": "^2.3.6",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",

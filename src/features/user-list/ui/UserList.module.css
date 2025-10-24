@@ -1,0 +1,121 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.info {
+  background: #f5f5f5;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.info p {
+  margin: 0.5rem 0;
+}
+
+.note {
+  color: #666;
+  font-style: italic;
+  margin-top: 1rem !important;
+}
+
+.posts {
+  margin: 2rem 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: white;
+  transition: all 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.code {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.nameKo {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.nameEn {
+  color: #0070f3;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.email {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.company {
+  font-size: 0.875rem;
+  color: #999;
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #0070f3;
+}
+
+.error {
+  background: #fee;
+  color: #c00;
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+.features {
+  background: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+
+.features h3 {
+  margin-top: 0;
+}
+
+.features ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.features li {
+  margin: 0.5rem 0;
+}
+
+.moreInfo {
+  text-align: center;
+  color: #666;
+  margin-top: 1rem;
+}

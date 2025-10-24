@@ -16,14 +16,23 @@ const getBaseURL = () => {
   return env.API_URL;
 };
 
+const getDefaultHeaders = () => {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    accept: '*/*',
+  };
+
+  if (env.API_ACCEPT_LANGUAGE) {
+    headers['Accept-Language'] = env.API_ACCEPT_LANGUAGE;
+  }
+
+  return headers;
+};
+
 export const apiClient = axios.create({
   baseURL: getBaseURL(),
   timeout: env.API_TIMEOUT,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept-Language': 'ko',
-    accept: '*/*',
-  },
+  headers: getDefaultHeaders(),
 });
 
 apiClient.interceptors.request.use(

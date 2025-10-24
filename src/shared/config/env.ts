@@ -3,6 +3,7 @@ export const env = {
   API_TIMEOUT: Number(process.env.NEXT_PUBLIC_API_TIMEOUT) || 30000,
   FEATURE_DEBUG: process.env.NEXT_PUBLIC_FEATURE_DEBUG === 'true',
   API_TARGET_URL: typeof window === 'undefined' ? process.env.API_TARGET_URL : undefined,
+  API_ACCEPT_LANGUAGE: process.env.NEXT_PUBLIC_API_ACCEPT_LANGUAGE,
 } as const;
 
 export const isDev = process.env.NODE_ENV === 'development';

@@ -1,5 +1,5 @@
-import { NationListClientImproved } from '@/features/nation-list';
+import { UserListClient } from '@/features/user-list';
 
 export default function ExampleApiUsagePage() {
-  return <NationListClientImproved />;
+  return <UserListClient />;
 }
