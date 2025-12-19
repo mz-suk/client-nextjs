@@ -104,9 +104,7 @@ pnpm add --save-dev eslint-plugin-react-hooks@latest
 ```typescript
 // next.config.ts
 const nextConfig: NextConfig = {
-  experimental: {
-    reactCompiler: true,
-  },
+  reactCompiler: true,
 };
 ```
 

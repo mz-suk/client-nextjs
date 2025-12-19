@@ -2,12 +2,13 @@
   "name": "client-nextjs",
   "version": "0.1.0",
   "private": true,
-  "description": "Next.js 15 + React 19 + TypeScript 기반 범용 프로젝트 템플릿",
+  "description": "Next.js 16 + React 19 + TypeScript 기반 범용 프로젝트 템플릿",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "dev": "next dev",
+    "build": "next build",
     "start": "pnpm build && next start --port 4000",
-    "lint": "tsc --noEmit && eslint . --fix",
+    "lint": "tsc --noEmit",
+    "lint:eslint": "eslint . --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "prepare": "husky",
     "generate": "plop",
@@ -20,43 +21,39 @@
     "gfl": "git branch | grep -v '^*' | xargs git branch -D"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.90.5",
-    "@tanstack/react-query-devtools": "^5.90.2",
-    "axios": "^1.12.2",
-    "next": "15.5.6",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "swr": "^2.3.6",
-    "zod": "^4.1.12",
-    "zustand": "^5.0.8"
+    "@tanstack/react-query": "^5.90.12",
+    "@tanstack/react-query-devtools": "^5.91.1",
+    "axios": "^1.13.2",
+    "next": "16.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "swr": "^2.3.8",
+    "zod": "^4.2.1",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
-    "@next/bundle-analyzer": "^16.0.0",
-    "@types/node": "^24.8.1",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "eslint": "^9.38.0",
-    "eslint-config-next": "15.5.6",
-    "eslint-plugin-react-hooks": "^7.0.0",
+    "@eslint/eslintrc": "^3.3.3",
+    "@next/bundle-analyzer": "16.1.0",
+    "@types/node": "^24.10.4",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "16.1.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.4",
+    "lint-staged": "^16.2.7",
     "plop": "^4.0.4",
-    "prettier": "^3.6.2",
+    "prettier": "^3.7.4",
     "typescript": "^5.9.3"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{js,jsx,json,css,md}": [
+    "*.{ts,tsx,js,jsx,json,css,md}": [
       "prettier --write"
     ]
   },
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=20.9.0",
     "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@10.14.0"
+  "packageManager": "pnpm@10.25.0"
 }

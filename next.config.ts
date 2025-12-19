@@ -2,16 +2,12 @@ import type { NextConfig } from 'next';
 import { API_CONFIG, isAnalyze, isDebug, isDev, SERVER_CONFIG } from './src/shared/config/constants';
 
 let nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: isDev,
-  },
-
   // 이미지 최적화
   images: {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60,
+    imageSizes: [32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 14400,
   },
 
   // 프로덕션 빌드 최적화
@@ -19,10 +15,11 @@ let nextConfig: NextConfig = {
     removeConsole: !isDebug,
   },
 
+  reactCompiler: true,
+
   // 실험적 기능
   experimental: {
     optimizePackageImports: ['lucide-react'],
-    reactCompiler: true,
   },
 
   async rewrites() {

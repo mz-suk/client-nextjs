@@ -1,8 +1,8 @@
-# Next.js 15 + React 19 프로젝트 템플릿
+# Next.js 16 + React 19 프로젝트 템플릿
 
 > **서버 없는** SSG+CSR 하이브리드로 빠른 로딩 + 실시간 데이터를 동시에!
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.5-black?logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.1-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.2-blue?logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![React Compiler](https://img.shields.io/badge/React_Compiler-1.0-purple)](https://react.dev/learn/react-compiler)
@@ -284,7 +284,7 @@ pnpm analyze          # 번들 크기 분석
 
 ### Core
 
-- **Next.js 15.5** - React 프레임워크 (App Router)
+- **Next.js 16.1** - React 프레임워크 (App Router)
 - **React 19.2** - UI 라이브러리
 - **TypeScript 5.9** - 타입 안전성
 - **React Compiler 1.0** - 자동 메모이제이션 ⚡
