@@ -15,6 +15,10 @@ const eslintConfig = [
     ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts', '*.config.*'],
   },
   {
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+    },
     rules: {
       '@typescript-eslint/no-unused-vars': [
         'error',
