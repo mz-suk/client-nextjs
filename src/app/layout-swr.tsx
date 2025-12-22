@@ -1,8 +1,8 @@
 import { API_CONFIG } from '@/core/config';
+import '@/shared/styles/index.scss';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { SWRConfig } from 'swr';
-import './globals.css';
 
 const swrConfig = {
   revalidateOnFocus: false,

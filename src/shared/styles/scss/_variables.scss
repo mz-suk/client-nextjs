@@ -1,0 +1,99 @@
+:root {
+  /* border-radius */
+  --rad-xl: 1rem;
+  --rad-lg: 0.8rem;
+  --rad-md: 0.6rem;
+  --rad-sm: 0.4rem;
+  --rad-xsm: 0.3rem;
+
+  /* layouts */
+  --notch-t: env(safe-area-inset-top, 0);
+  --notch-r: env(safe-area-inset-right, 0);
+  --notch-b: env(safe-area-inset-bottom, 0);
+  --notch-l: env(safe-area-inset-left, 0);
+
+  --height-header-original: 4.8rem;
+  --height-header: calc(var(--height-header-original) + var(--notch-t));
+  --height-gnb: 5.9rem;
+  --height-bottom-button-original: 7.2rem;
+  --height-bottom-button: calc(var(--height-bottom-button-original) + var(--notch-b));
+  --height-contents: calc(100vh - var(--height-header));
+}
+
+// 컬러 변수 명 규칙은 global > color.scss 를 따랐습니다.
+:root {
+  --base: #ffffff;
+  --base100: #000000;
+
+  /* Brand Color */
+  --brand100: #003b41;
+  --brand90: #005961;
+  --brand80: #007782;
+  --brand70: #0c9dab;
+  --brand60: #2bb3bf;
+  --brand50: #5bc9d4;
+  --brand40: #83d7df;
+  --brand30: #abe6eb;
+  --brand20: #ceeef1;
+  --brand10: #e7f8fa;
+
+  /* Blue Color  */
+  --blue100: #2f4552;
+  --blue90: #3e5b6c;
+  --blue80: #50758b;
+  --blue70: #6696b2;
+  --blue60: #70a5c4;
+  --blue50: #8db7d0;
+  --blue40: #9fc3d7;
+  --blue30: #bdd6e4;
+  --blue20: #d3e3ed;
+  --blue10: #f1f6f9;
+
+  /* Orange Color  */
+  --orange100: #6b311f;
+  --orange90: #8c4029;
+  --orange80: #b55335;
+  --orange70: #e86a43;
+  --orange60: #ff754a;
+  --orange50: #ff916e;
+  --orange40: #ffa386;
+  --orange30: #ffc0ac;
+  --orange20: #ffd4c7;
+  --orange10: #fff1ed;
+
+  /* Brown Color  */
+  --brown100: #573c29;
+  --brown90: #724f35;
+  --brown80: #946645;
+  --brown70: #bd8358;
+  --brown60: #d09061;
+  --brown50: #d9a681;
+  --brown40: #e0b595;
+  --brown30: #e9ccb6;
+  --brown20: #f0ddce;
+  --brown10: #faf4ef;
+
+  /* Yellow Color  */
+  --yellow100: #6b4800;
+  --yellow90: #8c5e00;
+  --yellow80: #b57900;
+  --yellow70: #e89c00;
+  --yellow60: #ffab00;
+  --yellow50: #ffbc33;
+  --yellow40: #ffc754;
+  --yellow30: #ffd88a;
+  --yellow20: #ffe5b0;
+  --yellow10: #fff7e6;
+
+  /* Neutral Color */
+  --gray100: #222222;
+  --gray90: #454444;
+  --gray80: #626261;
+  --gray70: #7e7e7d;
+  --gray60: #999898;
+  --gray50: #b1b1b0;
+  --gray40: #d3d3d3;
+  --gray30: #e5e5e5;
+  --gray20: #eeeeee;
+  --gray10: #f8f8f8;
+}

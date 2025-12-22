@@ -39,8 +39,12 @@ src/
     │   └── logger.ts
     ├── types/              # 공통 타입
     │   └── api.ts
-    └── providers/          # React 프로바이더
-        └── QueryProvider.tsx
+    ├── providers/          # React 프로바이더
+    │   └── QueryProvider.tsx
+    ├── styles/             # 공통 스타일
+    └── assets/             # 공통 에셋
+        ├── images/         # 공통 이미지
+        └── icons/          # 공통 아이콘 컴포넌트
 ```
 
 ## 레이어별 역할

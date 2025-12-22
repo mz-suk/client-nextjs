@@ -1,0 +1,106 @@
+@use 'scss/variables';
+@use 'scss/reset';
+// @use 'scss/mixins';
+// @use 'scss/utilities';
+
+$screenSizes: 280, 320, 360, 375, 393, 410, 412, 414, 450;
+@each $size in $screenSizes {
+  @media (min-width: #{$size}px) {
+    html {
+      font-size: calc(($size / 375) * 62.5%);
+    }
+  }
+}
+
+html {
+  /* 모달/시트 활성화 시 스크롤 방지 */
+  &.modal,
+  &.alert,
+  &.bottom-sheet {
+    touch-action: none;
+    overflow: hidden;
+
+    body {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+    }
+  }
+
+  /* iOS 탄성 스크롤 개선 */
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  font-size: 1.3rem;
+  color: var(--gray70);
+  background-color: var(--base);
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* 텍스트 렌더링 최적화 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
+  /* 하드웨어 가속 (성능 개선) */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Next.js 루트 컨테이너 */
+#__next {
+  height: 100%;
+  isolation: isolate;
+}
+
+/* 메인 래퍼 컨테이너 */
+.wrap-contain {
+  min-height: 100%;
+  min-height: var(--height-viewport-dynamic, 100vh);
+  padding-right: var(--notch-r);
+  padding-left: var(--notch-l);
+  background-color: var(--base);
+
+  /* iOS 바운스 스크롤 방지 (필요시) */
+  overscroll-behavior-y: contain;
+}
+
+/* ========================================
+   하이브리드 앱 최적화
+======================================== */
+
+/* 터치 피드백 최적화 */
+button,
+a,
+[role='button'] {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.05);
+  touch-action: manipulation;
+}
+
+/* 입력 필드 줌 방지 (iOS) */
+input,
+textarea,
+select {
+  font-size: 1.6rem; /* 16px 이상이면 iOS 자동 줌 방지 */
+}
+
+/* 스크롤 성능 최적화 */
+.scroll-container {
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+}
+
+/* 애니메이션 성능 최적화 */
+.animated {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Pull-to-Refresh 방지 (필요시) */
+body.no-pull-refresh {
+  overscroll-behavior-y: none;
+}
