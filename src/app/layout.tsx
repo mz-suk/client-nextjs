@@ -32,7 +32,9 @@ export default function RootLayout({
         <link rel="dns-prefetch" href={API_CONFIG.BASE_URL} />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <QueryProvider>{children}</QueryProvider>
+        <div className="root">
+          <QueryProvider>{children}</QueryProvider>
+        </div>
       </body>
     </html>
   );
