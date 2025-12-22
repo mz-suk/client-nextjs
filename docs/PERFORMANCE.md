@@ -1,236 +1,161 @@
-# ⚡ 성능 최적화 가이드
+# 성능 최적화
 
-Next.js 15 애플리케이션의 성능을 최적화하는 방법을 안내합니다.
+## 현재 적용된 최적화
 
-## 📊 현재 최적화 상태
+✅ **React Compiler v1.0** - 자동 메모이제이션  
+✅ **이미지 최적화** - AVIF/WebP 변환  
+✅ **번들 최적화** - Code Splitting  
+✅ **보안 헤더** - XSS, CSP
 
-### 이미 적용된 최적화
+## React Compiler
 
-✅ **이미지 최적화**
+빌드 타임에 컴포넌트를 자동으로 최적화
 
-- AVIF/WebP 포맷 자동 변환
-- 반응형 이미지 크기
-- 60초 캐시 TTL
+### 주요 기능
 
-✅ **번들 최적화**
+**자동 메모이제이션**
 
-- 프로덕션 빌드 시 console 제거
-- 패키지 import 최적화 (실험적)
-- Code Splitting 자동 적용
+```typescript
+// Before: 수동 메모이제이션
+function Component({ data }) {
+  const processed = useMemo(() => expensive(data), [data]);
+  const handleClick = useCallback(() => doSomething(processed), [processed]);
+  return <Child onClick={handleClick} data={processed} />;
+}
 
-✅ **보안 헤더**
+// After: React Compiler가 자동 처리
+function Component({ data }) {
+  const processed = expensive(data);
+  const handleClick = () => doSomething(processed);
+  return <Child onClick={handleClick} data={processed} />;
+}
+```
 
-- X-Frame-Options, X-Content-Type-Options
-- Referrer-Policy
-- DNS Prefetch Control
+컴파일러가 자동으로 필요한 곳에 메모이제이션 적용
 
-✅ **정적 자산 캐싱**
+### 설정
 
-- 1년 캐시 (immutable)
+```typescript
+// next.config.ts
+export default {
+  reactCompiler: true,
+};
+```
 
----
+```bash
+# 확인
+pnpm build
+# 출력: ✓ reactCompiler
+```
 
-## 🔍 번들 분석
+### useMemo/useCallback 사용 시점
+
+**기본:** 컴파일러에 맡기기
+
+**필요한 경우:**
+
+- Effect 의존성으로 사용
+- 매우 비싼 계산 (측정 후)
+- 외부 라이브러리 통합
+
+```typescript
+// Effect 의존성
+const value = useMemo(() => compute(data), [data]);
+
+useEffect(() => {
+  doSomething(value);
+}, [value]); // value 변경 시에만 실행
+```
+
+## 번들 최적화
 
 ### 번들 크기 확인
 
 ```bash
-# 번들 분석 실행
 pnpm analyze
-
-# 브라우저에서 자동으로 열림
-# - client.html: 클라이언트 번들
-# - server.html: 서버 번들
 ```
 
-**확인 사항:**
+브라우저에서 자동으로 열림:
 
-- 큰 라이브러리 찾기
-- 중복 의존성 확인
-- Tree-shaking 여부
+- `client.html`: 클라이언트 번들
+- `server.html`: 서버 번들
 
----
+### Dynamic Import
 
-## 🖼️ 이미지 최적화
+```typescript
+// 무거운 컴포넌트 코드 분할
+import dynamic from 'next/dynamic';
+
+const HeavyChart = dynamic(() => import('./HeavyChart'), {
+  loading: () => <Skeleton />,
+  ssr: false, // 클라이언트 전용
+});
+```
+
+### 라이브러리 최적화
+
+```typescript
+// ❌ 전체 import
+import _ from 'lodash';
+
+// ✅ 필요한 것만
+import debounce from 'lodash/debounce';
+```
+
+```typescript
+// next.config.ts - 자동 최적화
+experimental: {
+  optimizePackageImports: ['react-icons', 'lucide-react'],
+}
+```
+
+## 이미지 최적화
 
 ### next/image 사용
 
 ```typescript
 import Image from 'next/image';
 
-// ✅ 올바른 사용
 <Image
-  src="/images/hero.jpg"
-  alt="Hero Image"
+  src="/hero.jpg"
+  alt="Hero"
   width={1200}
   height={600}
-  priority  // LCP 이미지에만 사용
-  placeholder="blur"  // 옵션
+  priority  // LCP 이미지에만
+  placeholder="blur"
 />
-
-// ❌ 잘못된 사용
-<img src="/images/hero.jpg" alt="Hero Image" />
 ```
 
-### 최적화 설정 (next.config.ts)
+### 설정
 
 ```typescript
+// next.config.ts
 images: {
   formats: ['image/avif', 'image/webp'],
-  deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-  imageSizes: [16, 32, 48, 64, 96, 128, 256],
   minimumCacheTTL: 60,
 }
 ```
 
-### 외부 이미지
+## 렌더링 최적화
+
+### SSG 우선
 
 ```typescript
-// next.config.ts
-images: {
-  remotePatterns: [
-    {
-      protocol: 'https',
-      hostname: 'example.com',
-      pathname: '/images/**',
-    },
-  ],
-}
-```
-
----
-
-## 🔤 폰트 최적화
-
-### next/font 사용 (권장)
-
-```typescript
-// app/layout.tsx
-import { Inter, Noto_Sans_KR } from 'next/font/google';
-
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-});
-
-const notoSansKR = Noto_Sans_KR({
-  subsets: ['korean'],
-  display: 'swap',
-  weight: ['400', '700'],
-  variable: '--font-noto-sans-kr',
-});
-
-export default function RootLayout({ children }) {
-  return (
-    <html className={`${inter.variable} ${notoSansKR.variable}`}>
-      <body>{children}</body>
-    </html>
-  );
-}
-```
-
-### 로컬 폰트
-
-```typescript
-import localFont from 'next/font/local';
-
-const customFont = localFont({
-  src: './fonts/CustomFont.woff2',
-  display: 'swap',
-  variable: '--font-custom',
-});
-```
-
-**이점:**
-
-- 자동 최적화
-- CLS (Cumulative Layout Shift) 방지
-- 폰트 로딩 전략 자동 적용
-
----
-
-## 📦 번들 크기 최적화
-
-### 1. Dynamic Import
-
-```typescript
-// ✅ 동적 import로 코드 분할
-import dynamic from 'next/dynamic';
-
-const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
-  loading: () => <p>Loading...</p>,
-  ssr: false,  // 클라이언트 전용 컴포넌트
-});
-
-// 사용
-<HeavyComponent />
-```
-
-### 2. 라이브러리 선택적 import
-
-```typescript
-// ❌ 전체 import
-import _ from 'lodash';
-
-// ✅ 필요한 것만 import
-import debounce from 'lodash/debounce';
-
-// 또는 lodash-es 사용
-import { debounce } from 'lodash-es';
-```
-
-### 3. 패키지 최적화
-
-```typescript
-// next.config.ts
-experimental: {
-  optimizePackageImports: [
-    'react-icons',
-    'lucide-react',
-    '@mui/material',
-    '@mui/icons-material',
-  ],
-}
-```
-
-### 4. Tree Shaking 확인
-
-```bash
-# 번들 분석으로 확인
-pnpm analyze
-
-# 사용하지 않는 export 제거
-# side-effects 최소화
-```
-
----
-
-## 🚀 렌더링 최적화
-
-### 1. Static Generation (SSG) 활용
-
-```typescript
-// ✅ 가능하면 SSG 사용
+// ✅ 가능하면 SSG
 export default async function Page() {
   const data = await fetchData();
   return <Component data={data} />;
 }
 ```
 
-### 2. Incremental Static Regeneration (ISR)
+### 병렬 데이터 페칭
 
 ```typescript
-// 재검증 주기 설정
-export const revalidate = 3600;  // 1시간
-
-export default async function Page() {
-  const data = await fetchData();
-  return <Component data={data} />;
-}
+// ✅ 병렬로 가져오기
+const [users, posts] = await Promise.all([getUsers(), getPosts()]);
 ```
 
-### 3. Suspense + Streaming
+### Suspense 활용
 
 ```typescript
 import { Suspense } from 'react';
@@ -244,66 +169,45 @@ export default function Page() {
 }
 ```
 
-### 4. Parallel Data Fetching
+## 폰트 최적화
+
+### next/font 사용
 
 ```typescript
-// ✅ 병렬로 데이터 가져오기
-const [users, products] = await Promise.all([getUsers(), getProducts()]);
-```
+// app/layout.tsx
+import { Inter } from 'next/font/google';
 
----
-
-## 🎯 React 최적화
-
-### 1. useMemo / useCallback
-
-```typescript
-// ✅ 비싼 계산 메모이제이션
-const expensiveValue = useMemo(() => {
-  return computeExpensiveValue(a, b);
-}, [a, b]);
-
-// ✅ 콜백 메모이제이션
-const handleClick = useCallback(() => {
-  doSomething(a, b);
-}, [a, b]);
-```
-
-### 2. React.memo
-
-```typescript
-// ✅ 불필요한 리렌더링 방지
-const MemoizedComponent = React.memo(function Component({ data }) {
-  return <div>{data}</div>;
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
 });
+
+export default function RootLayout({ children }) {
+  return (
+    <html className={inter.variable}>
+      <body>{children}</body>
+    </html>
+  );
+}
 ```
 
-### 3. 리스트 최적화
+자동 최적화:
+
+- CLS 방지
+- 폰트 로딩 전략
+- 최적화된 다운로드
+
+## 캐싱
+
+### TanStack Query
 
 ```typescript
-// ✅ 안정적인 key 사용
-{items.map(item => (
-  <Item key={item.id} item={item} />
-))}
-
-// ❌ index를 key로 사용 금지
-{items.map((item, index) => (
-  <Item key={index} item={item} />
-))}
-```
-
----
-
-## 🔄 캐싱 전략
-
-### TanStack Query 캐싱
-
-```typescript
-const { data } = useQuery({
+useQuery({
   queryKey: ['data'],
   queryFn: fetchData,
-  staleTime: 60000, // 60초
-  gcTime: 300000, // 5분 (이전 cacheTime)
+  staleTime: 60000, // 60초 fresh
+  gcTime: 300000, // 5분 후 GC
 });
 ```
 
@@ -321,19 +225,16 @@ headers: [
       },
     ],
   },
-];
+],
 ```
 
----
+## 성능 측정
 
-## 📈 성능 측정
-
-### 1. Lighthouse
+### Lighthouse
 
 ```bash
-# Chrome DevTools에서 실행
-1. F12 → Lighthouse
-2. Generate Report
+# Chrome DevTools
+F12 → Lighthouse → Generate Report
 ```
 
 **목표:**
@@ -343,41 +244,85 @@ headers: [
 - Best Practices: 90+
 - SEO: 90+
 
-### 2. Core Web Vitals
+### Core Web Vitals
 
-**LCP (Largest Contentful Paint):** < 2.5s
+| 지표    | 목표    | 최적화 방법                   |
+| ------- | ------- | ----------------------------- |
+| **LCP** | < 2.5s  | 이미지 최적화, SSG            |
+| **FID** | < 100ms | 코드 분할, React Compiler     |
+| **CLS** | < 0.1   | 이미지 크기 지정, 폰트 최적화 |
 
-- 이미지 최적화
-- 서버 응답 시간 개선
-- Critical CSS 인라인
-
-**FID (First Input Delay):** < 100ms
-
-- 큰 JavaScript 파일 분할
-- Web Workers 활용
-
-**CLS (Cumulative Layout Shift):** < 0.1
-
-- 이미지/비디오에 width/height 지정
-- 폰트 최적화
-- 광고/동적 콘텐츠 공간 예약
-
-### 3. 번들 크기 모니터링
+### 번들 크기
 
 ```bash
-# 빌드 후 확인
 pnpm build
 
 # 목표
-- First Load JS: < 200KB
-- 개별 페이지: < 50KB 추가
+# - First Load JS: < 200KB
+# - 페이지별: < 50KB
 ```
 
----
+## React 최적화
 
-## 🛠️ 개발 도구
+### 리스트 렌더링
 
-### Next.js Speed Insights
+```typescript
+// ✅ 안정적인 key
+{items.map(item => (
+  <Item key={item.id} item={item} />
+))}
+
+// ❌ index를 key로
+{items.map((item, index) => (
+  <Item key={index} item={item} />
+))}
+```
+
+### React.memo (필요시만)
+
+```typescript
+// 복잡한 컴포넌트만
+const HeavyComponent = React.memo(function Heavy({ data }) {
+  return <div>{/* ... */}</div>;
+});
+```
+
+React Compiler가 대부분 자동 처리
+
+## 체크리스트
+
+### 이미지
+
+- [ ] next/image 사용
+- [ ] LCP 이미지에 priority
+- [ ] 적절한 크기 지정
+
+### JavaScript
+
+- [ ] 번들 크기 < 200KB
+- [ ] Dynamic import 활용
+- [ ] 사용 안 하는 라이브러리 제거
+
+### 렌더링
+
+- [ ] SSG 우선 고려
+- [ ] 병렬 데이터 페칭
+- [ ] Suspense 활용
+
+### 폰트
+
+- [ ] next/font 사용
+- [ ] display: swap 설정
+
+### 측정
+
+- [ ] Lighthouse 90+ 달성
+- [ ] Core Web Vitals 통과
+- [ ] 번들 분석 정기 실행
+
+## 개발 도구
+
+### Speed Insights
 
 ```bash
 pnpm add @vercel/speed-insights
@@ -387,73 +332,25 @@ pnpm add @vercel/speed-insights
 // app/layout.tsx
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
-<SpeedInsights />
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {children}
+        <SpeedInsights />
+      </body>
+    </html>
+  );
+}
 ```
 
-### Bundle Analyzer
+### React DevTools Profiler
 
-```bash
-# 이미 설정됨
-pnpm analyze
-```
+컴포넌트 렌더링 시간 측정
 
----
+## 참고
 
-## ✅ 체크리스트
-
-### 이미지
-
-- [ ] next/image 사용
-- [ ] LCP 이미지에 priority 설정
-- [ ] 적절한 크기 사용
-- [ ] 최신 포맷 (AVIF/WebP)
-
-### 폰트
-
-- [ ] next/font 사용
-- [ ] display: swap 설정
-- [ ] 필요한 subset만 로드
-
-### JavaScript
-
-- [ ] 번들 크기 < 200KB
-- [ ] Dynamic import 활용
-- [ ] Tree shaking 확인
-- [ ] 사용하지 않는 라이브러리 제거
-
-### 렌더링
-
-- [ ] SSG 우선 고려
-- [ ] ISR 적절히 활용
-- [ ] Suspense로 스트리밍
-- [ ] 병렬 데이터 페칭
-
-### 캐싱
-
-- [ ] HTTP 캐싱 설정
-- [ ] TanStack Query 활용
-- [ ] 정적 자산 장기 캐싱
-
-### 측정
-
-- [ ] Lighthouse 90+ 달성
-- [ ] Core Web Vitals 통과
-- [ ] 번들 분석 정기 실행
-
----
-
-## 🎓 추가 학습
-
+- [React Compiler](https://react.dev/learn/react-compiler)
 - [Next.js Performance](https://nextjs.org/docs/app/building-your-application/optimizing)
 - [Web.dev Performance](https://web.dev/performance/)
 - [Core Web Vitals](https://web.dev/vitals/)
-
----
-
-## 💬 성능 이슈 보고
-
-성능 문제를 발견하면 다음 정보와 함께 이슈를 등록해주세요:
-
-- Lighthouse 점수
-- 번들 분석 결과
-- 재현 방법

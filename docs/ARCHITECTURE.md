@@ -1,167 +1,200 @@
-# 프로젝트 아키텍처
+# 프로젝트 구조
 
-> **Feature-Sliced Design (FSD)** 기반 구조
+DDD(Domain-Driven Design) 아키텍처 기반
 
-## FSD 핵심 원칙
-
-1. **단방향 의존성**: 상위 → 하위 레이어만 참조
-2. **Public API**: `index.ts`를 통해서만 외부 노출
-3. **격리성**: 같은 레벨 슬라이스는 직접 참조 불가
-
----
-
-## 프로젝트 구조
+## 폴더 구조
 
 ```
 src/
-├── app/           # Next.js 라우트
-├── features/      # 비즈니스 기능 (user-list, todo-list)
-├── entities/      # 도메인 모델 (user, todo)
-└── shared/        # 공통 모듈 (api, config, hooks)
+├── app/                    # Next.js App Router
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── example-*/          # 예제 페이지
+│
+├── core/                   # 인프라 레이어
+│   ├── api/                # HTTP 클라이언트 (Axios)
+│   │   ├── client.ts
+│   │   └── index.ts
+│   └── config/             # 환경 설정
+│       ├── env.ts          # 환경변수 검증 (Zod)
+│       ├── constants.ts
+│       └── index.ts
+│
+├── domains/                # 비즈니스 로직
+│   ├── user/
+│   │   ├── types/          # 타입 정의
+│   │   ├── services/       # API 호출
+│   │   ├── hooks/          # TanStack Query 훅
+│   │   ├── components/     # 도메인 컴포넌트
+│   │   └── index.ts
+│   └── counter/
+│       ├── stores/         # Zustand 스토어
+│       └── index.ts
+│
+└── shared/                 # 공유 리소스
+    ├── ui/                 # 공통 컴포넌트
+    │   └── ErrorBoundary/
+    ├── lib/                # 유틸리티
+    │   └── logger.ts
+    ├── types/              # 공통 타입
+    ├── providers/          # React Provider
+    └── styles/             # 전역 스타일
 ```
 
----
+## 레이어별 역할
 
-## 레이어별 설명
+### Core Layer
 
-### 1. app/ (라우팅)
+**역할:** 인프라 제공
 
-```typescript
-app/
-├── page.tsx           # 홈
-├── layout.tsx         # 레이아웃
-└── users/
-    ├── page.tsx       # 목록
-    └── [id]/page.tsx  # 상세
+- API 클라이언트 (Axios 설정, 인터셉터)
+- 환경변수 검증 (Zod)
+- 전역 상수
+
+**의존성:** 없음
+
+### Domains Layer
+
+**역할:** 비즈니스 로직
+
+각 도메인은 독립적으로 구성:
+
+- `types/`: 엔티티 타입
+- `services/`: API 호출
+- `hooks/`: 데이터 페칭
+- `components/`: 도메인 UI
+- `stores/`: 상태 관리 (선택)
+
+**의존성:** `core/`, `shared/`
+
+### Shared Layer
+
+**역할:** 공통 리소스
+
+- UI 컴포넌트
+- 유틸리티 함수
+- 타입 정의
+- Provider
+
+**의존성:** `core/`
+
+### App Layer
+
+**역할:** 라우팅 및 페이지 조립
+
+- 도메인 컴포넌트 조합
+- 레이아웃 정의
+- 메타데이터
+
+**의존성:** `domains/`, `shared/`
+
+## 의존성 규칙
+
+```
+app/ ──────┐
+           ├──> domains/ ──┐
+           │                ├──> core/
+           └──> shared/ ────┘
 ```
 
-**역할**: Next.js 라우팅, 페이지 조합
-
-### 2. features/ (기능)
-
-```typescript
-features/user-list/
-├── api/          # API 함수
-│   ├── getUsers.ts
-│   └── index.ts
-├── hooks/        # React Query 훅
-│   ├── useUsers.ts
-│   └── index.ts
-├── ui/           # UI 컴포넌트
-│   ├── UserList.tsx
-│   └── index.ts
-└── index.ts      # Public API
-```
-
-**역할**: 비즈니스 로직, 사용자 시나리오
-
-### 3. entities/ (엔티티)
-
-```typescript
-entities/user/
-├── model/
-│   ├── types.ts   # User 타입
-│   └── index.ts
-└── index.ts
-```
-
-**역할**: 도메인 모델, 타입 정의
-
-### 4. shared/ (공유)
-
-```typescript
-shared/
-├── api/          # Axios 클라이언트
-├── config/       # 환경변수, 설정
-├── hooks/        # 공통 훅
-├── lib/          # 유틸리티
-└── types/        # 공통 타입
-```
-
-**역할**: 프로젝트 전역 공통 모듈
-
----
+- 상위 → 하위 레이어만 의존
+- 동일 레벨 간 의존 최소화
+- `core`는 독립적
 
 ## Import 규칙
 
 ```typescript
-// ✅ Good: 하위 레이어 참조
-// app → features → entities → shared
-import { UserList } from '@/features/user-list';
-import { User } from '@/entities/user';
-import { fetchAPI } from '@/shared/api';
+// ✅ 올바른 방식
+import { fetchAPI } from '@/core/api';
+import { User, getUsers } from '@/domains/user';
+import { logger } from '@/shared/lib';
 
-// ❌ Bad: 상위 레이어 참조
-// shared에서 features 참조 불가
-
-// ❌ Bad: 내부 구조 직접 참조
-import { UserList } from '@/features/user-list/ui/UserList';
-// ✅ Good: Public API 사용
-import { UserList } from '@/features/user-list';
+// ❌ 잘못된 방식
+import { getUsers } from '@/domains/user/services/userService';
 ```
 
----
+각 레이어의 `index.ts`를 통해 public API만 노출
 
-## 새 기능 추가
-
-### 1. 코드 제너레이터 사용 (권장)
+## 도메인 추가하기
 
 ```bash
-pnpm generate:feature  # Feature 생성
-pnpm generate:entity   # Entity 생성
-pnpm generate:page     # Page 생성
+domains/new-domain/
+├── types/
+│   ├── types.ts
+│   └── index.ts
+├── services/
+│   ├── newService.ts
+│   └── index.ts
+├── hooks/
+│   ├── useNew.ts
+│   └── index.ts
+├── components/
+│   ├── NewComponent.tsx
+│   └── index.ts
+└── index.ts
 ```
 
-### 2. 수동 생성
+`index.ts`에서 외부로 노출할 항목만 export
 
-```bash
-# 1. Entity 생성
-mkdir -p src/entities/todo/model
-touch src/entities/todo/model/types.ts
-touch src/entities/todo/model/index.ts
-touch src/entities/todo/index.ts
+## 예제
 
-# 2. Feature 생성
-mkdir -p src/features/todo-list/{api,hooks,ui}
-touch src/features/todo-list/api/getTodos.ts
-touch src/features/todo-list/hooks/useTodos.ts
-touch src/features/todo-list/ui/TodoList.tsx
-
-# 3. Page 생성
-touch src/app/todos/page.tsx
-```
-
----
-
-## 베스트 프랙티스
-
-### 1. Public API 패턴
+### 도메인 Service
 
 ```typescript
-// features/user-list/index.ts
-export { UserList } from './ui/UserList';
-export { useUsers } from './hooks/useUsers';
-export { getUsers } from './api/getUsers';
-export type { User } from '@/entities/user';
+// domains/user/services/userService.ts
+import { fetchAPI } from '@/core/api';
+import type { User } from '../types';
+
+export const getUsers = async (): Promise<User[]> => {
+  return fetchAPI<User[]>('/users');
+};
 ```
 
-### 2. 파일 네이밍
-
-- 컴포넌트: PascalCase (`UserList.tsx`)
-- 함수/Hook: camelCase (`getUsers.ts`, `useUsers.ts`)
-- 타입: PascalCase (`types.ts` 내부에서 `User`)
-
-### 3. 레이어 독립성
+### 도메인 Hook
 
 ```typescript
-// ✅ Good: Feature는 Entity만 의존
-// features/user-list/hooks/useUsers.ts
-import type { User } from '@/entities/user';
+// domains/user/hooks/useUsers.ts
+import { useQuery } from '@tanstack/react-query';
+import { getUsers } from '../services';
 
-// ❌ Bad: Feature끼리 직접 참조
-import { TodoList } from '@/features/todo-list';
+export const useUsers = () => {
+  return useQuery({
+    queryKey: ['users'],
+    queryFn: getUsers,
+  });
+};
 ```
 
----
+### 페이지에서 사용
 
-📚 **상세 문서**: [FSD Official](https://feature-sliced.design/)
+```typescript
+// app/example/page.tsx
+import { UserList } from '@/domains/user';
+
+export default function Page() {
+  return <UserList />;
+}
+```
+
+## 장점
+
+1. **명확한 책임 분리**
+   - 레이어별 역할 명확
+   - 비즈니스 로직 집중
+
+2. **확장성**
+   - 도메인 추가 용이
+   - 독립적 개발 가능
+
+3. **유지보수성**
+   - 변경 영향 범위 제한
+   - 테스트 작성 쉬움
+
+4. **타입 안전성**
+   - TypeScript 전면 활용
+   - 컴파일 타임 검증
+
+## 참고
+
+- [Next.js 프로젝트 구조](https://nextjs.org/docs/getting-started/project-structure)
+- [DDD 소개](https://martinfowler.com/bliki/DomainDrivenDesign.html)

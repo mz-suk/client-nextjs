@@ -1,61 +1,73 @@
-# 상태 관리 가이드
-
-> **Zustand** - 경량 클라이언트 상태 관리
+# 상태 관리
 
 ## 상태 분류
 
-| 상태 타입      | 도구           | 예시                     |
-| -------------- | -------------- | ------------------------ |
-| **서버**       | TanStack Query | API 데이터, 사용자 목록  |
-| **클라이언트** | Zustand        | 모달, 테마, 필터         |
-| **URL**        | Next.js Params | 페이지 ID, 쿼리 파라미터 |
+| 상태 타입           | 도구           | 예시                    |
+| ------------------- | -------------- | ----------------------- |
+| **서버 상태**       | TanStack Query | API 데이터, 사용자 목록 |
+| **클라이언트 상태** | Zustand        | 모달, 테마, UI 설정     |
+| **URL 상태**        | Next.js        | 페이지 파라미터, 쿼리   |
 
----
+## Zustand
 
-## Zustand 기본
+경량 클라이언트 상태 관리 (~1KB)
 
-### 1. 스토어 생성
+### 기본 사용
+
+**스토어 생성**
 
 ```typescript
-// shared/store/useModalStore.ts
+// domains/counter/stores/useCounterStore.ts
 import { create } from 'zustand';
 
-interface ModalStore {
-  isOpen: boolean;
-  open: () => void;
-  close: () => void;
+interface CounterStore {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+  reset: () => void;
 }
 
-export const useModalStore = create<ModalStore>(set => ({
-  isOpen: false,
-  open: () => set({ isOpen: true }),
-  close: () => set({ isOpen: false }),
+export const useCounterStore = create<CounterStore>(set => ({
+  count: 0,
+  increment: () => set(state => ({ count: state.count + 1 })),
+  decrement: () => set(state => ({ count: state.count - 1 })),
+  reset: () => set({ count: 0 }),
 }));
 ```
 
-### 2. 컴포넌트에서 사용
+**컴포넌트에서 사용**
 
 ```typescript
 'use client';
+import { useCounterStore } from '@/domains/counter';
 
-export function Modal() {
-  const { isOpen, close } = useModalStore();
+export function Counter() {
+  const { count, increment, decrement, reset } = useCounterStore();
 
-  if (!isOpen) return null;
-  return <div onClick={close}>모달</div>;
-}
-
-export function Button() {
-  const open = useModalStore((state) => state.open);
-  return <button onClick={open}>열기</button>;
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={increment}>+1</button>
+      <button onClick={decrement}>-1</button>
+      <button onClick={reset}>Reset</button>
+    </div>
+  );
 }
 ```
 
----
+**부분 선택 (리렌더링 최적화)**
+
+```typescript
+// ✅ count만 구독
+const count = useCounterStore(state => state.count);
+
+// ❌ 전체 스토어 구독 (불필요한 리렌더링)
+const { count, increment } = useCounterStore();
+```
 
 ## 고급 기능
 
-### Persist (LocalStorage 저장)
+### Persist (LocalStorage)
 
 ```typescript
 import { create } from 'zustand';
@@ -64,30 +76,20 @@ import { persist } from 'zustand/middleware';
 export const useThemeStore = create(
   persist(
     set => ({
-      theme: 'light',
-      setTheme: theme => set({ theme }),
+      theme: 'light' as 'light' | 'dark',
+      toggleTheme: () =>
+        set(state => ({
+          theme: state.theme === 'light' ? 'dark' : 'light',
+        })),
     }),
-    { name: 'theme-storage' }
+    {
+      name: 'theme-storage',
+    }
   )
 );
 ```
 
-### 비동기 액션
-
-```typescript
-export const useUserStore = create<UserStore>(set => ({
-  user: null,
-
-  fetchUser: async (id: number) => {
-    const user = await getUser(id);
-    set({ user });
-  },
-
-  logout: () => set({ user: null }),
-}));
-```
-
-### DevTools 연동
+### DevTools
 
 ```typescript
 import { devtools } from 'zustand/middleware';
@@ -100,89 +102,168 @@ export const useStore = create(
 );
 ```
 
----
+Redux DevTools에서 상태 변경 추적 가능
+
+### 비동기 액션
+
+```typescript
+export const useUserStore = create<UserStore>(set => ({
+  user: null,
+  isLoading: false,
+
+  fetchUser: async (id: number) => {
+    set({ isLoading: true });
+    try {
+      const user = await getUser(id);
+      set({ user, isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+    }
+  },
+
+  logout: () => set({ user: null }),
+}));
+```
+
+### 여러 스토어 조합
+
+```typescript
+export const useCartActions = () => {
+  const addToCart = useCartStore(state => state.addItem);
+  const incrementCount = useCounterStore(state => state.increment);
+
+  return {
+    addAndCount: item => {
+      addToCart(item);
+      incrementCount();
+    },
+  };
+};
+```
+
+## 실전 예제
+
+### 모달 관리
+
+```typescript
+// shared/stores/useModalStore.ts
+export const useModalStore = create<ModalStore>(set => ({
+  isOpen: false,
+  content: null,
+  open: content => set({ isOpen: true, content }),
+  close: () => set({ isOpen: false, content: null }),
+}));
+```
+
+```typescript
+// 사용
+const { open, close } = useModalStore();
+
+<button onClick={() => open(<LoginForm />)}>로그인</button>
+```
+
+### 장바구니
+
+```typescript
+export const useCartStore = create<CartStore>(
+  persist(
+    set => ({
+      items: [],
+
+      addItem: item =>
+        set(state => ({
+          items: [...state.items, item],
+        })),
+
+      removeItem: id =>
+        set(state => ({
+          items: state.items.filter(item => item.id !== id),
+        })),
+
+      updateQuantity: (id, quantity) =>
+        set(state => ({
+          items: state.items.map(item => (item.id === id ? { ...item, quantity } : item)),
+        })),
+
+      clear: () => set({ items: [] }),
+    }),
+    { name: 'cart' }
+  )
+);
+```
+
+### 필터 상태
+
+```typescript
+export const useFilterStore = create<FilterStore>(set => ({
+  search: '',
+  category: 'all',
+  sortBy: 'name',
+
+  setSearch: search => set({ search }),
+  setCategory: category => set({ category }),
+  setSortBy: sortBy => set({ sortBy }),
+  reset: () => set({ search: '', category: 'all', sortBy: 'name' }),
+}));
+```
 
 ## 베스트 프랙티스
 
 ### 1. 작은 스토어 여러 개
 
 ```typescript
-// ✅ Good: 기능별 분리
+// ✅ 기능별 분리
 useModalStore;
 useThemeStore;
 useCartStore;
 
-// ❌ Bad: 거대한 단일 스토어
+// ❌ 거대한 단일 스토어
 useGlobalStore;
 ```
 
-### 2. 선택자 사용 (리렌더링 최적화)
+### 2. 선택자 사용
 
 ```typescript
-// ✅ Good: 필요한 것만 구독
+// ✅ 필요한 것만 구독
 const count = useStore(state => state.count);
 
-// ❌ Bad: 전체 스토어 구독
+// ❌ 전체 구독
 const { count, user, theme } = useStore();
 ```
 
-### 3. 서버 데이터는 React Query 사용
+### 3. 서버 데이터는 TanStack Query
 
 ```typescript
-// ❌ Bad: Zustand로 서버 데이터
-const users = useUserStore(state => state.users);
+// ❌ Zustand로 서버 데이터
+const users = useStore(state => state.users);
 
-// ✅ Good: React Query로 서버 데이터
+// ✅ TanStack Query로 서버 데이터
 const { data: users } = useUsers();
 ```
 
----
-
-## 실전 예제
-
-### 테마 전환
+### 4. 타입 안전성
 
 ```typescript
-// shared/store/useThemeStore.ts
-export const useThemeStore = create(
-  persist(
-    (set) => ({
-      theme: 'light',
-      toggleTheme: () =>
-        set((state) => ({
-          theme: state.theme === 'light' ? 'dark' : 'light',
-        })),
-    }),
-    { name: 'theme' }
-  )
-);
-
-// 사용
-'use client';
-
-export function ThemeToggle() {
-  const { theme, toggleTheme } = useThemeStore();
-  return <button onClick={toggleTheme}>{theme}</button>;
+// ✅ 인터페이스 정의
+interface CounterStore {
+  count: number;
+  increment: () => void;
 }
+
+export const useCounterStore = create<CounterStore>(...);
 ```
 
-### 장바구니
+## 선택 가이드
 
-```typescript
-export const useCartStore = create<CartStore>(set => ({
-  items: [],
+| 상황                 | 도구                    |
+| -------------------- | ----------------------- |
+| API 데이터           | TanStack Query          |
+| UI 상태 (모달, 테마) | Zustand                 |
+| 폼 상태              | React Hook Form         |
+| URL 파라미터         | Next.js useSearchParams |
+| 전역 설정            | Zustand + Persist       |
 
-  addItem: item => set(state => ({ items: [...state.items, item] })),
+## 참고
 
-  removeItem: id =>
-    set(state => ({
-      items: state.items.filter(item => item.id !== id),
-    })),
-
-  clear: () => set({ items: [] }),
-}));
-```
-
----
-
-📚 **상세 문서**: [Zustand Docs](https://zustand-demo.pmnd.rs/)
+- [Zustand 문서](https://zustand-demo.pmnd.rs/)
+- [TanStack Query 문서](https://tanstack.com/query/latest)
