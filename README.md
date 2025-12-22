@@ -34,7 +34,7 @@ Hybrid Pattern                    →  최고의 사용성 🎯
 - **🔒 보안 강화** - CSP, Permissions-Policy 등 보안 헤더 적용
 - **⚡ 성능 최적화** - DNS Prefetch, Preconnect로 API 연결 최적화
 - **📦 최적화 도구** - Bundle Analyzer, 이미지 최적화
-- **🚀 빠른 개발** - Plop.js 코드 제너레이터 + Turbopack
+- **🚀 빠른 개발** - Turbopack
 
 ---
 
@@ -117,25 +117,41 @@ src/
 
 ### 새 기능 추가하기
 
-**1. 코드 제너레이터 사용 (권장)**
+FSD 아키텍처를 따라 기능을 추가합니다:
 
-```bash
-# Feature 생성 (Entity + API + Hooks + UI)
-pnpm generate:feature
+**1. Entity 정의**
 
-# 프롬프트에 따라 입력
-? Feature name: product-list
-? Entity name: product
+```typescript
+// entities/product/model/types.ts
+export interface Product {
+  id: number;
+  name: string;
+  price: number;
+}
 ```
 
-자동으로 생성됨:
+**2. Feature 구현**
 
-- `entities/product/` - 타입 정의
-- `features/product-list/api/` - API 함수
-- `features/product-list/hooks/` - React 훅
-- `features/product-list/ui/` - UI 컴포넌트
+```typescript
+// features/product-list/api/getProducts.ts
+export async function getProducts() {
+  const response = await apiClient.get<Product[]>('/products');
+  return response.data;
+}
 
-**2. 페이지에서 사용**
+// features/product-list/hooks/useProducts.ts
+export function useProducts() {
+  return useSWR('/products', getProducts);
+}
+
+// features/product-list/ui/ProductList.tsx
+export function ProductList() {
+  const { data: products } = useProducts();
+  return <div>{/* UI 구현 */}</div>;
+}
+```
+
+**3. 페이지에서 사용**
 
 ```typescript
 // app/products/page.tsx (Server Component)
@@ -145,16 +161,9 @@ export default async function ProductsPage() {
   const products = await getProducts();
   return <ProductListHybrid initialProducts={products} />;
 }
-
-// 또는 Client Component로만 (CSR)
-// 'use client';
-// import { ProductList } from '@/features/product-list/ui';
-// export default function ProductsPage() {
-//   return <ProductList />;
-// }
 ```
 
-> 📖 **상세 가이드:** [GENERATOR.md](./docs/GENERATOR.md)
+> 📖 **상세 가이드:** [ARCHITECTURE.md](./docs/ARCHITECTURE.md)
 
 ### 데이터 페칭
 
@@ -245,7 +254,6 @@ export const useCounterStore = create<CounterState>()(
 
 | 문서                                         | 설명                      |
 | -------------------------------------------- | ------------------------- |
-| [🛠️ GENERATOR.md](./docs/GENERATOR.md)       | Plop.js 코드 제너레이터   |
 | [📊 PERFORMANCE.md](./docs/PERFORMANCE.md)   | 성능 최적화 기법          |
 | [🚀 DEPLOYMENT.md](./docs/DEPLOYMENT.md)     | 배포 가이드               |
 | [📋 PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) | 프로젝트 계획 및 히스토리 |
@@ -266,13 +274,6 @@ pnpm start            # 프로덕션 서버 실행
 # 코드 품질
 pnpm lint             # TypeScript + ESLint 검사
 pnpm format           # Prettier 포맷팅
-
-# 코드 생성
-pnpm generate         # 대화형 제너레이터
-pnpm generate:feature # Feature 생성
-pnpm generate:component # 컴포넌트 생성
-pnpm generate:hook    # 훅 생성
-pnpm generate:page    # 페이지 생성
 
 # 분석
 pnpm analyze          # 번들 크기 분석
@@ -301,7 +302,6 @@ pnpm analyze          # 번들 크기 분석
 
 ### 개발 도구
 
-- **Plop 4.0** - 코드 제너레이터
 - **Turbopack** - 고속 번들러
 - **Zod 4.1** - 환경변수 검증
 - **ESLint 9.38** - 코드 린팅
@@ -327,9 +327,8 @@ pnpm analyze          # 번들 크기 분석
 
 1. **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - FSD 구조 이해 (10분)
 2. **예제 페이지 둘러보기** - 실제 코드 확인 (10분)
-3. **[GENERATOR.md](./docs/GENERATOR.md)** - 코드 생성 실습 (5분)
-4. **[DATA_FETCHING.md](./docs/DATA_FETCHING.md)** - 데이터 페칭 이해 (15분)
-5. **첫 기능 만들어보기** - 실전 연습 (30분)
+3. **[DATA_FETCHING.md](./docs/DATA_FETCHING.md)** - 데이터 페칭 이해 (15분)
+4. **첫 기능 만들어보기** - 실전 연습 (30분)
 
 **총 소요 시간: 약 1시간** ⏱️
 
@@ -458,7 +457,7 @@ A: 간단한 데이터 페칭은 SWR, 복잡한 서버 상태 관리는 TanStack
 A: 기본적으로 활성화되어 있으며, 자동으로 최적화합니다. 수동 `useMemo`/`useCallback` 작성이 불필요합니다.
 
 **Q: 새 기능을 어떻게 추가하나요?**  
-A: `pnpm generate:feature` 명령어로 자동 생성하거나, [GENERATOR.md](./docs/GENERATOR.md)를 참고하세요.
+A: FSD 아키텍처를 따라 entities, features 구조로 추가합니다. [ARCHITECTURE.md](./docs/ARCHITECTURE.md)를 참고하세요.
 
 **Q: 환경변수는 어떻게 관리하나요?**  
 A: `.env.example`을 복사하여 `.env` 파일을 만들고, Zod로 자동 검증됩니다 (`shared/config/env.ts`). 검증된 환경변수는 `shared/config/constants.ts`에서 애플리케이션 상수로 변환되어 사용됩니다.
