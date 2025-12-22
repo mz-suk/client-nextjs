@@ -1,31 +1,8 @@
 :root {
-  /* border-radius */
-  --rad-xl: 1rem;
-  --rad-lg: 0.8rem;
-  --rad-md: 0.6rem;
-  --rad-sm: 0.4rem;
-  --rad-xsm: 0.3rem;
+  --base-white: #ffffff;
+  --base-black: #000000;
 
-  /* layouts */
-  --notch-t: env(safe-area-inset-top, 0);
-  --notch-r: env(safe-area-inset-right, 0);
-  --notch-b: env(safe-area-inset-bottom, 0);
-  --notch-l: env(safe-area-inset-left, 0);
-
-  --height-header-original: 4.8rem;
-  --height-header: calc(var(--height-header-original) + var(--notch-t));
-  --height-gnb: 5.9rem;
-  --height-bottom-button-original: 7.2rem;
-  --height-bottom-button: calc(var(--height-bottom-button-original) + var(--notch-b));
-  --height-contents: calc(100vh - var(--height-header));
-}
-
-// 컬러 변수 명 규칙은 global > color.scss 를 따랐습니다.
-:root {
-  --base: #ffffff;
-  --base100: #000000;
-
-  /* Brand Color */
+  /* Brand Colors */
   --brand100: #003b41;
   --brand90: #005961;
   --brand80: #007782;
@@ -37,7 +14,7 @@
   --brand20: #ceeef1;
   --brand10: #e7f8fa;
 
-  /* Blue Color  */
+  /* Blue Colors */
   --blue100: #2f4552;
   --blue90: #3e5b6c;
   --blue80: #50758b;
@@ -49,7 +26,7 @@
   --blue20: #d3e3ed;
   --blue10: #f1f6f9;
 
-  /* Orange Color  */
+  /* Orange Colors */
   --orange100: #6b311f;
   --orange90: #8c4029;
   --orange80: #b55335;
@@ -61,7 +38,7 @@
   --orange20: #ffd4c7;
   --orange10: #fff1ed;
 
-  /* Brown Color  */
+  /* Brown Colors */
   --brown100: #573c29;
   --brown90: #724f35;
   --brown80: #946645;
@@ -73,7 +50,7 @@
   --brown20: #f0ddce;
   --brown10: #faf4ef;
 
-  /* Yellow Color  */
+  /* Yellow Colors */
   --yellow100: #6b4800;
   --yellow90: #8c5e00;
   --yellow80: #b57900;
@@ -85,7 +62,7 @@
   --yellow20: #ffe5b0;
   --yellow10: #fff7e6;
 
-  /* Neutral Color */
+  /* Grayscale */
   --gray100: #222222;
   --gray90: #454444;
   --gray80: #626261;
@@ -96,4 +73,35 @@
   --gray30: #e5e5e5;
   --gray20: #eeeeee;
   --gray10: #f8f8f8;
+
+  /* Semantic Colors */
+  --danger: #ff4d4f;
+  --success: #52c41a;
+  --warning: #faad14;
+  --info: var(--blue60);
+
+  /* Safe Area Insets */
+  --sat: env(safe-area-inset-top, 0);
+  --sar: env(safe-area-inset-right, 0);
+  --sab: env(safe-area-inset-bottom, 0);
+  --sal: env(safe-area-inset-left, 0);
+
+  /* Layout Tokens */
+  --header-height: 4.8rem;
+  --gnb-height: 5.9rem;
+  --content-height: calc(100dvh - var(--header-height));
+
+  /* Border Radius */
+  --radius-xl: 1rem;
+  --radius-lg: 0.8rem;
+  --radius-md: 0.6rem;
+  --radius-sm: 0.4rem;
+
+  /* Z-Index Scale */
+  --z-base: 1;
+  --z-sticky: 10;
+  --z-header: 100;
+  --z-dropdown: 500;
+  --z-modal: 1000;
+  --z-toast: 2000;
 }
