@@ -1,0 +1,68 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 0;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 2px solid var(--gray40);
+  border-radius: var(--radius-sm);
+  color: var(--base-white);
+  transition: all 0.2s;
+
+  .input:checked + & {
+    background-color: var(--brand60);
+    border-color: var(--brand60);
+  }
+
+  .input:focus-visible + & {
+    outline: 2px solid var(--brand60);
+    outline-offset: 2px;
+  }
+}
+
+.text {
+  font-size: 1.4rem;
+  color: var(--gray100);
+}
+
+.required {
+  color: var(--danger);
+  margin-right: 0.4rem;
+}
+
+.link {
+  font-size: 1.3rem;
+  color: var(--gray60);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+
+  &:hover {
+    color: var(--brand60);
+  }
+}
+

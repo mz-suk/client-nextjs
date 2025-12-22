@@ -1,0 +1,100 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 2rem;
+}
+
+.iconWrapper {
+  margin-bottom: 2.4rem;
+  animation: bounce 1s ease-in-out;
+}
+
+.celebrationIcon {
+  font-size: 8rem;
+  line-height: 1;
+}
+
+.content {
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--gray100);
+  line-height: 1.4;
+  margin-bottom: 1.6rem;
+}
+
+.description {
+  font-size: 1.5rem;
+  color: var(--gray60);
+  line-height: 1.6;
+
+  strong {
+    color: var(--brand60);
+    font-weight: 600;
+  }
+}
+
+.nextStep {
+  width: 100%;
+  padding: 2.4rem;
+  background: linear-gradient(135deg, var(--brand10) 0%, var(--blue10) 100%);
+  border-radius: var(--radius-lg);
+  margin-bottom: 2.4rem;
+}
+
+.nextStepTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--gray100);
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+}
+
+.nextStepDescription {
+  font-size: 1.4rem;
+  color: var(--gray70);
+  line-height: 1.5;
+}
+
+.buttonGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.button {
+  width: 100%;
+}
+
+.skipButton {
+  font-size: 1.4rem;
+  color: var(--gray60);
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 1.2rem;
+
+  &:hover {
+    color: var(--gray80);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+

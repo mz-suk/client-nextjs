@@ -1,0 +1,82 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  margin-bottom: 3.2rem;
+}
+
+.title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--gray100);
+  margin-bottom: 1.2rem;
+}
+
+.description {
+  font-size: 1.5rem;
+  color: var(--gray60);
+  line-height: 1.5;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  flex: 1;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.timer {
+  position: absolute;
+  top: 3.8rem;
+  right: 1.6rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.resendButton {
+  align-self: flex-start;
+  font-size: 1.4rem;
+  color: var(--brand60);
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.8rem 0;
+
+  &:hover {
+    color: var(--brand70);
+  }
+
+  &:disabled {
+    color: var(--gray50);
+    cursor: not-allowed;
+  }
+}
+
+.submitButton {
+  margin-top: auto;
+  width: 100%;
+}
+
+.hint {
+  margin-top: 1.6rem;
+  padding: 1.6rem;
+  background-color: var(--blue10);
+  border-radius: var(--radius-md);
+
+  p {
+    font-size: 1.3rem;
+    color: var(--blue80);
+    text-align: center;
+  }
+}
+
