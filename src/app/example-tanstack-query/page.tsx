@@ -1,4 +1,4 @@
-import { UserListWithQuery } from '@/features/user-list';
+import { UserListWithQuery } from '@/domains/user';
 
 export default function ExampleTanStackQueryPage() {
   return <UserListWithQuery />;

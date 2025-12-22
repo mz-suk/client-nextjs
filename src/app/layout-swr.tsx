@@ -1,9 +1,18 @@
-import { API_CONFIG } from '@/shared/config';
-import { swrConfig } from '@/shared/config/swr';
+import { API_CONFIG } from '@/core/config';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { SWRConfig } from 'swr';
 import './globals.css';
+
+const swrConfig = {
+  revalidateOnFocus: false,
+  revalidateOnReconnect: true,
+  dedupingInterval: 60000,
+  errorRetryCount: 3,
+  errorRetryInterval: 5000,
+  shouldRetryOnError: true,
+  keepPreviousData: true,
+};
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

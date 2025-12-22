@@ -1,4 +1,4 @@
-import { getUsers, UserListHybrid } from '@/features/user-list';
+import { getUsers, UserListHybrid } from '@/domains/user';
 
 export default async function ExampleHybridPage() {
   const users = await getUsers();

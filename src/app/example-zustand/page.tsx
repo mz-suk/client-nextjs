@@ -1,6 +1,6 @@
 'use client';
 
-import { useCounterStore } from '@/shared/stores';
+import { useCounterStore } from '@/domains/counter';
 import styles from '../page.module.css';
 
 export default function ExampleZustandPage() {

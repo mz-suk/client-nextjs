@@ -1,4 +1,4 @@
-import { API_CONFIG } from '@/shared/config';
+import { API_CONFIG } from '@/core/config';
 import { QueryProvider } from '@/shared/providers';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';

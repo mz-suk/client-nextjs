@@ -1,5 +1,5 @@
 import type { NextConfig } from 'next';
-import { API_CONFIG, isAnalyze, isDebug, isDev, SERVER_CONFIG } from './src/shared/config/constants';
+import { API_CONFIG, isAnalyze, isDebug, isDev, SERVER_CONFIG } from './src/core/config/constants';
 
 let nextConfig: NextConfig = {
   // 이미지 최적화
