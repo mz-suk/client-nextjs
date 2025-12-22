@@ -4,11 +4,11 @@
 
 ## 상태 분류
 
-| 상태 타입      | 도구               | 예시                     |
-| -------------- | ------------------ | ------------------------ |
-| **서버**       | SWR/TanStack Query | API 데이터, 사용자 목록  |
-| **클라이언트** | Zustand            | 모달, 테마, 필터         |
-| **URL**        | Next.js Params     | 페이지 ID, 쿼리 파라미터 |
+| 상태 타입      | 도구           | 예시                     |
+| -------------- | -------------- | ------------------------ |
+| **서버**       | TanStack Query | API 데이터, 사용자 목록  |
+| **클라이언트** | Zustand        | 모달, 테마, 필터         |
+| **URL**        | Next.js Params | 페이지 ID, 쿼리 파라미터 |
 
 ---
 
@@ -126,13 +126,13 @@ const count = useStore(state => state.count);
 const { count, user, theme } = useStore();
 ```
 
-### 3. 서버 데이터는 SWR/Query 사용
+### 3. 서버 데이터는 React Query 사용
 
 ```typescript
 // ❌ Bad: Zustand로 서버 데이터
 const users = useUserStore(state => state.users);
 
-// ✅ Good: SWR로 서버 데이터
+// ✅ Good: React Query로 서버 데이터
 const { data: users } = useUsers();
 ```
 

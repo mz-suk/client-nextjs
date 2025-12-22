@@ -46,8 +46,7 @@ pnpm lint
 - **Next.js 16** - App Router, Turbopack
 - **React 19** - use() hook, Server Components
 - **TypeScript 5.9** - 타입 안전성
-- **TanStack Query** - 서버 상태 관리
-- **SWR** - 데이터 페칭
+- **TanStack Query** - 서버 상태 관리 및 데이터 페칭
 - **Zustand** - 클라이언트 상태 관리
 - **Axios** - HTTP 클라이언트
 - **Zod** - 스키마 검증
@@ -58,13 +57,12 @@ pnpm lint
 
 - ✅ SSG (Static Site Generation)
 - ✅ CSR (Client-Side Rendering)
-- ✅ Hybrid (SSG + SWR)
+- ✅ Hybrid (SSG + React Query)
 - ✅ React 19 use() hook
 
 ### 데이터 페칭
 
 - ✅ TanStack Query (React Query)
-- ✅ SWR (Stale-While-Revalidate)
 - ✅ React 19 use() hook
 
 ### 상태 관리
@@ -73,9 +71,9 @@ pnpm lint
 
 ## 📚 예제 페이지
 
-- `/example-api-usage` - CSR with SWR
+- `/example-api-usage` - CSR with React Query
 - `/example-ssg` - Static Site Generation
-- `/example-hybrid` - SSG + SWR Hybrid
+- `/example-hybrid` - SSG + React Query Hybrid
 - `/example-tanstack-query` - TanStack Query
 - `/example-react19` - React 19 use() hook
 - `/example-zustand` - Zustand 상태 관리

@@ -19,16 +19,16 @@ export default function Home() {
           </li>
           <li>
             <Link href="/example-hybrid">
-              <strong>하이브리드 (SSG + SWR)</strong>
+              <strong>하이브리드 (SSG + React Query)</strong>
               <br />
-              <small>초기는 SSG, 업데이트는 SWR - 추천 방식 ⭐</small>
+              <small>초기는 SSG, 업데이트는 React Query - 추천 방식 ⭐</small>
             </Link>
           </li>
           <li>
             <Link href="/example-api-usage">
-              <strong>CSR with SWR</strong>
+              <strong>CSR with React Query</strong>
               <br />
-              <small>클라이언트에서 SWR로 데이터 fetch</small>
+              <small>클라이언트에서 React Query로 데이터 fetch</small>
             </Link>
           </li>
           <li>

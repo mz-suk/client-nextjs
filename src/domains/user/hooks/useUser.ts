@@ -1,11 +1,15 @@
 'use client';
 
-import useSWR from 'swr';
+import { useQuery } from '@tanstack/react-query';
 import type { User } from '../types';
 import { getUser } from '../services';
 
 export function useUser(id: number) {
-  const { data, error, isLoading } = useSWR<User>(id ? `/users/${id}` : null, () => getUser(id));
+  const { data, error, isLoading } = useQuery<User>({
+    queryKey: ['user', id],
+    queryFn: () => getUser(id),
+    enabled: !!id,
+  });
 
   return {
     user: data,

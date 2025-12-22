@@ -21,10 +21,10 @@
 ```
 빌드 시(SSG) → HTML 생성 → CDN 배포
       ↓
-클라이언트(CSR) → SWR로 자동 업데이트
+클라이언트(CSR) → React Query로 자동 업데이트
 ```
 
-### 구현 (SWR)
+### 구현 (React Query)
 
 **서버 컴포넌트**
 
@@ -51,16 +51,17 @@ export function UserListHybrid({ initialUsers }: Props) {
 }
 ```
 
-**Hook (SWR)**
+**Hook (React Query)**
 
 ```typescript
 // features/user-list/hooks/useUsers.ts
 'use client';
 
 export function useUsers({ initialData }) {
-  return useSWR('/users', getUsers, {
-    fallbackData: initialData,
-    revalidateOnMount: true, // 마운트 시 자동 업데이트
+  return useQuery({
+    queryKey: ['users'],
+    queryFn: getUsers,
+    initialData, // SSG 데이터 초기값
   });
 }
 ```

@@ -49,7 +49,7 @@ Next.js 16 + React 19 기반 프로젝트를 범용 템플릿으로 전환하고
 
 - 서버 상태 관리
 - DevTools 통합
-- SWR과 병행 사용 (선택 가능)
+- 강력한 캐싱 및 자동 재검증
 
 #### 2.4 React Compiler v1.0 통합 ✅
 
@@ -370,11 +370,10 @@ Route (app)                         Size  First Load JS
 - 🎨 TypeScript strict 모드
 - ✅ 100% 타입 안전성
 
-### 3. 상태 관리 선택권
+### 3. 상태 관리
 
-- 🔄 SWR (경량)
-- 💪 TanStack Query (강력)
-- 🎨 Zustand (클라이언트)
+- 💪 TanStack Query (서버 상태)
+- 🎨 Zustand (클라이언트 상태)
 
 ### 4. 자동 성능 최적화
 
@@ -533,7 +532,7 @@ pnpm start
 
 - ✅ 범용 도메인 (JSONPlaceholder)
 - ✅ 타입 안전성 (Zod, TypeScript)
-- ✅ 상태 관리 (SWR, TanStack Query, Zustand)
+- ✅ 상태 관리 (TanStack Query, Zustand)
 - ✅ 코드 제너레이터 (Plop.js)
 - ✅ 성능 최적화 기반
 - ✅ 에러 처리

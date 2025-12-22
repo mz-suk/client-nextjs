@@ -15,7 +15,7 @@ export function UserListClient() {
           <strong>API:</strong> JSONPlaceholder /users
         </p>
         <p>
-          <strong>렌더링 방식:</strong> Client-Side Rendering with SWR
+          <strong>렌더링 방식:</strong> Client-Side Rendering with React Query
         </p>
         <p>
           <strong>현재 상태:</strong> {isLoading ? '🔄 로딩 중...' : error ? '❌ 에러' : '✅ 완료'}

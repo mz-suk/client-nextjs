@@ -1,10 +1,10 @@
 'use client';
 
-import { useUsersQuery } from '../hooks';
+import { useUsers } from '../hooks';
 import styles from './UserList.module.css';
 
 export function UserListWithQuery() {
-  const { data: users, isLoading, error } = useUsersQuery();
+  const { users, isLoading, error } = useUsers();
 
   return (
     <div className={styles.container}>
@@ -27,7 +27,7 @@ export function UserListWithQuery() {
 
       {error && <div className={styles.error}>에러: {(error as Error).message}</div>}
 
-      {!isLoading && users && users.length > 0 ? (
+      {!isLoading && users.length > 0 ? (
         <div className={styles.posts}>
           <h2>사용자 목록 ({users.length})</h2>
           <div className={styles.grid}>

@@ -2,11 +2,10 @@
 
 ## 페칭 방법 비교
 
-| 방법               | 사용 시점        | 번들 크기 | 장점           |
-| ------------------ | ---------------- | --------- | -------------- |
-| **fetch (서버)**   | SSG 빌드         | 0KB       | 빠른 초기 로딩 |
-| **SWR**            | 간단한 CSR       | 11KB      | 경량, 쉬움     |
-| **TanStack Query** | 복잡한 서버 상태 | 40KB      | 강력한 기능    |
+| 방법               | 사용 시점       | 번들 크기 | 장점           |
+| ------------------ | --------------- | --------- | -------------- |
+| **fetch (서버)**   | SSG 빌드        | 0KB       | 빠른 초기 로딩 |
+| **TanStack Query** | 클라이언트 상태 | 40KB      | 강력한 기능    |
 
 ---
 
@@ -31,17 +30,20 @@ export default async function UsersPage() {
 
 ---
 
-## 2. SWR (권장 - CSR)
+## 2. TanStack Query (권장 - CSR)
 
 ### 기본 사용
 
 ```typescript
 // features/user-list/hooks/useUsers.ts
 'use client';
-import useSWR from 'swr';
+import { useQuery } from '@tanstack/react-query';
 
 export function useUsers() {
-  return useSWR('/users', getUsers);
+  return useQuery({
+    queryKey: ['users'],
+    queryFn: getUsers,
+  });
 }
 ```
 
@@ -58,32 +60,14 @@ export function UserList() {
 }
 ```
 
-### Hybrid (SSG + SWR)
+### Hybrid (SSG + React Query)
 
 ```typescript
 export function useUsers({ initialData }) {
-  return useSWR('/users', getUsers, {
-    fallbackData: initialData, // SSG 데이터
-    revalidateOnMount: true, // 자동 업데이트
-  });
-}
-```
-
----
-
-## 3. TanStack Query (고급)
-
-### 기본 사용
-
-```typescript
-// features/user-list/hooks/useUsersQuery.ts
-'use client';
-import { useQuery } from '@tanstack/react-query';
-
-export function useUsersQuery() {
   return useQuery({
     queryKey: ['users'],
     queryFn: getUsers,
+    initialData, // SSG 데이터
   });
 }
 ```
@@ -110,24 +94,14 @@ export function useCreateUser() {
 | 상황             | 권장 방법      |
 | ---------------- | -------------- |
 | SSG 빌드 시      | fetch (서버)   |
-| 간단한 GET 요청  | **SWR** ⭐     |
+| 간단한 GET 요청  | TanStack Query |
 | 복잡한 상태 관리 | TanStack Query |
 | Mutation 많을 때 | TanStack Query |
-| Hybrid 패턴      | **SWR** ⭐     |
+| Hybrid 패턴      | TanStack Query |
 
 ---
 
 ## 에러 처리
-
-### SWR
-
-```typescript
-const { data, error } = useSWR('/users', getUsers, {
-  onError: err => console.error(err),
-  shouldRetryOnError: true,
-  errorRetryCount: 3,
-});
-```
 
 ### TanStack Query
 
@@ -150,7 +124,7 @@ const { data, error } = useQuery({
 // ✅ Good: SSG + CSR
 export default async function Page() {
   const initial = await getUsers(); // SSG
-  return <List initialUsers={initial} />; // CSR with SWR
+  return <List initialUsers={initial} />; // CSR with React Query
 }
 ```
 
@@ -159,7 +133,7 @@ export default async function Page() {
 ```
 features/user-list/
 ├── api/          # API 함수 (getUsers, getUser)
-├── hooks/        # SWR/Query 훅
+├── hooks/        # React Query 훅
 └── ui/           # 컴포넌트
 ```
 
@@ -175,5 +149,4 @@ features/user-list/
 
 📚 **상세 문서**:
 
-- [SWR Docs](https://swr.vercel.app/)
 - [TanStack Query Docs](https://tanstack.com/query/latest)

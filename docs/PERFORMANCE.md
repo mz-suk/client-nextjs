@@ -296,29 +296,18 @@ const MemoizedComponent = React.memo(function Component({ data }) {
 
 ## 🔄 캐싱 전략
 
-### 1. SWR 캐싱
-
-```typescript
-import useSWR from 'swr';
-
-const { data } = useSWR('/api/data', fetcher, {
-  revalidateOnFocus: false,
-  dedupingInterval: 60000, // 60초
-});
-```
-
-### 2. TanStack Query 캐싱
+### TanStack Query 캐싱
 
 ```typescript
 const { data } = useQuery({
   queryKey: ['data'],
   queryFn: fetchData,
   staleTime: 60000, // 60초
-  cacheTime: 300000, // 5분
+  gcTime: 300000, // 5분 (이전 cacheTime)
 });
 ```
 
-### 3. HTTP 캐싱
+### HTTP 캐싱
 
 ```typescript
 // next.config.ts
@@ -442,7 +431,7 @@ pnpm analyze
 ### 캐싱
 
 - [ ] HTTP 캐싱 설정
-- [ ] SWR/TanStack Query 활용
+- [ ] TanStack Query 활용
 - [ ] 정적 자산 장기 캐싱
 
 ### 측정

@@ -44,7 +44,7 @@ features/user-list/
 ├── api/          # API 함수
 │   ├── getUsers.ts
 │   └── index.ts
-├── hooks/        # SWR/Query 훅
+├── hooks/        # React Query 훅
 │   ├── useUsers.ts
 │   └── index.ts
 ├── ui/           # UI 컴포넌트

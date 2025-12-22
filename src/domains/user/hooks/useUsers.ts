@@ -1,6 +1,6 @@
 'use client';
 
-import useSWR from 'swr';
+import { useQuery } from '@tanstack/react-query';
 import type { User } from '../types';
 import { getUsers } from '../services';
 
@@ -11,14 +11,16 @@ export interface UseUsersOptions {
 export function useUsers(options?: UseUsersOptions) {
   const { initialData } = options || {};
 
-  const { data, error, isLoading, mutate } = useSWR<User[]>('/users', getUsers, {
-    fallbackData: initialData,
+  const { data, error, isLoading, refetch } = useQuery<User[]>({
+    queryKey: ['users'],
+    queryFn: getUsers,
+    initialData,
   });
 
   return {
     users: data || [],
     isLoading,
     error,
-    refetch: mutate,
+    refetch,
   };
 }

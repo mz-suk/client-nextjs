@@ -22,7 +22,7 @@ src/
 │   ├── user/               # User 도메인
 │   │   ├── types/          # 타입 정의
 │   │   ├── services/       # 비즈니스 로직 & API 호출
-│   │   ├── hooks/          # React 훅 (SWR, TanStack Query)
+│   │   ├── hooks/          # React 훅 (TanStack Query)
 │   │   ├── components/     # 도메인 전용 컴포넌트
 │   │   └── index.ts
 │   ├── todo/               # Todo 도메인
