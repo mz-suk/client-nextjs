@@ -14,7 +14,7 @@ export const validateName = (name: string): ValidationResult<schemas.NameFormDat
     return { success: true, data };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0]?.message };
+      return { success: false, error: error.issues[0]?.message };
     }
     return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
   }
@@ -27,7 +27,7 @@ export const validateCarrier = (carrier: string): ValidationResult<schemas.Carri
     return { success: true, data };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0]?.message };
+      return { success: false, error: error.issues[0]?.message };
     }
     return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
   }
@@ -40,7 +40,7 @@ export const validatePhone = (phoneNumber: string): ValidationResult<schemas.Pho
     return { success: true, data };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0]?.message };
+      return { success: false, error: error.issues[0]?.message };
     }
     return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
   }
@@ -53,7 +53,7 @@ export const validateAgreement = (agreeTerms: boolean, agreePrivacy: boolean, ag
     return { success: true, data };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0]?.message };
+      return { success: false, error: error.issues[0]?.message };
     }
     return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
   }
@@ -66,7 +66,7 @@ export const validateVerification = (data: schemas.VerificationFormData): Valida
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0]?.message };
+      return { success: false, error: error.issues[0]?.message };
     }
     return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
   }
@@ -79,7 +79,7 @@ export const validateAuthCode = (verificationCode: string): ValidationResult<sch
     return { success: true, data };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0]?.message };
+      return { success: false, error: error.issues[0]?.message };
     }
     return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
   }
@@ -92,7 +92,7 @@ export const validateUserId = (userId: string): ValidationResult<schemas.UserIdF
     return { success: true, data };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0]?.message };
+      return { success: false, error: error.issues[0]?.message };
     }
     return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
   }
@@ -105,7 +105,7 @@ export const validateAccount = (data: schemas.AccountFormData): ValidationResult
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0]?.message };
+      return { success: false, error: error.issues[0]?.message };
     }
     return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
   }
@@ -118,7 +118,7 @@ export const validateAllergies = (allergies: string[]): ValidationResult<schemas
     return { success: true, data };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0]?.message };
+      return { success: false, error: error.issues[0]?.message };
     }
     return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
   }
@@ -131,7 +131,7 @@ export const validateGender = (gender: string): ValidationResult<schemas.GenderF
     return { success: true, data };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0]?.message };
+      return { success: false, error: error.issues[0]?.message };
     }
     return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
   }
@@ -144,7 +144,7 @@ export const validateLifestyle = (lifestyle: string[]): ValidationResult<schemas
     return { success: true, data };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0]?.message };
+      return { success: false, error: error.issues[0]?.message };
     }
     return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
   }

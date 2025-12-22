@@ -7,9 +7,12 @@ export const nameSchema = z.object({
 
 // Step 2-4: 본인인증
 export const carrierSchema = z.object({
-  carrier: z.enum(['SKT', 'KT', 'LGU+'], {
-    required_error: '통신사를 선택해주세요.',
-  }),
+  carrier: z
+    .enum(['SKT', 'KT', 'LGU+'])
+    .or(z.literal(''))
+    .refine(val => val !== '', {
+      message: '통신사를 선택해주세요.',
+    }),
 });
 
 export const phoneSchema = z.object({
@@ -68,9 +71,12 @@ export const allergiesSchema = z.object({
 
 // Step 10-3: 성별
 export const genderSchema = z.object({
-  gender: z.enum(['male', 'female', 'other'], {
-    required_error: '성별을 선택해주세요.',
-  }),
+  gender: z
+    .enum(['male', 'female', 'other'])
+    .or(z.literal(''))
+    .refine(val => val !== '', {
+      message: '성별을 선택해주세요.',
+    }),
 });
 
 // Step 10-4: 생활패턴

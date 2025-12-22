@@ -65,11 +65,13 @@ export const useJoinStore = create<JoinStore>()(
           historyStack: [...state.historyStack, state.currentStep],
         })),
 
-      goBack: () => {
+      goBack: (): JoinStep | null => {
         const { historyStack } = get();
         if (historyStack.length === 0) return null;
 
         const previousStep = historyStack[historyStack.length - 1];
+        if (!previousStep) return null;
+
         set({
           currentStep: previousStep,
           historyStack: historyStack.slice(0, -1),
