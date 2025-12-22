@@ -282,10 +282,8 @@ import { ErrorBoundary } from '@/shared/ui';
 **이동된 문서 (`docs/` 폴더):**
 
 - `docs/PROJECT_PLAN.md` - 프로젝트 계획
-- `docs/GENERATOR.md` - 코드 제너레이터 가이드
 - `docs/PERFORMANCE.md` - 성능 최적화 가이드
 - `docs/REACT_COMPILER.md` - React Compiler v1.0 가이드
-- `docs/Apidog.md` - MCP 설정
 - `docs/GEMINI.md` - AI 컨텍스트
 
 **Root에 유지:**
@@ -495,9 +493,7 @@ pnpm start
 ## 📚 참고 문서
 
 - [README.md](../README.md) - 프로젝트 개요
-- [GENERATOR.md](./GENERATOR.md) - 코드 제너레이터 가이드
 - [PERFORMANCE.md](./PERFORMANCE.md) - 성능 최적화 가이드
-- [Apidog.md](./Apidog.md) - MCP 설정
 - [GEMINI.md](./GEMINI.md) - AI 컨텍스트
 
 ---

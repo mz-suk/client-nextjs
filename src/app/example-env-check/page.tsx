@@ -1,5 +1,4 @@
-import { API_CONFIG, APP_METADATA, SERVER_CONFIG, isDebug, isDev } from '@/shared/config/constants';
-import { parsed } from '@/shared/config/env';
+import { API_CONFIG, APP_METADATA, SERVER_CONFIG, isDebug, isDev, parsed } from '@/core/config';
 import styles from './page.module.css';
 
 export default function EnvCheckPage() {

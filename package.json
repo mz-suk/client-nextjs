@@ -10,11 +10,6 @@
     "lint": "tsc --noEmit && eslint . --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "prepare": "husky",
-    "generate": "plop",
-    "generate:feature": "plop feature",
-    "generate:component": "plop component",
-    "generate:hook": "plop hook",
-    "generate:page": "plop page",
     "analyze": "ANALYZE=true next build",
     "gf": "git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -d",
     "gfl": "git branch | grep -v '^*' | xargs git branch -D"
@@ -41,8 +36,8 @@
     "eslint-config-next": "15.5.6",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "plop": "^4.0.4",
     "prettier": "^3.7.4",
+    "sass": "^1.97.1",
     "typescript": "^5.9.3"
   },
   "lint-staged": {
@@ -54,5 +49,5 @@
     "node": ">=20.9.0",
     "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@10.25.0"
+  "packageManager": "pnpm@10.26.1"
 }

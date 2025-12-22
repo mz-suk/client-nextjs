@@ -1,4 +1,4 @@
-import { getUser, getUsers } from '@/features/user-list/api';
+import { getUser, getUsers } from '@/domains/user';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
