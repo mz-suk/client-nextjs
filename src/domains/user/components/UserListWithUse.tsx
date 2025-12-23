@@ -1,6 +1,7 @@
 'use client';
 
 import { use } from 'react';
+
 import { getUsers } from '../services';
 import styles from './UserList.module.css';
 

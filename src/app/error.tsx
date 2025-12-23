@@ -1,8 +1,9 @@
 'use client';
 
-import { logger } from '@/shared/lib';
 import Link from 'next/link';
 import { useEffect } from 'react';
+
+import { logger } from '@/shared/lib';
 
 interface ErrorProps {
   error: Error & { digest?: string };

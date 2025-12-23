@@ -1,6 +1,8 @@
 import axios, { type AxiosError, type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios';
-import { API_CONFIG, isDev, SERVER_CONFIG } from '../config/constants';
+
 import { logger } from '@/shared/lib';
+
+import { API_CONFIG, isDev, SERVER_CONFIG } from '../config/constants';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
