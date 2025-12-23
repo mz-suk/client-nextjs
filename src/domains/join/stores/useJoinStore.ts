@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import type { JoinFormData, JoinStep } from '../types';
 
 interface JoinStore {

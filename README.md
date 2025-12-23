@@ -34,48 +34,48 @@ pnpm lint
 src/
 ├── app/          # Next.js 페이지
 ├── core/         # API, Config (인프라)
-├── domains/      # 비즈니스 로직 (User, Counter)
+├── domains/      # 비즈니스 로직
 └── shared/       # 공통 리소스 (UI, Types)
 ```
 
-**상세:** [아키텍처 가이드](./docs/ARCHITECTURE.md)
+### 주요 디렉토리
 
-## 주요 기능
-
-### 렌더링 방식
-
-- SSG (Static Site Generation)
-- CSR (Client-Side Rendering)
-- Hybrid (SSG + React Query)
-
-**상세:** [렌더링 가이드](./docs/RENDERING.md)
-
-### 데이터 페칭
-
-- TanStack Query (추천)
-- React 19 use() hook
-- Server Components
-
-**상세:** [데이터 페칭 가이드](./docs/DATA_FETCHING.md)
-
-### 상태 관리
-
-- 서버 상태: TanStack Query
-- 클라이언트 상태: Zustand
-
-**상세:** [상태 관리 가이드](./docs/STATE_MANAGEMENT.md)
+- **app/**: Next.js App Router 페이지 및 라우팅
+- **core/**: API 클라이언트, 환경 설정 등 인프라 레벨 코드
+- **domains/**: 도메인별 비즈니스 로직 (services, hooks, stores, types)
+- **shared/**: UI 컴포넌트, Provider, 유틸리티 등 공통 코드
 
 ## 예제 페이지
 
-| 경로                      | 설명                |
-| ------------------------- | ------------------- |
-| `/example/ssg`            | SSG 빌드            |
-| `/example/api-usage`      | CSR + React Query   |
-| `/example/hybrid`         | Hybrid (SSG + CSR)  |
-| `/example/tanstack-query` | TanStack Query      |
-| `/example/react19`        | React 19 use() hook |
-| `/example/zustand`        | Zustand 상태 관리   |
-| `/example/env-check`      | 환경변수 확인       |
+| 경로               | 설명                   |
+| ------------------ | ---------------------- |
+| `/example/ssg`     | SSG + TanStack Query   |
+| `/example/csr`     | CSR + TanStack Query   |
+| `/example/zustand` | Zustand 전역 상태 관리 |
+
+### SSG + TanStack Query
+
+빌드 타임에 데이터를 prefetch하고 클라이언트에서 TanStack Query로 관리합니다.
+
+- 초기 페이지 로딩 속도 향상
+- SEO 최적화
+- 자동 리페치 및 캐싱
+
+### CSR + TanStack Query
+
+완전히 클라이언트에서 데이터를 페칭하고 관리합니다.
+
+- 로딩, 에러 상태 자동 관리
+- 백그라운드 업데이트
+- 캐싱 및 리페치 전략
+
+### Zustand
+
+간단하고 직관적한 전역 상태 관리 라이브러리입니다.
+
+- DevTools 지원
+- localStorage 자동 동기화
+- TypeScript 완벽 지원
 
 ## 환경 설정
 
@@ -92,17 +92,6 @@ NEXT_PUBLIC_FEATURE_DEBUG=true
 - React Compiler v1.0 (자동 메모이제이션)
 - Next.js Image 최적화
 - 번들 분석: `pnpm analyze`
-
-**상세:** [성능 최적화 가이드](./docs/PERFORMANCE.md)
-
-## 문서
-
-- [프로젝트 구조](./docs/ARCHITECTURE.md)
-- [렌더링 전략](./docs/RENDERING.md)
-- [데이터 페칭](./docs/DATA_FETCHING.md)
-- [상태 관리](./docs/STATE_MANAGEMENT.md)
-- [성능 최적화](./docs/PERFORMANCE.md)
-- [배포 가이드](./docs/DEPLOYMENT.md)
 
 ## 라이선스
 

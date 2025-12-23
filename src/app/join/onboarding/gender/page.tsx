@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import { useJoinStore, validateGender } from '@/domains/join';
 import { JoinLayout } from '@/domains/join/components';
 import { Button } from '@/domains/join/components/Button';
+
 import styles from './page.module.scss';
 
 const GENDER_OPTIONS = [
@@ -23,12 +25,12 @@ export default function OnboardingGenderPage() {
     // Zod 벨리데이션
     const result = validateGender(selected);
 
-    if (!result.success) {
+    if (!result.success || !result.data) {
       setError(result.error || '');
       return;
     }
 
-    setOnboardingData({ gender: result.data!.gender });
+    setOnboardingData({ gender: result.data.gender });
     goToStep('onboarding-lifestyle');
     router.push('/join/onboarding/lifestyle');
   };

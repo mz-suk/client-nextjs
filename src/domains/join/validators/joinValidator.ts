@@ -1,4 +1,5 @@
-import { z } from 'zod';
+import { type z } from 'zod';
+
 import * as schemas from '../schemas';
 
 type ValidationResult<T> = {

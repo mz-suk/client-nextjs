@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import { useJoinStore, validateLifestyle } from '@/domains/join';
 import { JoinLayout } from '@/domains/join/components';
 import { Button } from '@/domains/join/components/Button';
+
 import styles from './page.module.scss';
 
 const LIFESTYLE_OPTIONS = [
@@ -20,7 +22,7 @@ const LIFESTYLE_OPTIONS = [
 
 export default function OnboardingLifestylePage() {
   const router = useRouter();
-  const { formData, setOnboardingData, goToStep, resetForm } = useJoinStore();
+  const { formData, setOnboardingData, resetForm } = useJoinStore();
   const [selected, setSelected] = useState<string[]>(formData.onboarding.lifestyle);
   const [error, setError] = useState('');
 
@@ -33,12 +35,12 @@ export default function OnboardingLifestylePage() {
     // Zod 벨리데이션
     const result = validateLifestyle(selected);
 
-    if (!result.success) {
+    if (!result.success || !result.data) {
       setError(result.error || '');
       return;
     }
 
-    setOnboardingData({ lifestyle: result.data!.lifestyle, isCompleted: true });
+    setOnboardingData({ lifestyle: result.data.lifestyle, isCompleted: true });
 
     // 온보딩 완료 API 호출 (Mock)
     await new Promise(resolve => setTimeout(resolve, 1000));

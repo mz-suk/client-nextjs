@@ -2,7 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+
 import { useJoinStore } from '@/domains/join';
+
 import styles from './JoinLayout.module.scss';
 
 interface JoinLayoutProps {
@@ -15,7 +17,15 @@ interface JoinLayoutProps {
   onBack?: () => void;
 }
 
-export function JoinLayout({ children, title, showBackButton = true, showProgress = false, currentStep = 1, totalStep = 10, onBack }: JoinLayoutProps) {
+export function JoinLayout({
+  children,
+  title,
+  showBackButton = true,
+  showProgress = false,
+  currentStep = 1,
+  totalStep: _totalStep = 10,
+  onBack,
+}: JoinLayoutProps) {
   const router = useRouter();
   const { goBack, canGoBack, previousProgress, setPreviousProgress } = useJoinStore();
 

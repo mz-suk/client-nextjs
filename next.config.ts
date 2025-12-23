@@ -17,11 +17,6 @@ let nextConfig: NextConfig = {
 
   reactCompiler: true,
 
-  // 실험적 기능
-  experimental: {
-    optimizePackageImports: ['lucide-react'],
-  },
-
   async rewrites() {
     if (isDev && SERVER_CONFIG.API_TARGET_URL) {
       return [
