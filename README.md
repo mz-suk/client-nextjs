@@ -26,7 +26,7 @@ pnpm lint
 - **TypeScript 5.9**
 - **TanStack Query** - 서버 상태 관리
 - **Zustand** - 클라이언트 상태 관리
-- **Axios** - HTTP 클라이언트
+- **Native Fetch** - HTTP 클라이언트
 
 ## 프로젝트 구조
 
