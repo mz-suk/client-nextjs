@@ -2,7 +2,7 @@
 
 import { useCounterStore } from '@/domains/counter';
 
-import styles from '../page.module.css';
+import styles from '../../page.module.css';
 
 export default function ExampleZustandPage() {
   const { count, increment, decrement, reset } = useCounterStore();

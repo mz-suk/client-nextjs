@@ -32,7 +32,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
         </div>
       </Suspense>
 
-      <Link href="/example-ssg" style={{ display: 'block', marginTop: '2rem' }}>
+      <Link href="/example/ssg" style={{ display: 'block', marginTop: '2rem' }}>
         ← 목록으로
       </Link>
     </main>
