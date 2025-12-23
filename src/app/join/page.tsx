@@ -4,8 +4,8 @@ import { CarrierSelectBottomSheet, JoinLayout } from '@/domains/join/components'
 import { Button } from '@/domains/join/components/Button';
 import { FormCheckbox } from '@/domains/join/components/FormCheckbox';
 import { FormInput } from '@/domains/join/components/FormInput';
-import { stepTitles } from '@/domains/join/constants';
 import { useJoinForm } from '@/domains/join/hooks/useJoinForm';
+import { stepTitles } from '@/domains/join/types';
 import styles from './page.module.scss';
 
 export default function JoinPage() {
