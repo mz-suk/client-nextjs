@@ -6,5 +6,7 @@
     "source.organizeImports": "explicit"
   },
   "eslint.validate": ["javascript", "typescript", "javascriptreact", "typescriptreact", "vue"],
-  "prettier.enable": true
+  "prettier.enable": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

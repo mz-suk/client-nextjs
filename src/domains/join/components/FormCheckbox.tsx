@@ -2,6 +2,7 @@
 
 import type { Control, FieldValues, Path } from 'react-hook-form';
 import { useController } from 'react-hook-form';
+
 import { Checkbox } from './Checkbox';
 
 interface FormCheckboxProps<T extends FieldValues = FieldValues> {

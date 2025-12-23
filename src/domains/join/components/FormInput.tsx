@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { Control, FieldPathValue, FieldValues, Path } from 'react-hook-form';
 import { useController } from 'react-hook-form';
+
 import { FormFieldError } from './FormFieldError';
 import styles from './Input.module.scss';
 
@@ -30,7 +31,7 @@ export function FormInput<T extends FieldValues = FieldValues>({
   control,
   label,
   placeholder,
-  required = false,
+  required: _required = false,
   disabled = false,
   className,
   description,

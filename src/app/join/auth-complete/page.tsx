@@ -1,15 +1,22 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect } from 'react';
+
 import { useJoinStore } from '@/domains/join';
 import { JoinLayout } from '@/domains/join/components';
 import { Button } from '@/domains/join/components/Button';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+
 import styles from './page.module.scss';
 
 export default function JoinAuthCompletePage() {
   const router = useRouter();
   const { goToStep } = useJoinStore();
+
+  const handleNext = useCallback(() => {
+    goToStep('account');
+    router.push('/join/account');
+  }, [goToStep, router]);
 
   useEffect(() => {
     // 자동으로 다음 단계로 이동 (3초 후)
@@ -18,12 +25,7 @@ export default function JoinAuthCompletePage() {
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, []);
-
-  const handleNext = () => {
-    goToStep('account');
-    router.push('/join/account');
-  };
+  }, [handleNext]);
 
   return (
     <JoinLayout title="본인인증" showBackButton={false} showProgress currentStep={4} totalStep={10}>

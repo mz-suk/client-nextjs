@@ -6,6 +6,7 @@ import { FormCheckbox } from '@/domains/join/components/FormCheckbox';
 import { FormInput } from '@/domains/join/components/FormInput';
 import { stepTitles } from '@/domains/join/constants';
 import { useJoinForm } from '@/domains/join/hooks/useJoinForm';
+
 import styles from './page.module.scss';
 
 export default function JoinPage() {
@@ -17,14 +18,12 @@ export default function JoinPage() {
     showTermsModal,
     setShowCarrierBottomSheet,
     setShowTermsModal,
-    setValue,
     handleNameBlur,
     handleCarrierSelect,
     handlePhoneChange,
     handleAllAgree,
     handleNext,
     handleCancel,
-    formatPhoneNumber,
     getNextButtonText,
     isNextButtonDisabled,
     allAgree,

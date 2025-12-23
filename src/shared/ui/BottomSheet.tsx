@@ -2,6 +2,7 @@
 import { Dialog } from '@base-ui/react/dialog';
 import { ScrollArea } from '@base-ui/react/scroll-area';
 import * as React from 'react';
+
 import styles from './BottomSheet.module.scss';
 
 export interface BottomSheetProps {

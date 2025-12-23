@@ -1,6 +1,7 @@
 'use client';
 
 import { BottomSheet } from '@/shared/ui';
+
 import type { JoinFormData } from '../types';
 import styles from './CarrierSelectBottomSheet.module.scss';
 

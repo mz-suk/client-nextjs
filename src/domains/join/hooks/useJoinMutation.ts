@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import { useJoinStore } from '../stores/useJoinStore';
+
 import * as joinService from '../services/joinService';
-import type { JoinFormData } from '../types';
+import { useJoinStore } from '../stores/useJoinStore';
 
 /**
  * 본인인증 요청 훅
@@ -16,8 +16,8 @@ export function useRequestVerification() {
         carrier: formData.carrier,
         phoneNumber: formData.phoneNumber,
       }),
-    onSuccess: data => {
-      console.log('본인인증 요청 성공:', data);
+    onSuccess: () => {
+      // 본인인증 요청 성공
     },
     onError: error => {
       console.error('본인인증 요청 실패:', error);
@@ -36,7 +36,6 @@ export function useConfirmVerification() {
     onSuccess: data => {
       if (data.isVerified) {
         setFormData({ isVerified: true });
-        console.log('본인인증 완료');
       }
     },
     onError: error => {
@@ -53,8 +52,7 @@ export function useCreateAccount() {
 
   return useMutation({
     mutationFn: () => joinService.createAccount(formData),
-    onSuccess: data => {
-      console.log('회원가입 성공:', data);
+    onSuccess: () => {
       // 회원가입 완료 후 폼 초기화
       resetForm();
     },

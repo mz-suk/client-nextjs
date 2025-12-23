@@ -1,4 +1,5 @@
 import { apiClient } from '@/core/api';
+
 import type { JoinFormData } from '../types';
 
 export interface JoinResponse {

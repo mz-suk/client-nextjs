@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import { useJoinStore, validateAllergies } from '@/domains/join';
 import { JoinLayout } from '@/domains/join/components';
 import { Button } from '@/domains/join/components/Button';
+
 import styles from './page.module.scss';
 
 const ALLERGY_OPTIONS = [
@@ -41,12 +43,12 @@ export default function OnboardingAllergyPage() {
     // Zod 벨리데이션
     const result = validateAllergies(selected);
 
-    if (!result.success) {
+    if (!result.success || !result.data) {
       setError(result.error || '');
       return;
     }
 
-    setOnboardingData({ allergies: result.data!.allergies });
+    setOnboardingData({ allergies: result.data.allergies });
     goToStep('onboarding-gender');
     router.push('/join/onboarding/gender');
   };
