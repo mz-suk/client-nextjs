@@ -29,42 +29,21 @@
 }
 
 .sectionTitle {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: var(--gray100);
-}
-
-.carrierGroup {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.2rem;
-}
-
-.carrierButton {
-  height: 5.2rem;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: var(--gray70);
-  background-color: var(--base-white);
-  border: 1px solid var(--gray30);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 0.8rem;
+}
 
-  &:hover {
-    border-color: var(--brand60);
-    color: var(--brand60);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(43, 179, 191, 0.15);
-  }
-
-  &.active {
-    background-color: var(--brand60);
-    border-color: var(--brand60);
-    color: var(--base-white);
-    transform: scale(1.02);
-    box-shadow: 0 4px 16px rgba(43, 179, 191, 0.25);
-  }
+.arrowIcon {
+  position: absolute;
+  right: 1.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  color: var(--gray70);
+  pointer-events: none;
 }
 
 .agreementGroup {

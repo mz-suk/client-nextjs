@@ -3,7 +3,7 @@ export interface JoinFormData {
   name: string;
 
   // Step 2-4: 본인인증
-  carrier: 'SKT' | 'KT' | 'LGU+' | '';
+  carrier: 'SKT' | 'KT' | 'LGU+' | 'SKT_BUDGET' | 'KT_BUDGET' | 'LGU_BUDGET' | '';
   phoneNumber: string;
   agreeTerms: boolean;
   agreePrivacy: boolean;

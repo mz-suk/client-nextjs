@@ -8,9 +8,10 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   helperText?: string;
   onClear?: () => void;
+  rightIcon?: React.ReactNode;
 }
 
-export function Input({ label, error, helperText, className, value, onClear, ...props }: InputProps) {
+export function Input({ label, error, helperText, className, value, onClear, rightIcon, ...props }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const hasValue = value !== undefined && value !== null && String(value).length > 0;
 
@@ -31,14 +32,18 @@ export function Input({ label, error, helperText, className, value, onClear, ...
           value={value}
           {...props}
         />
-        {hasValue && !props.disabled && (
-          <button type="button" className={styles.clearButton} onClick={handleClear} aria-label="입력 내용 지우기">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="9" cy="9" r="9" fill="#E2E5EB" />
-              <path d="M11.5 6.5L6.5 11.5M6.5 6.5L11.5 11.5" stroke="#5F646F" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-          </button>
-        )}
+        {rightIcon
+          ? rightIcon
+          : hasValue &&
+            !props.disabled &&
+            !props.readOnly && (
+              <button type="button" className={styles.clearButton} onClick={handleClear} aria-label="입력 내용 지우기">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="9" cy="9" r="9" fill="#E2E5EB" />
+                  <path d="M11.5 6.5L6.5 11.5M6.5 6.5L11.5 11.5" stroke="#5F646F" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </button>
+            )}
       </div>
       {error && <span className={styles.errorMessage}>{error}</span>}
       {!error && helperText && <span className={styles.helperText}>{helperText}</span>}
