@@ -12,7 +12,8 @@
     "prepare": "husky",
     "analyze": "ANALYZE=true next build",
     "gf": "git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -d",
-    "gfl": "git branch | grep -v '^*' | xargs git branch -D"
+    "gfl": "git branch | grep -v '^*' | xargs git branch -D",
+    "clean:empty": "./scripts/remove-empty-dirs.sh"
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
