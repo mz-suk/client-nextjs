@@ -1,6 +1,7 @@
-import { getUser, getUsers } from '@/domains/user';
 import Link from 'next/link';
 import { Suspense } from 'react';
+
+import { getUser, getUsers } from '@/domains/user';
 
 // SSG: 빌드 시 정적 페이지 생성 대상 지정
 export async function generateStaticParams() {
@@ -31,7 +32,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
         </div>
       </Suspense>
 
-      <Link href="/example-ssg" style={{ display: 'block', marginTop: '2rem' }}>
+      <Link href="/example/ssg" style={{ display: 'block', marginTop: '2rem' }}>
         ← 목록으로
       </Link>
     </main>

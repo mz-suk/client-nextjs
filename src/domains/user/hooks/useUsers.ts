@@ -1,8 +1,9 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { User } from '../types';
+
 import { getUsers } from '../services';
+import type { User } from '../types';
 
 export interface UseUsersOptions {
   initialData?: User[];

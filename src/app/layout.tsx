@@ -1,8 +1,10 @@
-import { API_CONFIG } from '@/core/config';
-import { QueryProvider } from '@/shared/providers';
 import '@/shared/styles/index.scss';
+
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+
+import { API_CONFIG } from '@/core/config';
+import { QueryProvider } from '@/shared/providers';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
