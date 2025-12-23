@@ -2,25 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-import { agreementSchema, carrierSchema, nameSchema, phoneSchema } from '../schemas';
+import { type JoinPageFormData, joinPageSchema } from '../schemas';
 import { useJoinStore } from '../stores/useJoinStore';
-import type { JoinFormData } from '../types';
-
-// 회원가입 페이지용 통합 스키마
-const joinPageSchema = z.object({
-  name: nameSchema.shape.name,
-  carrier: carrierSchema.shape.carrier,
-  phoneNumber: phoneSchema.shape.phoneNumber,
-  agreeTerms: agreementSchema.shape.agreeTerms,
-  agreePrivacy: agreementSchema.shape.agreePrivacy,
-  agreeMarketing: agreementSchema.shape.agreeMarketing.optional(),
-});
-
-type JoinPageFormData = z.infer<typeof joinPageSchema>;
-
-type VerifyStep = 'name' | 'carrier' | 'phone' | 'agreement';
+import type { JoinFormData, VerifyStep } from '../types';
 
 export function useJoinForm() {
   const router = useRouter();

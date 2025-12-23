@@ -123,3 +123,14 @@ export type GenderFormData = z.infer<typeof genderSchema>;
 export type LifestyleFormData = z.infer<typeof lifestyleSchema>;
 export type OnboardingFormData = z.infer<typeof onboardingSchema>;
 export type JoinFormData = z.infer<typeof joinFormSchema>;
+
+export const joinPageSchema = z.object({
+  name: nameSchema.shape.name,
+  carrier: carrierSchema.shape.carrier,
+  phoneNumber: phoneSchema.shape.phoneNumber,
+  agreeTerms: agreementSchema.shape.agreeTerms,
+  agreePrivacy: agreementSchema.shape.agreePrivacy,
+  agreeMarketing: agreementSchema.shape.agreeMarketing.optional(),
+});
+
+export type JoinPageFormData = z.infer<typeof joinPageSchema>;
