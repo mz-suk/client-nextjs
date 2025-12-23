@@ -1,5 +1,6 @@
 import { fetchAPI } from '@/core/api';
 import { logger } from '@/shared/lib';
+
 import type { User } from '../types';
 
 export async function getUsers(): Promise<User[]> {

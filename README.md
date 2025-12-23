@@ -69,13 +69,13 @@ src/
 
 | 경로                      | 설명                |
 | ------------------------- | ------------------- |
-| `/example-ssg`            | SSG 빌드            |
-| `/example-api-usage`      | CSR + React Query   |
-| `/example-hybrid`         | Hybrid (SSG + CSR)  |
-| `/example-tanstack-query` | TanStack Query      |
-| `/example-react19`        | React 19 use() hook |
-| `/example-zustand`        | Zustand 상태 관리   |
-| `/example-env-check`      | 환경변수 확인       |
+| `/example/ssg`            | SSG 빌드            |
+| `/example/api-usage`      | CSR + React Query   |
+| `/example/hybrid`         | Hybrid (SSG + CSR)  |
+| `/example/tanstack-query` | TanStack Query      |
+| `/example/react19`        | React 19 use() hook |
+| `/example/zustand`        | Zustand 상태 관리   |
+| `/example/env-check`      | 환경변수 확인       |
 
 ## 환경 설정
 
@@ -102,6 +102,7 @@ NEXT_PUBLIC_FEATURE_DEBUG=true
 - [데이터 페칭](./docs/DATA_FETCHING.md)
 - [상태 관리](./docs/STATE_MANAGEMENT.md)
 - [성능 최적화](./docs/PERFORMANCE.md)
+- [배포 가이드](./docs/DEPLOYMENT.md)
 
 ## 라이선스
 

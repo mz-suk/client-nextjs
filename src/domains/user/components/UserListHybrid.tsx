@@ -1,7 +1,7 @@
 'use client';
 
-import type { User } from '../types';
 import { useUsers } from '../hooks';
+import type { User } from '../types';
 import styles from './UserList.module.css';
 
 interface UserListHybridProps {
