@@ -7,57 +7,33 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <h1>Next.js 범용 템플릿</h1>
-        <p className={styles.description}>다양한 렌더링 방식과 최신 기술 스택을 활용한 범용 템플릿입니다.</p>
+        <p className={styles.description}>Next.js 16 + React 19 기반 DDD 아키텍처 템플릿</p>
 
-        <h2>렌더링 방식 예제</h2>
-        <ol>
-          <li>
-            <Link href="/example-ssg">
-              <strong>SSG (Static Site Generation)</strong>
-              <br />
-              <small>빌드 시 정적 페이지 생성 - 최고 성능</small>
-            </Link>
-          </li>
-          <li>
-            <Link href="/example-hybrid">
-              <strong>하이브리드 (SSG + React Query)</strong>
-              <br />
-              <small>초기는 SSG, 업데이트는 React Query - 추천 방식 ⭐</small>
-            </Link>
-          </li>
-          <li>
-            <Link href="/example-api-usage">
-              <strong>CSR with React Query</strong>
-              <br />
-              <small>클라이언트에서 React Query로 데이터 fetch</small>
-            </Link>
-          </li>
-          <li>
-            <Link href="/example-react19">
-              <strong>React 19 use() 훅</strong>
-              <br />
-              <small>React 19 신규 훅으로 Promise unwrap</small>
-            </Link>
-          </li>
-        </ol>
+        <div className={styles.exampleLink}>
+          <Link href="/example">예제 페이지 보기 →</Link>
+        </div>
 
-        <h2>상태 관리 예제</h2>
-        <ol>
+        <h2>주요 기능</h2>
+        <ul>
           <li>
-            <Link href="/example-tanstack-query">
-              <strong>TanStack Query (React Query)</strong>
-              <br />
-              <small>서버 상태 관리 및 강력한 캐싱</small>
-            </Link>
+            <strong>SSG + TanStack Query:</strong> 빌드 타임 데이터 prefetch + 클라이언트 상태 관리
           </li>
           <li>
-            <Link href="/example-zustand">
-              <strong>Zustand</strong>
-              <br />
-              <small>간단하고 강력한 클라이언트 상태 관리</small>
-            </Link>
+            <strong>CSR + TanStack Query:</strong> 완전한 클라이언트 사이드 데이터 페칭
           </li>
-        </ol>
+          <li>
+            <strong>Zustand:</strong> 간단하고 직관적인 전역 상태 관리
+          </li>
+        </ul>
+
+        <h2>기술 스택</h2>
+        <ul>
+          <li>Next.js 16 (App Router, Turbopack)</li>
+          <li>React 19 (Server Components, use() hook)</li>
+          <li>TypeScript 5.9</li>
+          <li>TanStack Query (서버 상태)</li>
+          <li>Zustand (클라이언트 상태)</li>
+        </ul>
       </main>
     </div>
   );
