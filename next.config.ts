@@ -2,6 +2,8 @@ import type { NextConfig } from 'next';
 import { API_CONFIG, isAnalyze, isDebug, isDev, SERVER_CONFIG } from './src/core/config/constants';
 
 let nextConfig: NextConfig = {
+  // assetPrefix: !isDev ? process.env.NEXT_PUBLIC_CDN_URL || '' : '',
+
   // 이미지 최적화
   images: {
     formats: ['image/avif', 'image/webp'],

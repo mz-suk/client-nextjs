@@ -1,20 +1,10 @@
 import '@/shared/styles/index.scss';
 
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
 
 import { API_CONFIG } from '@/core/config';
 import { QueryProvider } from '@/shared/providers';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
+import { pretendard, suite } from '@/shared/styles/fonts';
 
 export const metadata: Metadata = {
   title: 'Next.js 범용 템플릿',
@@ -33,7 +23,7 @@ export default function RootLayout({
         <link rel="preconnect" href={API_CONFIG.BASE_URL} />
         <link rel="dns-prefetch" href={API_CONFIG.BASE_URL} />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${pretendard.variable} ${suite.variable}`}>
         <div className="root">
           <QueryProvider>{children}</QueryProvider>
         </div>
