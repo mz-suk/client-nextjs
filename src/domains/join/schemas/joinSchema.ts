@@ -8,7 +8,7 @@ export const nameSchema = z.object({
 // Step 2-4: 본인인증
 export const carrierSchema = z.object({
   carrier: z
-    .enum(['SKT', 'KT', 'LGU+'])
+    .enum(['SKT', 'KT', 'LGU+', 'SKT_BUDGET', 'KT_BUDGET', 'LGU_BUDGET'])
     .or(z.literal(''))
     .refine(val => val !== '', {
       message: '통신사를 선택해주세요.',
