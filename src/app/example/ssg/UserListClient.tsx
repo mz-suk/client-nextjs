@@ -18,7 +18,7 @@ export function UserListClient({ initialUsers }: UserListClientProps) {
     refetch,
   } = useQuery({
     queryKey: ['users'],
-    queryFn: getUsers,
+    queryFn: () => getUsers(),
     initialData: initialUsers,
     staleTime: 5 * 60 * 1000, // 5분
   });

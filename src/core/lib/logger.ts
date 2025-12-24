@@ -3,14 +3,14 @@ import { isDebug } from '@core/config';
 type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'api';
 
 class Logger {
-  private isEnabled: boolean;
+  private enabled: boolean;
 
   constructor(enabled = isDebug) {
-    this.isEnabled = enabled;
+    this.enabled = enabled;
   }
 
   private shouldLog(level: LogLevel): boolean {
-    return this.isEnabled || level === 'error';
+    return this.enabled || level === 'error';
   }
 
   private log(level: LogLevel, ...args: unknown[]) {
@@ -52,12 +52,6 @@ class Logger {
   api(...args: unknown[]) {
     this.log('api', ...args);
   }
-
-  setEnabled(enabled: boolean) {
-    this.isEnabled = enabled;
-  }
 }
 
 export const logger = new Logger();
-
-export { Logger };
