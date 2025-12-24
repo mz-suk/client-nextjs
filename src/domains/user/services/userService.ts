@@ -1,18 +1,13 @@
-import { fetchAPI } from '@core/api';
-import { logger } from '@core/lib';
+import { apiClient } from '@core/api';
 
 import type { User } from '../types';
 
-export async function getUsers(): Promise<User[]> {
-  try {
-    const users = await fetchAPI<User[]>('/users');
-    return users;
-  } catch (error) {
-    logger.error('getUsers 에러:', error);
-    throw error;
-  }
-}
+export const getUsers = async (): Promise<User[]> => {
+  const { data } = await apiClient.get<User[]>('/users');
+  return data;
+};
 
-export async function getUser(id: number): Promise<User> {
-  return fetchAPI<User>(`/users/${id}`);
-}
+export const getUser = async (id: number): Promise<User> => {
+  const { data } = await apiClient.get<User>(`/users/${id}`);
+  return data;
+};
