@@ -1,3 +1,8 @@
+export interface NextFetchRequestConfig {
+  revalidate?: number | false;
+  tags?: string[];
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
@@ -8,6 +13,7 @@ export interface ApiResponse<T> {
 export interface FetchConfig extends RequestInit {
   params?: Record<string, unknown>;
   skipAuth?: boolean;
+  next?: NextFetchRequestConfig;
 }
 
 export type RequestInterceptor = (config: RequestInit) => RequestInit | Promise<RequestInit>;
