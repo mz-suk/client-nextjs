@@ -104,4 +104,39 @@
   --z-dropdown: 500;
   --z-modal: 1000;
   --z-toast: 2000;
+
+  /* Semantic Tokens - Color */
+  --color-primary: var(--brand70);
+  --color-primary-hover: var(--brand80);
+  --color-primary-active: var(--brand90);
+  --color-primary-light: var(--brand10);
+
+  --color-secondary: var(--blue70);
+  --color-secondary-hover: var(--blue80);
+
+  --color-success: var(--success);
+  --color-error: var(--danger);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
+  --color-text-primary: var(--gray100);
+  --color-text-secondary: var(--gray70);
+  --color-text-tertiary: var(--gray50);
+  --color-text-disabled: var(--gray40);
+  --color-text-inverse: var(--base-white);
+
+  --color-bg-base: var(--base-white);
+  --color-bg-sub: var(--gray10);
+  --color-bg-disabled: var(--gray20);
+
+  --color-border-base: var(--gray30);
+  --color-border-light: var(--gray20);
+
+  /* Semantic Tokens - Layout & Spacing */
+  --spacing-xs: 0.4rem;
+  --spacing-sm: 0.8rem;
+  --spacing-md: 1.2rem;
+  --spacing-lg: 1.6rem;
+  --spacing-xl: 2.4rem;
+  --spacing-2xl: 3.2rem;
 }

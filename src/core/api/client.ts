@@ -1,6 +1,7 @@
-import { logger } from '../lib';
-
 import { API_CONFIG, isDev, SERVER_CONFIG } from '../config/constants';
+import { logger } from '../lib';
+import { ApiError } from './error';
+import type { ApiResponse } from './types';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
@@ -86,8 +87,6 @@ class ApiClient {
         headers,
       });
 
-      logger.debug('Response:', response.status);
-
       if (!response.ok) {
         const shouldRetry = response.status === 503;
         if (shouldRetry && retryCount < MAX_RETRIES) {
@@ -99,14 +98,18 @@ class ApiClient {
 
         const errorData = await response.json().catch(() => ({}));
         const message = (errorData as { message?: string })?.message || response.statusText;
+        const code = (errorData as { code?: string })?.code;
+
         logger.error('API Error:', response.status, message);
-        throw new Error(`API Error: ${response.status} - ${message}`);
+        throw new ApiError(response.status, message, code, errorData);
       }
 
       const data = await response.json();
       logger.debug('Response data:', data);
       return data;
     } catch (error) {
+      if (error instanceof ApiError) throw error;
+
       if (error instanceof Error) {
         const isNetworkError = error.name === 'AbortError' || error.message.includes('fetch');
         if (isNetworkError && retryCount < MAX_RETRIES) {
@@ -117,70 +120,64 @@ class ApiClient {
         }
 
         logger.error('Request Error:', error);
-        throw error;
+        throw new ApiError(0, error.message);
       }
 
       logger.error('Unknown Error:', error);
-      throw error;
+      throw new ApiError(0, 'Unknown error occurred');
     }
   }
 
-  async get<T>(endpoint: string, config?: FetchConfig): Promise<{ data: T }> {
+  async get<T>(endpoint: string, config?: FetchConfig): Promise<ApiResponse<T>> {
     const data = await this.request<T>(endpoint, { ...config, method: 'GET' });
-    return { data };
+    return { data, success: true };
   }
 
-  async post<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<{ data: T }> {
+  async post<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<ApiResponse<T>> {
     const data = await this.request<T>(endpoint, {
       ...config,
       method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
     });
-    return { data };
+    return { data, success: true };
   }
 
-  async put<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<{ data: T }> {
+  async put<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<ApiResponse<T>> {
     const data = await this.request<T>(endpoint, {
       ...config,
       method: 'PUT',
       body: body ? JSON.stringify(body) : undefined,
     });
-    return { data };
+    return { data, success: true };
   }
 
-  async patch<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<{ data: T }> {
+  async patch<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<ApiResponse<T>> {
     const data = await this.request<T>(endpoint, {
       ...config,
       method: 'PATCH',
       body: body ? JSON.stringify(body) : undefined,
     });
-    return { data };
+    return { data, success: true };
   }
 
-  async delete<T>(endpoint: string, config?: FetchConfig): Promise<{ data: T }> {
+  async delete<T>(endpoint: string, config?: FetchConfig): Promise<ApiResponse<T>> {
     const data = await this.request<T>(endpoint, { ...config, method: 'DELETE' });
-    return { data };
+    return { data, success: true };
   }
 }
 
 export const apiClient = new ApiClient();
 
+/**
+ * 단순 데이터만 반환하는 레거시 또는 직접 호출용
+ */
 export async function fetchAPI<T>(endpoint: string, config?: FetchConfig): Promise<T> {
   return apiClient.request<T>(endpoint, { ...config, method: config?.method || 'GET' });
 }
 
-export interface ApiResponse<T> {
-  data: T;
-  message?: string;
-  success: boolean;
-}
-
+/**
+ * 상태와 데이터를 함께 반환하는 권장 호출 방식
+ */
 export async function fetchApiWithStatus<T>(endpoint: string, config?: FetchConfig): Promise<ApiResponse<T>> {
-  try {
-    const data = await fetchAPI<T>(endpoint, config);
-    return { data, success: true };
-  } catch (error) {
-    logger.error('API 호출 실패:', error);
-    throw error;
-  }
+  return apiClient.get<T>(endpoint, config);
 }
