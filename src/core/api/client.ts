@@ -1,4 +1,4 @@
-import { logger } from '@shared/lib';
+import { logger } from '../lib';
 
 import { API_CONFIG, isDev, SERVER_CONFIG } from '../config/constants';
 

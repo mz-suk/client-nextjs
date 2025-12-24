@@ -1,6 +1,6 @@
 'use client';
 
-import { logger } from '@shared/lib';
+import { logger } from '@core/lib';
 import Link from 'next/link';
 import { useEffect } from 'react';
 

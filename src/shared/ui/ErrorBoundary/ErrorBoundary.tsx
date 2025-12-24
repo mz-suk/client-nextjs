@@ -1,6 +1,6 @@
 'use client';
 
-import { logger } from '@shared/lib';
+import { logger } from '@core/lib';
 import { Component, type ReactNode } from 'react';
 
 import styles from './ErrorBoundary.module.css';

@@ -1,5 +1,5 @@
 import { fetchAPI } from '@core/api';
-import { logger } from '@shared/lib';
+import { logger } from '@core/lib';
 
 import type { User } from '../types';
 
