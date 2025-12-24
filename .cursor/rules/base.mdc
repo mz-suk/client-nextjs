@@ -1,0 +1,6 @@
+---
+alwaysApply: true
+---
+- 모바일 하이브리드 앱(flutter)의 웹뷰 영역을 개발하는 프로젝트.
+- 기본 틀은 next.js ^16.1을 사용하며 데이터 패칭에 tanstack-query, 클라이언트 상태 관리에 zustand, 스타일링에는 sass를 사용한다.
+- FSD, DDD 혼합 아키텍쳐이며 shared는 공용 컴포넌트 위주, core는 공통 환경 위주, domains는 비즈니스 로직 위주로 관리한다.

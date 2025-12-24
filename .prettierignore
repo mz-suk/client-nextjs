@@ -1,19 +1,27 @@
 # Dependencies
 node_modules
+.pnp
+.pnp.js
 
 # Build outputs
 .next
 out
 build
 dist
+coverage
 
 # TypeScript
 *.tsbuildinfo
+next-env.d.ts
 
 # Lock files
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
 
-# Config files (생성된 파일만)
-next-env.d.ts
+# Public assets (optional - usually we want to format these if they are code, but ignore binary)
+# public/
+
+# System
+.DS_Store
+.vercel
