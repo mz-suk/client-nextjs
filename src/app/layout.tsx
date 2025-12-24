@@ -1,7 +1,7 @@
 import '@shared/styles/index.scss';
 
 import { API_CONFIG } from '@core/config';
-import { QueryProvider } from '@shared/providers';
+import { AuthProvider, QueryProvider } from '@shared/providers';
 import { pretendard, suite } from '@shared/styles/fonts';
 import type { Metadata } from 'next';
 
@@ -24,7 +24,9 @@ export default function RootLayout({
       </head>
       <body className={`${pretendard.variable} ${suite.variable}`}>
         <div className="root">
-          <QueryProvider>{children}</QueryProvider>
+          <AuthProvider>
+            <QueryProvider>{children}</QueryProvider>
+          </AuthProvider>
         </div>
       </body>
     </html>
