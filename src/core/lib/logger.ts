@@ -3,13 +3,21 @@ import { isDebug } from '@core/config';
 type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'api';
 
 class Logger {
-  private isEnabled = isDebug;
+  private enabled: boolean;
+
+  constructor(enabled = isDebug) {
+    this.enabled = enabled;
+  }
+
+  private shouldLog(level: LogLevel): boolean {
+    return this.enabled || level === 'error';
+  }
 
   private log(level: LogLevel, ...args: unknown[]) {
-    if (!this.isEnabled && level !== 'error') return;
+    if (!this.shouldLog(level)) return;
 
-    const prefix = `[${level.toUpperCase()}]`;
     const timestamp = new Date().toISOString();
+    const prefix = `[${level.toUpperCase()}]`;
 
     /* eslint-disable no-console */
     switch (level) {
@@ -18,9 +26,6 @@ class Logger {
         break;
       case 'warn':
         console.warn(prefix, timestamp, ...args);
-        break;
-      case 'api':
-        console.log(`[API]`, timestamp, ...args);
         break;
       default:
         console.log(prefix, timestamp, ...args);

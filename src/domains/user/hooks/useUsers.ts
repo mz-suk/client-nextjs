@@ -15,13 +15,13 @@ export function useUsers(options?: UseUsersOptions) {
 
   const { data, error, isLoading, refetch } = useQuery<User[]>({
     queryKey: ['users'],
-    queryFn: getUsers,
+    queryFn: () => getUsers(),
     initialData,
     enabled,
   });
 
   return {
-    users: data || [],
+    users: data ?? [],
     isLoading,
     error,
     refetch,
