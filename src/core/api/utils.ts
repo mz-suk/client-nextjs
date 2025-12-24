@@ -23,15 +23,37 @@ export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, 
 export const buildURL = (baseURL: string, endpoint: string, params?: Record<string, unknown>): string => {
   const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
   const normalizedBase = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
-  const url = new URL(normalizedEndpoint, normalizedBase);
 
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        url.searchParams.append(key, String(value));
-      }
-    });
+  // 절대 URL인 경우
+  if (normalizedBase.startsWith('http://') || normalizedBase.startsWith('https://')) {
+    const url = new URL(normalizedEndpoint, normalizedBase);
+
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          url.searchParams.append(key, String(value));
+        }
+      });
+    }
+
+    return url.toString();
   }
 
-  return url.toString();
+  // 상대 경로인 경우 (클라이언트 환경)
+  let url = normalizedBase + normalizedEndpoint;
+
+  if (params) {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        searchParams.append(key, String(value));
+      }
+    });
+    const queryString = searchParams.toString();
+    if (queryString) {
+      url += `?${queryString}`;
+    }
+  }
+
+  return url;
 };

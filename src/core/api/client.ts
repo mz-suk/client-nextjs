@@ -161,8 +161,8 @@ class ApiClient {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const message = (errorData as { message?: string })?.message || response.statusText;
-        const code = (errorData as { code?: string })?.code;
+        const message = (errorData as { message?: string }).message ?? response.statusText;
+        const code = (errorData as { code?: string }).code;
 
         if (this.shouldRetry(response.status, config.skipRetry, retryCount)) {
           const delayMs = API_CONSTANTS.RETRY_DELAY * (retryCount + 1);
