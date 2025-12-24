@@ -1,10 +1,10 @@
 import { API_CONFIG, isDev, SERVER_CONFIG } from '../config/constants';
 import { logger } from '../lib';
 import { AUTH_ERROR_CODES, AuthError, type AuthTokens, getAuthConfig } from './auth';
-import { API_CONSTANTS, HTTP_STATUS } from './constants';
+import { HTTP_STATUS } from './constants';
 import { ApiError, ERROR_TYPES, type ErrorType } from './error';
 import type { ApiResponse, FetchConfig, RequestInterceptor, ResponseInterceptor } from './types';
-import { buildURL, createHeaders, delay, serializeBody } from './utils';
+import { buildURL, createHeaders, serializeBody } from './utils';
 
 const getBaseURL = () => {
   if (typeof window === 'undefined' && isDev && SERVER_CONFIG.API_TARGET_URL) {
@@ -69,7 +69,7 @@ class ApiClient {
     return { ...headers, Authorization: `Bearer ${accessToken}` };
   }
 
-  private async handleTokenRefresh(endpoint: string, config: FetchConfig, retryCount: number): Promise<Response> {
+  private async handleTokenRefresh(endpoint: string, config: FetchConfig): Promise<Response> {
     const authConfig = getAuthConfig();
     if (!authConfig) throw new AuthError(AUTH_ERROR_CODES.UNAUTHORIZED);
 
@@ -91,7 +91,7 @@ class ApiClient {
       authConfig.store.getState().setTokens(tokens);
 
       logger.info('토큰 갱신 성공');
-      return this.executeRequest(endpoint, { ...config, _isRetry: true }, retryCount);
+      return this.executeRequest(endpoint, { ...config, _isRetry: true });
     } catch {
       logger.error('토큰 갱신 실패');
       authConfig.onAuthFailure();
@@ -99,12 +99,7 @@ class ApiClient {
     }
   }
 
-  private shouldRetry(status: number, skipRetry?: boolean, retryCount?: number): boolean {
-    if (skipRetry || !retryCount || retryCount >= API_CONSTANTS.MAX_RETRIES) return false;
-    return status === HTTP_STATUS.SERVICE_UNAVAILABLE || status >= HTTP_STATUS.INTERNAL_SERVER_ERROR;
-  }
-
-  private async handleError(error: unknown, endpoint: string, config: FetchConfig, retryCount: number): Promise<never> {
+  private handleError(error: unknown): never {
     if (error instanceof ApiError || error instanceof AuthError) throw error;
 
     if (!(error instanceof Error)) {
@@ -113,13 +108,6 @@ class ApiClient {
 
     const isTimeout = error.name === 'AbortError';
     const isNetworkError = error.message.includes('fetch') || error.message.includes('network');
-
-    if (!config.skipRetry && (isNetworkError || isTimeout) && retryCount < API_CONSTANTS.MAX_RETRIES) {
-      const delayMs = API_CONSTANTS.RETRY_DELAY * (retryCount + 1);
-      logger.warn(`재시도 ${retryCount + 1}/${API_CONSTANTS.MAX_RETRIES} (${delayMs}ms 후)`);
-      await delay(delayMs);
-      return this.request(endpoint, config, retryCount + 1);
-    }
 
     const authConfig = getAuthConfig();
     if (authConfig?.onError && (isNetworkError || isTimeout)) {
@@ -130,7 +118,7 @@ class ApiClient {
     throw new ApiError(0, error.message, undefined, undefined, errorType);
   }
 
-  private async executeRequest(endpoint: string, config: FetchConfig & { _isRetry?: boolean }, retryCount: number): Promise<Response> {
+  private async executeRequest(endpoint: string, config: FetchConfig & { _isRetry?: boolean }): Promise<Response> {
     const url = this.buildURL(endpoint, config.params);
     const headers = await this.injectAuthHeader(createHeaders(config.body, config.headers, API_CONFIG.ACCEPT_LANGUAGE), config.skipAuth);
 
@@ -149,27 +137,20 @@ class ApiClient {
     }
 
     if (response.status === HTTP_STATUS.UNAUTHORIZED && !config._isRetry && !config.skipAuth) {
-      return this.handleTokenRefresh(endpoint, config, retryCount);
+      return this.handleTokenRefresh(endpoint, config);
     }
 
     return response;
   }
 
-  async request<T>(endpoint: string, config: FetchConfig & { _isRetry?: boolean } = {}, retryCount = 0): Promise<T> {
+  async request<T>(endpoint: string, config: FetchConfig & { _isRetry?: boolean } = {}): Promise<T> {
     try {
-      const response = await this.executeRequest(endpoint, config, retryCount);
+      const response = await this.executeRequest(endpoint, config);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         const message = (errorData as { message?: string }).message ?? response.statusText;
         const code = (errorData as { code?: string }).code;
-
-        if (this.shouldRetry(response.status, config.skipRetry, retryCount)) {
-          const delayMs = API_CONSTANTS.RETRY_DELAY * (retryCount + 1);
-          logger.warn(`재시도 ${retryCount + 1}/${API_CONSTANTS.MAX_RETRIES} (${delayMs}ms 후)`);
-          await delay(delayMs);
-          return this.request<T>(endpoint, config, retryCount + 1);
-        }
 
         let errorType: ErrorType = ERROR_TYPES.API;
         if (response.status >= HTTP_STATUS.INTERNAL_SERVER_ERROR) {
@@ -186,7 +167,7 @@ class ApiClient {
       logger.debug('Response:', data);
       return data;
     } catch (error) {
-      return this.handleError(error, endpoint, config, retryCount);
+      return this.handleError(error);
     }
   }
 

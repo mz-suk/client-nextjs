@@ -18,13 +18,10 @@ export const serializeBody = (body: unknown): BodyInit | undefined => {
   return JSON.stringify(body);
 };
 
-export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 export const buildURL = (baseURL: string, endpoint: string, params?: Record<string, unknown>): string => {
   const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
   const normalizedBase = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
 
-  // 절대 URL인 경우
   if (normalizedBase.startsWith('http://') || normalizedBase.startsWith('https://')) {
     const url = new URL(normalizedEndpoint, normalizedBase);
 
@@ -39,7 +36,6 @@ export const buildURL = (baseURL: string, endpoint: string, params?: Record<stri
     return url.toString();
   }
 
-  // 상대 경로인 경우 (클라이언트 환경)
   let url = normalizedBase + normalizedEndpoint;
 
   if (params) {

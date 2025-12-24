@@ -1,9 +1,3 @@
-export const API_CONSTANTS = {
-  MAX_RETRIES: 3,
-  RETRY_DELAY: 1000,
-  DEFAULT_TIMEOUT: 30000,
-} as const;
-
 export const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,
