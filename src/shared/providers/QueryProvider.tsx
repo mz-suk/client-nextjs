@@ -1,22 +1,23 @@
 'use client';
 
-import { CACHE_CONFIG } from '@core/config';
+import { CACHE_CONFIG, isDebug } from '@core/config';
 import { logger } from '@core/lib';
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type ReactNode, useState } from 'react';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { type ReactNode, useMemo } from 'react';
 
-// 전역 에러 핸들링 설정
-const onError = (error: Error) => {
-  logger.error('Global Query Error:', error.message);
-  // 추후 토스트 메시지 등을 여기에 추가
-};
+interface QueryProviderProps {
+  children: ReactNode;
+  onError?: (error: Error) => void;
+  enableDevtools?: boolean;
+}
 
-const queryClientConfig = {
+const createQueryClientConfig = (onError?: (error: Error) => void) => ({
   queryCache: new QueryCache({
-    onError,
+    onError: onError ?? (error => logger.error('Query Error:', error.message)),
   }),
   mutationCache: new MutationCache({
-    onError,
+    onError: onError ?? (error => logger.error('Mutation Error:', error.message)),
   }),
   defaultOptions: {
     queries: {
@@ -31,19 +32,15 @@ const queryClientConfig = {
       retry: 0,
     },
   },
-};
+});
 
-interface QueryProviderProps {
-  children: ReactNode;
-}
-
-export function QueryProvider({ children }: QueryProviderProps) {
-  const [queryClient] = useState(() => new QueryClient(queryClientConfig));
+export function QueryProvider({ children, onError, enableDevtools = isDebug }: QueryProviderProps) {
+  const queryClient = useMemo(() => new QueryClient(createQueryClientConfig(onError)), [onError]);
 
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      {enableDevtools && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
 }

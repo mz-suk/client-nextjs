@@ -48,14 +48,16 @@ function parseEnv() {
   }
 }
 
-export const parsed = parseEnv();
+const parsed = parseEnv();
+
+const isServer = typeof window === 'undefined';
 
 export const env = {
   API_URL: parsed.NEXT_PUBLIC_API_URL,
   API_TIMEOUT: parsed.NEXT_PUBLIC_API_TIMEOUT,
   FEATURE_DEBUG: parsed.NEXT_PUBLIC_FEATURE_DEBUG,
-  API_TARGET_URL: typeof window === 'undefined' ? parsed.API_TARGET_URL : undefined,
+  API_TARGET_URL: isServer ? parsed.API_TARGET_URL : undefined,
   API_ACCEPT_LANGUAGE: parsed.NEXT_PUBLIC_API_ACCEPT_LANGUAGE,
   ANALYZE: parsed.ANALYZE,
   NODE_ENV: parsed.NODE_ENV,
-};
+} as const;
