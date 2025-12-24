@@ -3,7 +3,7 @@ import { env } from './env';
 export const API_CONFIG = {
   BASE_URL: env.API_URL,
   TIMEOUT: env.API_TIMEOUT,
-  ACCEPT_LANGUAGE: env.API_ACCEPT_LANGUAGE || 'ko-KR',
+  ACCEPT_LANGUAGE: env.API_ACCEPT_LANGUAGE ?? 'ko-KR',
 } as const;
 
 export const APP_METADATA = {

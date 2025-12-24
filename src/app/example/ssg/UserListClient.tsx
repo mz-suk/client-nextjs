@@ -1,9 +1,8 @@
 'use client';
 
+import { getUsers } from '@domains/user/services';
+import type { User } from '@domains/user/types';
 import { useQuery } from '@tanstack/react-query';
-
-import { getUsers } from '@/domains/user/services';
-import type { User } from '@/domains/user/types';
 
 import styles from './page.module.css';
 

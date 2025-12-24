@@ -1,8 +1,7 @@
 'use client';
 
+import { useUsers } from '@domains/user/hooks';
 import { useEffect, useState } from 'react';
-
-import { useUsers } from '@/domains/user/hooks';
 
 import styles from './page.module.css';
 

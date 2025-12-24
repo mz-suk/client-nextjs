@@ -1,6 +1,6 @@
 'use client';
 
-import { useCounterStore } from '@/domains/counter/stores';
+import { useCounterStore } from '@domains/counter/stores';
 
 import styles from './page.module.css';
 

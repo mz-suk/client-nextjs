@@ -1,11 +1,10 @@
 'use client';
 
+import { useJoinStore, validateGender } from '@domains/join';
+import { JoinLayout } from '@domains/join/components';
+import { Button } from '@domains/join/components/Button';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
-import { useJoinStore, validateGender } from '@/domains/join';
-import { JoinLayout } from '@/domains/join/components';
-import { Button } from '@/domains/join/components/Button';
 
 import styles from './page.module.scss';
 

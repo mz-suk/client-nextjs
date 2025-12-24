@@ -58,4 +58,4 @@ export const env = {
   API_ACCEPT_LANGUAGE: parsed.NEXT_PUBLIC_API_ACCEPT_LANGUAGE,
   ANALYZE: parsed.ANALYZE,
   NODE_ENV: parsed.NODE_ENV,
-} as const;
+};

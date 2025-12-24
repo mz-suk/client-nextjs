@@ -1,9 +1,8 @@
 'use client';
 
+import { useJoinStore } from '@domains/join';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-import { useJoinStore } from '@/domains/join';
 
 import styles from './JoinLayout.module.scss';
 

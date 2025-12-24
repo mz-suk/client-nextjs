@@ -1,4 +1,4 @@
-import { logger } from '@/shared/lib';
+import { logger } from '@shared/lib';
 
 import { API_CONFIG, isDev, SERVER_CONFIG } from '../config/constants';
 
@@ -73,7 +73,8 @@ class ApiClient {
   }
 
   async request<T>(endpoint: string, config: FetchConfig = {}, retryCount = 0): Promise<T> {
-    const { baseURL, timeout, params, headers: customHeaders, ...fetchConfig } = config;
+    const { params, headers: customHeaders, ...fetchConfig } = config;
+    // const { baseURL, timeout, params, headers: customHeaders, ...fetchConfig } = config;
     const url = this.buildURL(endpoint, params);
     const headers = { ...this.defaultHeaders, ...customHeaders };
 

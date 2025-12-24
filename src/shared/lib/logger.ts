@@ -1,4 +1,4 @@
-import { isDebug } from '@/core/config';
+import { isDebug } from '@core/config';
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'api';
 

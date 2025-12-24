@@ -1,4 +1,4 @@
-import { getUsers } from '@/domains/user/services';
+import { getUsers } from '@domains/user/services';
 
 import { UserListClient } from './UserListClient';
 

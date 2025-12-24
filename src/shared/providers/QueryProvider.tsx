@@ -1,12 +1,14 @@
 'use client';
 
+import { CACHE_CONFIG } from '@core/config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type ReactNode, useState } from 'react';
 
 const queryClientConfig = {
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000,
+      staleTime: CACHE_CONFIG.QUERY_STALE_TIME,
+      gcTime: CACHE_CONFIG.QUERY_GC_TIME,
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
       retry: 3,
