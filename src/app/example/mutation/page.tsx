@@ -3,6 +3,8 @@
 import { useCreatePost, useDeletePost, useUpdatePost } from '@domains/example';
 import { useState } from 'react';
 
+import styles from './page.module.scss';
+
 /**
  * Mutation (데이터 변경) 예제
  *
@@ -63,15 +65,15 @@ export default function MutationPage() {
   };
 
   return (
-    <div style={{ padding: '40px 20px', maxWidth: '800px', margin: '0 auto' }}>
-      <header style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '8px' }}>Mutation (데이터 변경) 예제</h1>
-        <p style={{ color: '#6b7280', lineHeight: '1.6' }}>생성, 수정, 삭제 작업 시 전역 로딩이 자동으로 표시됩니다.</p>
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <h1>Mutation (데이터 변경) 예제</h1>
+        <p>생성, 수정, 삭제 작업 시 전역 로딩이 자동으로 표시됩니다.</p>
       </header>
 
-      <div style={{ marginBottom: '32px', padding: '20px', background: '#f3f4f6', borderRadius: '8px' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '12px' }}>💡 동작 원리</h2>
-        <ul style={{ lineHeight: '1.8', color: '#4b5563' }}>
+      <div className={styles.infoBox}>
+        <h2>💡 동작 원리</h2>
+        <ul>
           <li>
             • Mutation 실행 중 <code>useIsMutating()</code>이 감지되어 전역 로딩 표시
           </li>
@@ -82,108 +84,36 @@ export default function MutationPage() {
       </div>
 
       {/* 생성 폼 */}
-      <section style={{ marginBottom: '32px', padding: '24px', border: '2px solid #e5e7eb', borderRadius: '8px' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '16px' }}>1. 게시글 생성</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <input
-            type="text"
-            placeholder="제목"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            style={{
-              padding: '12px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '1rem',
-            }}
-          />
-          <textarea
-            placeholder="내용"
-            value={body}
-            onChange={e => setBody(e.target.value)}
-            rows={4}
-            style={{
-              padding: '12px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '1rem',
-              resize: 'vertical',
-            }}
-          />
-          <button
-            onClick={handleCreate}
-            disabled={createPost.isPending}
-            style={{
-              padding: '12px 24px',
-              background: createPost.isPending ? '#d1d5db' : '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: '500',
-              cursor: createPost.isPending ? 'not-allowed' : 'pointer',
-            }}
-          >
+      <section className={styles.section}>
+        <h3>1. 게시글 생성</h3>
+        <div className={styles.formGroup}>
+          <input type="text" placeholder="제목" value={title} onChange={e => setTitle(e.target.value)} className={styles.input} />
+          <textarea placeholder="내용" value={body} onChange={e => setBody(e.target.value)} rows={4} className={styles.textarea} />
+          <button onClick={handleCreate} disabled={createPost.isPending} className={`${styles.button} ${styles.primary}`}>
             {createPost.isPending ? '생성 중...' : '게시글 생성'}
           </button>
         </div>
       </section>
 
       {/* 수정/삭제 */}
-      <section style={{ marginBottom: '32px', padding: '24px', border: '2px solid #e5e7eb', borderRadius: '8px' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '16px' }}>2. 게시글 수정 / 삭제</h3>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button
-            onClick={handleUpdate}
-            disabled={updatePost.isPending}
-            style={{
-              flex: 1,
-              padding: '12px 24px',
-              background: updatePost.isPending ? '#d1d5db' : '#10b981',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: '500',
-              cursor: updatePost.isPending ? 'not-allowed' : 'pointer',
-            }}
-          >
+      <section className={styles.section}>
+        <h3>2. 게시글 수정 / 삭제</h3>
+        <div className={styles.buttonGroup}>
+          <button onClick={handleUpdate} disabled={updatePost.isPending} className={`${styles.button} ${styles.success}`}>
             {updatePost.isPending ? '수정 중...' : 'ID 1 수정'}
           </button>
-          <button
-            onClick={handleDelete}
-            disabled={deletePost.isPending}
-            style={{
-              flex: 1,
-              padding: '12px 24px',
-              background: deletePost.isPending ? '#d1d5db' : '#ef4444',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: '500',
-              cursor: deletePost.isPending ? 'not-allowed' : 'pointer',
-            }}
-          >
+          <button onClick={handleDelete} disabled={deletePost.isPending} className={`${styles.button} ${styles.danger}`}>
             {deletePost.isPending ? '삭제 중...' : 'ID 1 삭제'}
           </button>
         </div>
       </section>
 
       {/* 결과 표시 */}
-      {result && (
-        <div
-          style={{
-            padding: '16px',
-            background: result.startsWith('✅') ? '#d1fae5' : '#fee2e2',
-            borderRadius: '8px',
-            marginBottom: '32px',
-          }}
-        >
-          {result}
-        </div>
-      )}
+      {result && <div className={`${styles.result} ${result.startsWith('✅') ? styles.success : styles.error}`}>{result}</div>}
 
-      <div style={{ padding: '20px', background: '#eff6ff', borderRadius: '8px' }}>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px' }}>🎯 테스트 방법</h3>
-        <ol style={{ lineHeight: '1.8', color: '#1e40af' }}>
+      <div className={styles.guide}>
+        <h3>🎯 테스트 방법</h3>
+        <ol>
           <li>1. 제목과 내용을 입력하고 &quot;게시글 생성&quot; 클릭</li>
           <li>2. 전역 로딩이 표시되고 1초 후 완료 메시지 표시</li>
           <li>3. &quot;수정&quot; 또는 &quot;삭제&quot; 버튼 클릭하여 다른 Mutation 테스트</li>

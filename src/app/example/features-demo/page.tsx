@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { ExampleLayout, InfoBox } from '../_components';
+import styles from './page.module.scss';
 
 /**
  * 전역 기능 테스트 페이지
@@ -21,35 +22,11 @@ export default function FeaturesDemoPage() {
       tip='네트워크 탭에서 "Slow 3G"로 설정하면 더 명확하게 확인할 수 있습니다.'
     >
       {/* 탭 */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '32px', borderBottom: '2px solid #e5e7eb' }}>
-        <button
-          onClick={() => setTab('loading')}
-          style={{
-            padding: '12px 24px',
-            background: tab === 'loading' ? '#3b82f6' : 'transparent',
-            color: tab === 'loading' ? 'white' : '#6b7280',
-            border: 'none',
-            borderBottom: tab === 'loading' ? '2px solid #3b82f6' : 'none',
-            marginBottom: '-2px',
-            cursor: 'pointer',
-            fontWeight: '600',
-          }}
-        >
+      <div className={styles.tabs}>
+        <button onClick={() => setTab('loading')} className={`${styles.tab} ${tab === 'loading' ? styles.active : ''}`}>
           전역 로딩
         </button>
-        <button
-          onClick={() => setTab('error')}
-          style={{
-            padding: '12px 24px',
-            background: tab === 'error' ? '#3b82f6' : 'transparent',
-            color: tab === 'error' ? 'white' : '#6b7280',
-            border: 'none',
-            borderBottom: tab === 'error' ? '2px solid #3b82f6' : 'none',
-            marginBottom: '-2px',
-            cursor: 'pointer',
-            fontWeight: '600',
-          }}
-        >
+        <button onClick={() => setTab('error')} className={`${styles.tab} ${tab === 'error' ? styles.active : ''}`}>
           전역 에러
         </button>
       </div>
@@ -78,47 +55,19 @@ function LoadingDemo() {
         </ul>
       </InfoBox>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '32px' }}>
-        <button
-          onClick={() => setEnabled(true)}
-          disabled={enabled}
-          style={{
-            padding: '12px 24px',
-            background: enabled ? '#d1d5db' : '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            fontWeight: '500',
-            cursor: enabled ? 'not-allowed' : 'pointer',
-          }}
-        >
+      <div className={styles.buttonGroup}>
+        <button onClick={() => setEnabled(true)} disabled={enabled} className={`${styles.button} ${styles.primary}`}>
           데이터 가져오기 (첫 로딩)
         </button>
 
-        <button
-          onClick={() => refetch()}
-          disabled={!data}
-          style={{
-            padding: '12px 24px',
-            background: !data ? '#d1d5db' : '#10b981',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            fontWeight: '500',
-            cursor: !data ? 'not-allowed' : 'pointer',
-          }}
-        >
+        <button onClick={() => refetch()} disabled={!data} className={`${styles.button} ${styles.success}`}>
           다시 가져오기 (Refetch)
         </button>
       </div>
 
-      {isLoading && (
-        <div style={{ padding: '20px', background: '#fef3c7', borderRadius: '8px', marginBottom: '20px' }}>
-          ⏳ 로컬 로딩 상태: 데이터를 가져오는 중... (동시에 전역 로딩도 표시됩니다)
-        </div>
-      )}
+      {isLoading && <div className={`${styles.statusBox} ${styles.loading}`}>⏳ 로컬 로딩 상태: 데이터를 가져오는 중... (동시에 전역 로딩도 표시됩니다)</div>}
 
-      {data && <div style={{ padding: '20px', background: '#d1fae5', borderRadius: '8px' }}>✅ 데이터 로드 완료: {data.length}개의 게시글</div>}
+      {data && <div className={`${styles.statusBox} ${styles.success}`}>✅ 데이터 로드 완료: {data.length}개의 게시글</div>}
 
       <InfoBox title="🎯 테스트 방법" variant="info">
         <ol>
@@ -143,14 +92,14 @@ function ErrorDemo() {
         </ul>
       </InfoBox>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        <section style={{ padding: '24px', border: '2px solid #e5e7eb', borderRadius: '8px' }}>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '16px' }}>1. 404 에러 (Not Found)</h3>
+      <div className={styles.sectionGroup}>
+        <section className={styles.section}>
+          <h3>1. 404 에러 (Not Found)</h3>
           <ErrorTrigger errorType="404" />
         </section>
 
-        <section style={{ padding: '24px', border: '2px solid #e5e7eb', borderRadius: '8px' }}>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '16px' }}>2. 네트워크 에러</h3>
+        <section className={styles.section}>
+          <h3>2. 네트워크 에러</h3>
           <ErrorTrigger errorType="network" />
         </section>
       </div>
@@ -191,32 +140,19 @@ function ErrorTrigger({ errorType }: { errorType: '404' | 'network' }) {
 
   if (!enabled) {
     return (
-      <button
-        onClick={() => setEnabled(true)}
-        style={{
-          padding: '12px 24px',
-          background: '#ef4444',
-          color: 'white',
-          border: 'none',
-          borderRadius: '6px',
-          fontWeight: '500',
-          cursor: 'pointer',
-        }}
-      >
+      <button onClick={() => setEnabled(true)} className={`${styles.button} ${styles.danger}`}>
         에러 발생시키기
       </button>
     );
   }
 
   if (isLoading) {
-    return <div style={{ color: '#6b7280' }}>로딩 중...</div>;
+    return <div className={`${styles.statusBox} ${styles.loading}`}>로딩 중...</div>;
   }
 
   if (isError) {
-    return (
-      <div style={{ padding: '12px', background: '#fee2e2', borderRadius: '6px', color: '#991b1b' }}>에러가 발생했습니다. 우측 하단의 토스트를 확인하세요.</div>
-    );
+    return <div className={`${styles.statusBox} ${styles.error}`}>에러가 발생했습니다. 우측 하단의 토스트를 확인하세요.</div>;
   }
 
-  return <div style={{ color: '#059669' }}>✅ 성공</div>;
+  return <div className={`${styles.statusBox} ${styles.success}`}>✅ 성공</div>;
 }

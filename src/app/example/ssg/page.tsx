@@ -1,6 +1,8 @@
 import { PostListSuspense, postQueries } from '@domains/example';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 
+import styles from './page.module.scss';
+
 /**
  * SSG + CSR 데이터 패칭 예제
  *
@@ -18,10 +20,10 @@ export default async function SSGPage() {
   await queryClient.prefetchQuery(postQueries.list());
 
   return (
-    <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <header style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '8px' }}>SSG + CSR Data Fetching</h1>
-        <p style={{ color: '#6b7280', lineHeight: '1.6' }}>
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <h1>SSG + CSR Data Fetching</h1>
+        <p>
           빌드 시점에 데이터를 미리 가져와서(SSG) 정적 HTML을 생성하고,
           <br />
           클라이언트에서 Hydration되어 TanStack Query로 상호작용합니다.
