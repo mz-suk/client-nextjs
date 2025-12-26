@@ -6,10 +6,15 @@ import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@ta
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { type ReactNode, useMemo } from 'react';
 
+import { GlobalLoading } from '../ui/GlobalLoading';
+import { GlobalErrorHandler } from './GlobalErrorHandler';
+
 interface QueryProviderProps {
   children: ReactNode;
   onError?: (error: Error) => void;
   enableDevtools?: boolean;
+  enableGlobalLoading?: boolean;
+  enableGlobalErrorHandler?: boolean;
 }
 
 const createQueryClientConfig = (onError?: (error: Error) => void) => ({
@@ -27,20 +32,40 @@ const createQueryClientConfig = (onError?: (error: Error) => void) => ({
       refetchOnReconnect: true,
       retry: 2,
       retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      // 에러를 throw하지 않고 상태로 관리 (GlobalErrorHandler에서 처리)
+      throwOnError: false,
     },
     mutations: {
       retry: 0,
+      throwOnError: false,
     },
   },
 });
 
-export function QueryProvider({ children, onError, enableDevtools = isDebug }: QueryProviderProps) {
+export function QueryProvider({
+  children,
+  onError,
+  enableDevtools = isDebug,
+  enableGlobalLoading = true,
+  enableGlobalErrorHandler = true,
+}: QueryProviderProps) {
   const queryClient = useMemo(() => new QueryClient(createQueryClientConfig(onError)), [onError]);
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
-      {enableDevtools && <ReactQueryDevtools initialIsOpen={false} />}
+      {enableGlobalErrorHandler ? (
+        <GlobalErrorHandler>
+          {children}
+          {enableGlobalLoading && <GlobalLoading />}
+          {enableDevtools && <ReactQueryDevtools initialIsOpen={false} />}
+        </GlobalErrorHandler>
+      ) : (
+        <>
+          {children}
+          {enableGlobalLoading && <GlobalLoading />}
+          {enableDevtools && <ReactQueryDevtools initialIsOpen={false} />}
+        </>
+      )}
     </QueryClientProvider>
   );
 }

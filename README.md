@@ -54,38 +54,41 @@ src/
 
 - [Core 아키텍처 가이드](./docs/core-architecture.md)
 - [Shared Components 가이드](./docs/shared-components.md)
+- [데이터 패칭 가이드](./docs/data-fetching-guide.md)
+- [에러 처리 가이드](./docs/error-handling-guide.md)
 
 ## 예제 페이지
 
-| 경로               | 설명                   |
-| ------------------ | ---------------------- |
-| `/example/ssg`     | SSG + TanStack Query   |
-| `/example/csr`     | CSR + TanStack Query   |
-| `/example/zustand` | Zustand 전역 상태 관리 |
+| 경로                       | 설명                             |
+| -------------------------- | -------------------------------- |
+| `/example`                 | 예제 목록 및 학습 가이드         |
+| `/example/ssg`             | SSG + CSR 하이브리드 패턴        |
+| `/example/csr`             | 순수 CSR 데이터 패칭             |
+| `/example/mutation`        | 데이터 생성/수정/삭제 (Mutation) |
+| `/example/infinite-scroll` | 무한 스크롤 (Infinite Scroll)    |
+| `/example/features-demo`   | 전역 로딩/에러 처리 통합 테스트  |
 
-### SSG + TanStack Query
+### 주요 패턴
 
-빌드 타임에 데이터를 prefetch하고 클라이언트에서 TanStack Query로 관리합니다.
+**SSG + CSR 하이브리드** (권장)
 
-- 초기 페이지 로딩 속도 향상
-- SEO 최적화
-- 자동 리페치 및 캐싱
+- 빌드 타임에 데이터 prefetch → 정적 HTML 생성
+- 클라이언트에서 Hydration 후 TanStack Query로 관리
+- 초기 로딩 속도 + SEO + 실시간 업데이트
 
-### CSR + TanStack Query
+**CSR (Client-Side Rendering)**
 
-완전히 클라이언트에서 데이터를 페칭하고 관리합니다.
+- 클라이언트에서만 데이터 페칭
+- 전역 로딩/에러 처리 자동 적용
+- 실시간 데이터에 적합
 
-- 로딩, 에러 상태 자동 관리
-- 백그라운드 업데이트
-- 캐싱 및 리페치 전략
+**Mutation (데이터 변경)**
 
-### Zustand
+- 생성/수정/삭제 작업
+- 자동 캐시 무효화
+- Optimistic Update 지원
 
-간단하고 직관적한 전역 상태 관리 라이브러리입니다.
-
-- DevTools 지원
-- localStorage 자동 동기화
-- TypeScript 완벽 지원
+자세한 내용은 [데이터 패칭 가이드](./docs/data-fetching-guide.md) 참고
 
 ## 환경 설정
 
@@ -130,7 +133,8 @@ API_TARGET_URL=http://backend:8080
 ### UI 컴포넌트
 
 - BottomSheet (모바일 최적화)
-- ErrorBoundary
+- ErrorBoundary / QueryErrorBoundary (에러 처리)
+- GlobalLoading (전역 로딩 UI)
 - 폰트: Pretendard Variable, SUITE Variable
 
 ## 성능 최적화
