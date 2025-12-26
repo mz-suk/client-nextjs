@@ -6,7 +6,10 @@ import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
 /**
- * 느린 데이터 시뮬레이션
+ * 느린 데이터 시뮬레이션 (Server Component)
+ *
+ * React Server Component는 async/await를 직접 사용할 수 있습니다.
+ * 이를 통해 데이터 패칭 완료 전까지 렌더링을 지연시킬 수 있습니다.
  */
 async function SlowDataComponent() {
   await new Promise(resolve => setTimeout(resolve, 3000));

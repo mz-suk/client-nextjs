@@ -47,10 +47,18 @@ export default function InfiniteScrollPage() {
     >
       <InfoBox title="💡 동작 원리">
         <ul>
-          <li>• useIntersectionObserver 훅으로 스크롤 위치 감지</li>
-          <li>• 하단 도달 시 자동으로 fetchNextPage() 호출</li>
-          <li>• 페이지별 데이터는 자동으로 캐싱되어 중복 요청 방지</li>
-          <li>• 전역 로딩으로 페이지 로드 상태 표시</li>
+          <li>
+            • <strong>useInfiniteQuery</strong>: 페이지네이션 된 데이터를 관리하고 캐싱합니다.
+          </li>
+          <li>
+            • <strong>useIntersectionObserver</strong>: 사용자가 페이지 하단에 도달했는지 감지합니다.
+          </li>
+          <li>
+            • <strong>Interaction</strong>: 하단 감지 시 <code>fetchNextPage()</code>가 자동으로 호출됩니다.
+          </li>
+          <li>
+            • <strong>UX</strong>: 사용자는 끊김 없이 계속해서 콘텐츠를 소비할 수 있습니다.
+          </li>
         </ul>
       </InfoBox>
 

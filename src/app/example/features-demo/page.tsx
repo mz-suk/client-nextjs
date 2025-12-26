@@ -119,6 +119,8 @@ function ErrorDemo() {
 function ErrorTrigger({ errorType }: { errorType: '404' | 'network' }) {
   const [enabled, setEnabled] = useState(false);
 
+  // 에러 발생 시뮬레이션을 위한 쿼리
+  // retry: false 설정으로 즉시 에러 발생 유도
   const { isLoading, isError } = useQuery({
     queryKey: ['error-demo', errorType, enabled],
     queryFn: async () => {
@@ -128,6 +130,7 @@ function ErrorTrigger({ errorType }: { errorType: '404' | 'network' }) {
         throw new Error('네트워크 연결에 실패했습니다');
       }
 
+      // 존재하지 않는 리소스 요청 (404)
       const response = await fetch(`https://jsonplaceholder.typicode.com/posts/999999`);
       if (!response.ok) {
         throw new Error('요청한 리소스를 찾을 수 없습니다 (404)');

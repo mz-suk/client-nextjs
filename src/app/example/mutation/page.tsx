@@ -25,8 +25,8 @@ export default function MutationPage() {
   const deletePost = useDeletePost();
 
   const handleCreate = async () => {
-    if (!title || !body) {
-      alert('제목과 내용을 입력해주세요');
+    if (!title.trim() || !body.trim()) {
+      setResult('⚠️ 제목과 내용을 모두 입력해주세요.');
       return;
     }
 

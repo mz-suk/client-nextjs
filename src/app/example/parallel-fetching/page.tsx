@@ -28,24 +28,28 @@ export default async function ParallelFetchingPage() {
 
       <div className={styles.comparison}>
         <div className={styles.bad}>
-          <h3>❌ 순차 패칭 (워터폴)</h3>
+          <h3>❌ 순차 패칭 (Waterfall)</h3>
           <pre>
-            {`await queryClient.ensureQueryData(query1);
-await queryClient.ensureQueryData(query2);
-await queryClient.ensureQueryData(query3);
+            {`// 하나가 끝나야 다음이 시작됨
+await query1(); // 1초
+await query2(); // 1초
+await query3(); // 1초
 
-총 시간: T1 + T2 + T3`}
+// 총 소요 시간: 3초 이상`}
           </pre>
         </div>
 
         <div className={styles.good}>
-          <h3>✅ 병렬 패칭</h3>
+          <h3>✅ 병렬 패칭 (Parallel)</h3>
           <pre>
-            {`<Prefetch queries={[query1, query2, query3]}>
-  {children}
-</Prefetch>
+            {`// 동시에 시작됨
+<Prefetch queries={[
+  query1, // 1초
+  query2, // 1초
+  query3  // 1초
+]}>
 
-총 시간: max(T1, T2, T3)`}
+// 총 소요 시간: 약 1초`}
           </pre>
         </div>
       </div>
