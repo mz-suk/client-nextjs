@@ -1,170 +1,146 @@
 # 데이터 패칭 가이드
 
-TanStack Query v5를 활용한 데이터 패칭 패턴을 소개합니다.
+Next.js 16 + React 19 + TanStack Query v5 기반 데이터 패칭 패턴입니다.
 
-## 패턴 선택 가이드
+## 빠른 시작
 
-| 패턴           | 사용 시기                      | SEO | 초기 로딩 속도 |
-| -------------- | ------------------------------ | --- | -------------- |
-| SSG + CSR      | 대부분의 경우 (권장)           | ✅  | ⚡️ 빠름        |
-| CSR            | SEO 불필요, 실시간 데이터 필요 | ❌  | 🐢 느림        |
-| Infinite Query | 대량 데이터, 페이지네이션      | ✅  | ⚡️ 빠름        |
-
-## 패턴
-
-### SSG + CSR (권장)
-
-빌드 시 데이터를 prefetch하고, 클라이언트에서 hydrate하여 사용합니다.
-
-**언제 사용하나요?**
-
-- SEO가 중요한 페이지
-- 빌드 시점에 데이터를 가져올 수 있는 경우
-- 초기 로딩 속도가 중요한 경우
+### 기본 패턴 (SSG + CSR)
 
 ```typescript
 // app/posts/page.tsx
+import { Prefetch } from '@core/lib';
 import { PostList, postQueries } from '@domains/post';
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
 
 export default async function PostsPage() {
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(postQueries.list());
-
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
+    <Prefetch queries={[postQueries.list()]}>
       <PostList />
-    </HydrationBoundary>
+    </Prefetch>
   );
 }
 ```
 
-```typescript
-// domains/post/ui/PostList.tsx
-'use client';
+### 병렬 패칭
 
-export function PostList() {
-  const { data } = useSuspenseQuery(postQueries.list());
-  return <div>{data.map(post => <PostCard key={post.id} post={post} />)}</div>;
-}
+```typescript
+await Promise.all([queryClient.ensureQueryData(postQueries.list()), queryClient.ensureQueryData(userQueries.me())]);
 ```
 
-**장점:** 초기 로딩 속도 + SEO + 실시간 업데이트
-
-### CSR
-
-클라이언트에서만 데이터를 페칭합니다.
-
-**언제 사용하나요?**
-
-- SEO가 필요 없는 페이지 (대시보드, 마이페이지 등)
-- 사용자별로 다른 데이터를 보여주는 경우
-- 실시간 데이터가 필요한 경우
+### Optimistic Updates
 
 ```typescript
-// app/posts/page.tsx
-'use client';
-
-export default function PostsPage() {
-  return <PostList />;
-}
-```
-
-```typescript
-// domains/post/ui/PostList.tsx
-'use client';
-
-export function PostList() {
-  const { data, isLoading, error } = useQuery(postQueries.list());
-
-  if (isLoading) return <div>로딩 중...</div>;
-  if (error) return <div>에러 발생</div>;
-
-  return <div>{data.map(post => <PostCard key={post.id} post={post} />)}</div>;
-}
-```
-
-**장점:** 간단한 구현, 실시간 데이터
-
-## Mutation
-
-데이터 생성/수정/삭제 작업을 처리합니다.
-
-**주요 기능:**
-
-- 자동 전역 로딩 표시
-- 성공 시 관련 쿼리 자동 무효화
-- 에러 자동 처리 (GlobalErrorHandler)
-
-```typescript
-// domains/post/model/post.mutations.ts
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreatePostDto) => postApi.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    mutationFn: data => postApi.create(data),
+    onMutate: async newPost => {
+      await queryClient.cancelQueries({ queryKey: postQueries.keys.list() });
+      const previousPosts = queryClient.getQueryData(postQueries.keys.list());
+
+      queryClient.setQueryData(postQueries.keys.list(), old => [...old, newPost]);
+
+      return { previousPosts };
+    },
+    onError: (err, newPost, context) => {
+      queryClient.setQueryData(postQueries.keys.list(), context.previousPosts);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: postQueries.keys.list() });
     },
   });
 };
 ```
 
-```typescript
-// 사용
-const createPost = useCreatePost();
+## Query Factory 패턴
 
-await createPost.mutateAsync({ title: '제목', body: '내용' });
-```
-
-## Infinite Scroll
-
-무한 스크롤 및 페이지네이션을 구현합니다.
-
-**주요 기능:**
-
-- 자동 페이지 캐싱
-- 스크롤 기반 자동 로딩
-- 중복 요청 방지
+### Query 정의
 
 ```typescript
 // domains/post/model/post.queries.ts
-export const postQueries = {
-  infinite: () =>
-    infiniteQueryOptions({
-      queryKey: ['posts', 'infinite'],
-      queryFn: ({ pageParam }) => postApi.list({ page: pageParam }),
-      initialPageParam: 1,
-      getNextPageParam: lastPage => lastPage.nextPage,
-    }),
+import { createQueryFactory } from '@core/lib';
+
+export const postQueries = createQueryFactory('posts', {
+  list: (params?) => ({
+    queryFn: () => postApi.list(params),
+    ...(params && { params }),
+  }),
+
+  detail: (id: number) => ({
+    queryFn: () => postApi.detail(id),
+    id,
+  }),
+});
+```
+
+### 사용법
+
+```typescript
+// 쿼리 사용
+useQuery(postQueries.list());
+useSuspenseQuery(postQueries.detail(1));
+
+// 캐시 무효화
+queryClient.invalidateQueries({ queryKey: postQueries.keys.list() });
+queryClient.invalidateQueries({ queryKey: postQueries.keys.detail(1) });
+```
+
+## 최적화 기법
+
+### 1. React 19 cache API
+
+```typescript
+// core/lib/query-client.ts
+export const getQueryClient = cache(() => new QueryClient({...}));
+```
+
+### 2. ensureQueryData
+
+```typescript
+// prefetchQuery 대신 ensureQueryData 사용
+await queryClient.ensureQueryData(postQueries.list());
+```
+
+### 3. 조건부 재시도
+
+```typescript
+retry: (failureCount, error) => {
+  // 4xx 에러는 재시도 안함
+  if (error instanceof ApiError && error.status >= 400 && error.status < 500) {
+    return false;
+  }
+  // 5xx 에러는 최대 3회까지
+  return failureCount < 3;
 };
 ```
 
-```typescript
-// 사용
-const { data, fetchNextPage, hasNextPage } = useInfiniteQuery(postQueries.infinite());
-```
-
-## 전역 로딩
-
-`GlobalLoading` 컴포넌트가 모든 Query와 Mutation을 자동으로 감지하여 로딩 UI를 표시합니다.
+### 4. Infinite Query 최적화
 
 ```typescript
-// 별도 설정 불필요 - 자동으로 감지됨
-const { data } = useQuery(postQueries.list()); // Query 로딩 자동 감지
-const mutation = useMutation({ ... });
-await mutation.mutateAsync(data); // Mutation 로딩 자동 감지
+infiniteQueryOptions({
+  queryKey: ['posts', 'infinite'],
+  queryFn: ({ pageParam }) => postApi.list({ page: pageParam }),
+  initialPageParam: 1,
+  getNextPageParam: (lastPage, allPages) => (lastPage.length === 10 ? allPages.length + 1 : undefined),
+  maxPages: 10, // 메모리 누수 방지
+  refetchOnMount: false,
+  refetchOnWindowFocus: false,
+});
 ```
 
-**동작 방식:**
+## 예제 페이지
 
-- `useIsFetching()`: 진행 중인 Query 감지
-- `useIsMutating()`: 진행 중인 Mutation 감지
-- 화면 전체 dim 처리 + 중앙 스피너 표시
+| 경로                         | 설명                |
+| ---------------------------- | ------------------- |
+| `/example/ssg`               | SSG + CSR 기본 패턴 |
+| `/example/parallel-fetching` | 병렬 데이터 패칭    |
+| `/example/streaming`         | Suspense Streaming  |
+| `/example/csr`               | 순수 CSR            |
+| `/example/mutation`          | Optimistic Updates  |
+| `/example/infinite-scroll`   | 무한 스크롤         |
 
 ## 참고
 
 - [TanStack Query 공식 문서](https://tanstack.com/query/latest)
-- [에러 처리](./error-handling.md)
+- [아키텍처 가이드](./architecture.md)
+- [에러 처리 가이드](./error-handling.md)

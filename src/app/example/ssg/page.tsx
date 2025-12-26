@@ -1,24 +1,14 @@
+import { Prefetch } from '@core/lib';
 import { PostListSuspense, postQueries } from '@domains/example';
-import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 
 import styles from './page.module.scss';
 
 /**
  * SSG + CSR 데이터 패칭 예제
  *
- * 동작 방식:
- * 1. 빌드 타임에 QueryClient를 생성하고 데이터를 prefetch
- * 2. prefetch된 데이터를 dehydrate하여 HTML에 포함
- * 3. 클라이언트에서 HydrationBoundary를 통해 데이터를 hydrate
- * 4. useSuspenseQuery를 사용하여 즉시 데이터 사용 가능
- * 5. 이후 클라이언트 사이드에서 TanStack Query의 캐싱 정책에 따라 동작
+ * React 19 cache API + ensureQueryData로 최적화
  */
 export default async function SSGPage() {
-  const queryClient = new QueryClient();
-
-  // 빌드 타임에 데이터 미리 가져오기 (SSG)
-  await queryClient.prefetchQuery(postQueries.list());
-
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -30,9 +20,9 @@ export default async function SSGPage() {
         </p>
       </header>
 
-      <HydrationBoundary state={dehydrate(queryClient)}>
+      <Prefetch queries={[postQueries.list()]}>
         <PostListSuspense />
-      </HydrationBoundary>
+      </Prefetch>
     </div>
   );
 }

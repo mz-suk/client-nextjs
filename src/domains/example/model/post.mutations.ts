@@ -1,32 +1,42 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { postKeys } from './post.queries';
+import { postQueries } from './post.queries';
 import type { Post } from './post.types';
 
 /**
- * Post 생성 Mutation Hook
+ * Post 생성 Mutation (Optimistic Update)
  */
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: Omit<Post, 'id'>) => {
-      // 실제로는 POST 요청을 보내지만, 예제에서는 시뮬레이션
       await new Promise(resolve => setTimeout(resolve, 1000));
-      return {
-        id: Math.floor(Math.random() * 10000),
-        ...data,
-      } as Post;
+      return { id: Math.floor(Math.random() * 10000), ...data } as Post;
     },
-    onSuccess: () => {
-      // 성공 시 목록 쿼리 무효화하여 자동 refetch
-      queryClient.invalidateQueries({ queryKey: postKeys.lists() });
+    onMutate: async newPost => {
+      await queryClient.cancelQueries({ queryKey: postQueries.keys.list() });
+      const previousPosts = queryClient.getQueryData<Post[]>(postQueries.keys.list());
+
+      if (previousPosts) {
+        queryClient.setQueryData<Post[]>(postQueries.keys.list(), old => [{ id: Date.now(), ...newPost } as Post, ...(old || [])]);
+      }
+
+      return { previousPosts };
+    },
+    onError: (_, __, context) => {
+      if (context?.previousPosts) {
+        queryClient.setQueryData(postQueries.keys.list(), context.previousPosts);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: postQueries.keys.list() });
     },
   });
 };
 
 /**
- * Post 수정 Mutation Hook
+ * Post 수정 Mutation (Optimistic Update)
  */
 export const useUpdatePost = () => {
   const queryClient = useQueryClient();
@@ -36,16 +46,31 @@ export const useUpdatePost = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       return { id, ...data } as Post;
     },
-    onSuccess: (_, variables) => {
-      // 특정 게시글 쿼리 무효화
-      queryClient.invalidateQueries({ queryKey: postKeys.detail(variables.id) });
-      queryClient.invalidateQueries({ queryKey: postKeys.lists() });
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries({ queryKey: postQueries.keys.detail(id) });
+
+      const previousPost = queryClient.getQueryData<Post>(postQueries.keys.detail(id));
+
+      if (previousPost) {
+        queryClient.setQueryData<Post>(postQueries.keys.detail(id), { ...previousPost, ...data });
+      }
+
+      return { previousPost };
+    },
+    onError: (_, variables, context) => {
+      if (context?.previousPost) {
+        queryClient.setQueryData(postQueries.keys.detail(variables.id), context.previousPost);
+      }
+    },
+    onSettled: (_, __, variables) => {
+      queryClient.invalidateQueries({ queryKey: postQueries.keys.detail(variables.id) });
+      queryClient.invalidateQueries({ queryKey: postQueries.keys.list() });
     },
   });
 };
 
 /**
- * Post 삭제 Mutation Hook
+ * Post 삭제 Mutation (Optimistic Update)
  */
 export const useDeletePost = () => {
   const queryClient = useQueryClient();
@@ -55,8 +80,27 @@ export const useDeletePost = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       return id;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: postKeys.lists() });
+    onMutate: async id => {
+      await queryClient.cancelQueries({ queryKey: postQueries.keys.list() });
+
+      const previousPosts = queryClient.getQueryData<Post[]>(postQueries.keys.list());
+
+      if (previousPosts) {
+        queryClient.setQueryData<Post[]>(
+          postQueries.keys.list(),
+          previousPosts.filter(post => post.id !== id)
+        );
+      }
+
+      return { previousPosts };
+    },
+    onError: (_, __, context) => {
+      if (context?.previousPosts) {
+        queryClient.setQueryData(postQueries.keys.list(), context.previousPosts);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: postQueries.keys.list() });
     },
   });
 };
