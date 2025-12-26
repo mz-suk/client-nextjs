@@ -4,9 +4,6 @@ import { infiniteQueryOptions } from '@tanstack/react-query';
 import { postApi } from './post.api';
 import type { Post, PostListParams } from './post.types';
 
-/**
- * Post Query Factory
- */
 export const postQueries = createQueryFactory('posts', {
   list: (params?: PostListParams): { queryFn: () => Promise<Post[]>; params?: PostListParams } => ({
     queryFn: () => postApi.getPosts(params),
@@ -19,17 +16,12 @@ export const postQueries = createQueryFactory('posts', {
   }),
 });
 
-/**
- * Post Infinite Query
- */
 export const postInfiniteQuery = () =>
   infiniteQueryOptions({
     queryKey: ['posts', 'infinite'] as const,
     queryFn: ({ pageParam }) => postApi.getPostsPaginated(pageParam),
     initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.length === 10 && allPages.length < 10 ? allPages.length + 1 : undefined;
-    },
+    getNextPageParam: (lastPage, allPages) => (lastPage.length === 10 && allPages.length < 10 ? allPages.length + 1 : undefined),
     maxPages: 10,
     refetchOnMount: false,
     refetchOnWindowFocus: false,

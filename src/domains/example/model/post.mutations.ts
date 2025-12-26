@@ -4,9 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { postQueries } from './post.queries';
 import type { Post } from './post.types';
 
-/**
- * Post 생성 Mutation (Optimistic Update)
- */
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
 
@@ -23,9 +20,6 @@ export const useCreatePost = () => {
   });
 };
 
-/**
- * Post 수정 Mutation (Optimistic Update)
- */
 export const useUpdatePost = () => {
   const queryClient = useQueryClient();
 
@@ -43,9 +37,6 @@ export const useUpdatePost = () => {
   });
 };
 
-/**
- * Post 삭제 Mutation (Optimistic Update)
- */
 export const useDeletePost = () => {
   const queryClient = useQueryClient();
 

@@ -6,24 +6,9 @@ import { useIntersectionObserver } from '@shared/hooks';
 import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
-/**
- * 무한 스크롤 (Infinite Scroll) 예제
- *
- * 동작 방식:
- * 1. useInfiniteQuery로 페이지네이션 데이터 관리
- * 2. Intersection Observer로 스크롤 감지
- * 3. 하단 도달 시 자동으로 다음 페이지 로드
- * 4. 전역 로딩이 자동으로 표시됨
- *
- * 장점:
- * - 초기 로딩 속도 향상 (필요한 만큼만 로드)
- * - 무한 스크롤 UX
- * - 자동 캐싱 및 중복 요청 방지
- */
 export default function InfiniteScrollPage() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfinitePosts();
 
-  // 커스텀 훅을 사용하여 무한 스크롤 구현
   const observerRef = useIntersectionObserver({
     onIntersect: fetchNextPage,
     enabled: hasNextPage && !isFetchingNextPage,
@@ -68,24 +53,20 @@ export default function InfiniteScrollPage() {
         {!hasNextPage && ' • 모든 데이터 로드 완료'}
       </div>
 
-      {/* 게시글 그리드 */}
       <div className={styles.grid}>
         {allPosts.map(post => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>
 
-      {/* Intersection Observer 타겟 */}
       <div ref={observerRef} className={styles.observerTarget} />
 
-      {/* 로딩 상태 표시 */}
       {isFetchingNextPage && (
         <div className={styles.loadingMessage}>
           <p>다음 페이지를 불러오는 중...</p>
         </div>
       )}
 
-      {/* 더 이상 데이터가 없을 때 */}
       {!hasNextPage && allPosts.length > 0 && (
         <div className={styles.endMessage}>
           <p>모든 게시글을 불러왔습니다 🎉</p>

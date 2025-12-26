@@ -5,13 +5,7 @@ import { Suspense } from 'react';
 import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
-/**
- * 느린 데이터 시뮬레이션 (Server Component)
- *
- * React Server Component는 async/await를 직접 사용할 수 있습니다.
- * 이를 통해 데이터 패칭 완료 전까지 렌더링을 지연시킬 수 있습니다.
- */
-async function SlowDataComponent() {
+const SlowDataComponent = async () => {
   await new Promise(resolve => setTimeout(resolve, 3000));
   return (
     <div className={styles.slowData}>
@@ -19,13 +13,8 @@ async function SlowDataComponent() {
       <p>이 컴포넌트는 3초 후에 렌더링됩니다.</p>
     </div>
   );
-}
+};
 
-/**
- * Suspense Streaming 예제
- *
- * 빠른 데이터는 즉시 렌더링, 느린 데이터는 Suspense로 스트리밍
- */
 export default async function StreamingPage() {
   return (
     <ExampleLayout title="Suspense Streaming" description="빠른 데이터는 즉시 표시되고, 느린 데이터는 준비되는 대로 스트리밍됩니다.">

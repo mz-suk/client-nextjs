@@ -16,28 +16,18 @@ interface QueryProviderProps {
   enableGlobalErrorHandler?: boolean;
 }
 
-/**
- * Query Provider
- */
-export function QueryProvider({ children, enableDevtools = isDebug, enableGlobalLoading = true, enableGlobalErrorHandler = true }: QueryProviderProps) {
-  // useState로 QueryClient를 한 번만 생성 (클라이언트 싱글톤)
-  const [queryClient] = useState(() => getBrowserQueryClient());
+export const QueryProvider = ({ children, enableDevtools = isDebug, enableGlobalLoading = true, enableGlobalErrorHandler = true }: QueryProviderProps) => {
+  const [queryClient] = useState(getBrowserQueryClient);
+
+  const content = (
+    <>
+      {children}
+      {enableGlobalLoading && <GlobalLoading />}
+      {enableDevtools && <ReactQueryDevtools initialIsOpen={false} />}
+    </>
+  );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {enableGlobalErrorHandler ? (
-        <GlobalErrorHandler>
-          {children}
-          {enableGlobalLoading && <GlobalLoading />}
-          {enableDevtools && <ReactQueryDevtools initialIsOpen={false} />}
-        </GlobalErrorHandler>
-      ) : (
-        <>
-          {children}
-          {enableGlobalLoading && <GlobalLoading />}
-          {enableDevtools && <ReactQueryDevtools initialIsOpen={false} />}
-        </>
-      )}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{enableGlobalErrorHandler ? <GlobalErrorHandler>{content}</GlobalErrorHandler> : content}</QueryClientProvider>
   );
-}
+};

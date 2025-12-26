@@ -4,21 +4,6 @@ import { PostList } from '@domains/example';
 
 import { ExampleLayout } from '../_components';
 
-/**
- * CSR (Client-Side Rendering) 데이터 패칭 예제
- *
- * [동작 방식]
- * 1. 서버: 데이터 없이 기본 HTML(Shell)만 전송
- * 2. 클라이언트: JS 로드 후 React 마운트
- * 3. 클라이언트: useEffect 시점에 데이터 패칭 시작 (useQuery)
- * 4. 클라이언트: 로딩 -> 데이터 표시
- *
- * [특징]
- * - 'use client' 지시어 필수
- * - 초기 로딩 시점에 데이터가 없어 검색 엔진(SEO)에 불리할 수 있음
- * - 사용자 인터랙션이 많은 비공개 대시보드 등에 적합
- * - GlobalLoading이 자동으로 동작함 (useIsFetching 감지)
- */
 export default function CSRPage() {
   return (
     <ExampleLayout

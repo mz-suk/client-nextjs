@@ -1,6 +1,3 @@
-/**
- * Post 도메인 타입 정의
- */
 export interface Post {
   id: number;
   title: string;
@@ -8,7 +5,7 @@ export interface Post {
   userId: number;
 }
 
-export interface PostListParams {
+export interface PostListParams extends Record<string, unknown> {
   userId?: number;
   limit?: number;
 }

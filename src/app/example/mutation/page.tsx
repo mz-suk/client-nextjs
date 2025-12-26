@@ -6,15 +6,6 @@ import { useState } from 'react';
 import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
-/**
- * Mutation (데이터 변경) 예제
- *
- * 동작 방식:
- * 1. useMutation 훅으로 생성/수정/삭제 작업 수행
- * 2. Mutation 실행 중 전역 로딩이 자동으로 표시됨
- * 3. 성공 시 관련 쿼리를 자동으로 무효화하여 최신 데이터 유지
- * 4. 에러 발생 시 GlobalErrorHandler에서 처리
- */
 export default function MutationPage() {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -78,7 +69,6 @@ export default function MutationPage() {
         </ul>
       </InfoBox>
 
-      {/* 생성 폼 */}
       <section className={styles.section}>
         <h3>1. 게시글 생성</h3>
         <div className={styles.formGroup}>
@@ -90,7 +80,6 @@ export default function MutationPage() {
         </div>
       </section>
 
-      {/* 수정/삭제 */}
       <section className={styles.section}>
         <h3>2. 게시글 수정 / 삭제</h3>
         <div className={styles.buttonGroup}>
@@ -103,7 +92,6 @@ export default function MutationPage() {
         </div>
       </section>
 
-      {/* 결과 표시 */}
       {result && <div className={`${styles.result} ${result.startsWith('✅') ? styles.success : styles.error}`}>{result}</div>}
 
       <InfoBox title="🎯 테스트 방법" variant="info">

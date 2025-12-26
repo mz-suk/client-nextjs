@@ -2,38 +2,20 @@ import { apiClient } from '@core/api/client';
 
 import type { Post, PostListParams } from './post.types';
 
-/**
- * Post API 레이어
- * 외부 API와의 통신을 담당
- */
 export const postApi = {
-  /**
-   * 게시글 목록 조회
-   */
-  getPosts: async (params?: PostListParams): Promise<Post[]> => {
-    const { data } = await apiClient.get<Post[]>('https://jsonplaceholder.typicode.com/posts', {
-      params: params as Record<string, unknown>,
-    });
+  getPosts: async (params?: PostListParams) => {
+    const { data } = await apiClient.get<Post[]>('https://jsonplaceholder.typicode.com/posts', { params });
     return data;
   },
 
-  /**
-   * 게시글 상세 조회
-   */
-  getPost: async (id: number): Promise<Post> => {
+  getPost: async (id: number) => {
     const { data } = await apiClient.get<Post>(`https://jsonplaceholder.typicode.com/posts/${id}`);
     return data;
   },
 
-  /**
-   * 게시글 페이지네이션 조회 (무한 스크롤용)
-   */
-  getPostsPaginated: async (page: number): Promise<Post[]> => {
+  getPostsPaginated: async (page: number) => {
     const { data } = await apiClient.get<Post[]>('https://jsonplaceholder.typicode.com/posts', {
-      params: {
-        _page: page,
-        _limit: 10,
-      } as Record<string, unknown>,
+      params: { _page: page, _limit: 10 },
     });
     return data;
   },

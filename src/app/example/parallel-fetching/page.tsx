@@ -4,11 +4,6 @@ import { PostListSuspense, postQueries } from '@domains/example';
 import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
-/**
- * 병렬 데이터 패칭 예제
- *
- * Prefetch 컴포넌트의 Promise.all로 여러 쿼리를 동시 실행하여 워터폴 방지
- */
 export default async function ParallelFetchingPage() {
   return (
     <ExampleLayout title="병렬 데이터 패칭" description="Prefetch 컴포넌트의 Promise.all을 사용하여 여러 쿼리를 동시에 실행합니다.">
