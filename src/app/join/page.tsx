@@ -84,9 +84,9 @@ export default function JoinPage() {
             <div className={`${styles.section} ${styles.fadeIn}`}>
               <h3 className={styles.sectionTitle}>약관 동의</h3>
               <div className={styles.agreementGroup}>
-                <div onClick={() => handleAllAgree(!allAgree)} style={{ cursor: 'pointer' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                    <input type="checkbox" checked={allAgree} onChange={e => handleAllAgree(e.target.checked)} style={{ cursor: 'pointer' }} />
+                <div onClick={() => handleAllAgree(!allAgree)} className={styles.allAgree}>
+                  <div className={styles.content}>
+                    <input type="checkbox" checked={allAgree} onChange={e => handleAllAgree(e.target.checked)} />
                     <span>전체 동의</span>
                   </div>
                 </div>

@@ -1,0 +1,52 @@
+.box {
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.content {
+  line-height: 1.8;
+
+  ul,
+  ol {
+    margin-left: 20px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+}
+
+.info {
+  background: #f3f4f6;
+  color: #4b5563;
+
+  .title {
+    color: #1f2937;
+  }
+}
+
+.warning {
+  background: #fef3c7;
+  color: #92400e;
+
+  .title {
+    color: #78350f;
+  }
+}
+
+.success {
+  background: #d1fae5;
+  color: #065f46;
+
+  .title {
+    color: #064e3b;
+  }
+}
+

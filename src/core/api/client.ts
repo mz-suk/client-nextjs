@@ -152,9 +152,13 @@ class ApiClient {
       response = await interceptor(response);
     }
 
+    // 401 Unauthorized: 토큰 갱신 시도 (자동 처리)
     if (response.status === HTTP_STATUS.UNAUTHORIZED && !config._isRetry && !config.skipAuth) {
       return this.handleTokenRefresh(endpoint, config);
     }
+
+    // 403 Forbidden: 권한 없음 (GlobalErrorHandler에서 처리)
+    // 여기서는 응답을 그대로 반환하여 ApiError로 변환되도록 함
 
     return response;
   }
@@ -169,6 +173,8 @@ class ApiClient {
         const code = (errorData as { code?: string }).code;
 
         let errorType: ErrorType = ERROR_TYPES.API;
+
+        // 서버 에러 (5xx)
         if (response.status >= HTTP_STATUS.INTERNAL_SERVER_ERROR) {
           errorType = ERROR_TYPES.SERVER;
           const authConfig = getAuthConfig();
