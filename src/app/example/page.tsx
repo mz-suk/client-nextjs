@@ -16,6 +16,18 @@ export default function ExampleIndexPage() {
       tags: ['SSG', 'Prefetch', 'Hydration'],
     },
     {
+      title: '병렬 데이터 패칭',
+      path: '/example/parallel-fetching',
+      description: 'Promise.all을 활용한 병렬 패칭으로 워터폴 방지',
+      tags: ['Parallel', 'Promise.all', 'Optimization'],
+    },
+    {
+      title: 'Suspense Streaming',
+      path: '/example/streaming',
+      description: 'Suspense를 활용한 점진적 UI 렌더링',
+      tags: ['Streaming', 'Suspense', 'UX'],
+    },
+    {
       title: 'CSR 데이터 패칭',
       path: '/example/csr',
       description: '클라이언트에서만 데이터를 가져오는 순수 CSR 패턴',
@@ -69,6 +81,12 @@ export default function ExampleIndexPage() {
         <ol>
           <li>
             <strong>SSG + CSR 하이브리드</strong> - 가장 일반적인 패턴, 프로덕션에서 권장
+          </li>
+          <li>
+            <strong>병렬 데이터 패칭</strong> - 성능 최적화 필수 기법
+          </li>
+          <li>
+            <strong>Suspense Streaming</strong> - 사용자 경험(UX) 개선
           </li>
           <li>
             <strong>전역 기능 테스트</strong> - 로딩과 에러 처리 동작 원리 이해

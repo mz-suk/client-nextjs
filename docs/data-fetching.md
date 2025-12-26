@@ -23,31 +23,26 @@ export default async function PostsPage() {
 ### 병렬 패칭
 
 ```typescript
-await Promise.all([queryClient.ensureQueryData(postQueries.list()), queryClient.ensureQueryData(userQueries.me())]);
+<Prefetch queries={[postQueries.list(), userQueries.me()]}>
+  {children}
+</Prefetch>
 ```
 
 ### Optimistic Updates
 
 ```typescript
+import { createOptimisticUpdate } from '@core/lib';
+
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: data => postApi.create(data),
-    onMutate: async newPost => {
-      await queryClient.cancelQueries({ queryKey: postQueries.keys.list() });
-      const previousPosts = queryClient.getQueryData(postQueries.keys.list());
-
-      queryClient.setQueryData(postQueries.keys.list(), old => [...old, newPost]);
-
-      return { previousPosts };
-    },
-    onError: (err, newPost, context) => {
-      queryClient.setQueryData(postQueries.keys.list(), context.previousPosts);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: postQueries.keys.list() });
-    },
+    ...createOptimisticUpdate<Post[], CreatePostInput>({
+      queryClient,
+      queryKey: postQueries.keys.list(),
+      updater: (oldData, newPost) => [{ id: Date.now(), ...newPost }, ...oldData],
+    }),
   });
 };
 ```
@@ -80,6 +75,11 @@ export const postQueries = createQueryFactory('posts', {
 useQuery(postQueries.list());
 useSuspenseQuery(postQueries.detail(1));
 
+// 서버 컴포넌트에서 Prefetch
+<Prefetch queries={[postQueries.list(), postQueries.detail(1)]}>
+  {children}
+</Prefetch>
+
 // 캐시 무효화
 queryClient.invalidateQueries({ queryKey: postQueries.keys.list() });
 queryClient.invalidateQueries({ queryKey: postQueries.keys.detail(1) });
@@ -94,14 +94,40 @@ queryClient.invalidateQueries({ queryKey: postQueries.keys.detail(1) });
 export const getQueryClient = cache(() => new QueryClient({...}));
 ```
 
-### 2. ensureQueryData
+### 2. Prefetch 컴포넌트
 
 ```typescript
-// prefetchQuery 대신 ensureQueryData 사용
-await queryClient.ensureQueryData(postQueries.list());
+// 단일 쿼리
+<Prefetch queries={[postQueries.list()]}>
+  <PostList />
+</Prefetch>
+
+// 병렬 패칭
+<Prefetch queries={[
+  postQueries.list(),
+  postQueries.detail(1),
+  userQueries.me()
+]}>
+  <PageContent />
+</Prefetch>
 ```
 
-### 3. 조건부 재시도
+### 3. Optimistic Update 헬퍼
+
+```typescript
+import { createOptimisticUpdate } from '@core/lib';
+
+return useMutation({
+  mutationFn: postApi.create,
+  ...createOptimisticUpdate<Post[], CreatePostInput>({
+    queryClient,
+    queryKey: postQueries.keys.list(),
+    updater: (oldData, newPost) => [newPost, ...oldData],
+  }),
+});
+```
+
+### 4. 조건부 재시도
 
 ```typescript
 retry: (failureCount, error) => {
@@ -114,7 +140,7 @@ retry: (failureCount, error) => {
 };
 ```
 
-### 4. Infinite Query 최적화
+### 5. Infinite Query 최적화
 
 ```typescript
 infiniteQueryOptions({

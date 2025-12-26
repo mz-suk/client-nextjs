@@ -1,7 +1,7 @@
 import { Prefetch } from '@core/lib';
 import { PostListSuspense, postQueries } from '@domains/example';
 
-import styles from './page.module.scss';
+import { ExampleLayout } from '../_components';
 
 /**
  * SSG + CSR 데이터 패칭 예제
@@ -10,19 +10,13 @@ import styles from './page.module.scss';
  */
 export default async function SSGPage() {
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <h1>SSG + CSR Data Fetching</h1>
-        <p>
-          빌드 시점에 데이터를 미리 가져와서(SSG) 정적 HTML을 생성하고,
-          <br />
-          클라이언트에서 Hydration되어 TanStack Query로 상호작용합니다.
-        </p>
-      </header>
-
+    <ExampleLayout
+      title="SSG + CSR 하이브리드"
+      description="빌드 시점에 데이터를 미리 가져와서(SSG) 정적 HTML을 생성하고, 클라이언트에서 Hydration되어 TanStack Query로 상호작용합니다."
+    >
       <Prefetch queries={[postQueries.list()]}>
         <PostListSuspense />
       </Prefetch>
-    </div>
+    </ExampleLayout>
   );
 }

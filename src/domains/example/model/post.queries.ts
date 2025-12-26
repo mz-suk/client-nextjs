@@ -5,18 +5,6 @@ import { postApi } from './post.api';
 import type { Post, PostListParams } from './post.types';
 
 /**
- * Post Query Keys (하위 호환용)
- */
-export const postKeys = {
-  all: () => ['posts'] as const,
-  lists: () => ['posts', 'list'] as const,
-  list: (params?: PostListParams) => ['posts', 'list', ...(params ? [params] : [])] as const,
-  details: () => ['posts', 'detail'] as const,
-  detail: (id: number) => ['posts', 'detail', id] as const,
-  infinite: () => ['posts', 'infinite'] as const,
-} as const;
-
-/**
  * Post Query Factory
  */
 export const postQueries = createQueryFactory('posts', {
@@ -32,11 +20,11 @@ export const postQueries = createQueryFactory('posts', {
 });
 
 /**
- * Infinite Query (별도 정의)
+ * Post Infinite Query
  */
 export const postInfiniteQuery = () =>
   infiniteQueryOptions({
-    queryKey: postKeys.infinite(),
+    queryKey: ['posts', 'infinite'] as const,
     queryFn: ({ pageParam }) => postApi.getPostsPaginated(pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {

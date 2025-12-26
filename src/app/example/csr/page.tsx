@@ -2,7 +2,7 @@
 
 import { PostList } from '@domains/example';
 
-import styles from './page.module.scss';
+import { ExampleLayout } from '../_components';
 
 /**
  * CSR (Client-Side Rendering) 데이터 패칭 예제
@@ -24,21 +24,12 @@ import styles from './page.module.scss';
  */
 export default function CSRPage() {
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <h1>CSR Data Fetching</h1>
-        <p>
-          클라이언트에서만 데이터를 가져옵니다.
-          <br />
-          페이지 로드 후 전역 로딩이 표시되고, 데이터를 가져온 후 렌더링됩니다.
-        </p>
-      </header>
-
-      <div className={styles.tip}>
-        <strong>💡 Tip:</strong> 네트워크 탭에서 &quot;Slow 3G&quot;로 설정하면 전역 로딩을 더 명확하게 확인할 수 있습니다.
-      </div>
-
+    <ExampleLayout
+      title="CSR Data Fetching"
+      description="클라이언트에서만 데이터를 가져옵니다. 페이지 로드 후 전역 로딩이 표시되고, 데이터를 가져온 후 렌더링됩니다."
+      tip='네트워크 탭에서 "Slow 3G"로 설정하면 전역 로딩을 더 명확하게 확인할 수 있습니다.'
+    >
       <PostList />
-    </div>
+    </ExampleLayout>
   );
 }

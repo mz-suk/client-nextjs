@@ -1,6 +1,6 @@
 import { ApiError } from '@core/api/error';
 import { CACHE_CONFIG } from '@core/config';
-import { defaultShouldDehydrateQuery, isServer, QueryClient } from '@tanstack/react-query';
+import { defaultShouldDehydrateQuery, isServer, QueryClient, type QueryKey } from '@tanstack/react-query';
 import { cache } from 'react';
 
 /**
@@ -77,20 +77,20 @@ export function getBrowserQueryClient() {
  * queryClient.invalidateQueries({ queryKey: postQueries.keys.list() })
  * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function createQueryFactory<TFactoryName extends string, TQueries extends Record<string, (...args: any[]) => any>>(
+type QueryConfig = { queryFn: () => unknown; [key: string]: unknown };
+type QueryFactory<T extends Record<string, (...args: never[]) => QueryConfig>> = T;
+
+export function createQueryFactory<TFactoryName extends string, TQueries extends QueryFactory<Record<string, (...args: never[]) => QueryConfig>>>(
   factoryName: TFactoryName,
   queries: TQueries
 ) {
   type QueryKeys = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [K in keyof TQueries]: (...args: Parameters<TQueries[K]>) => readonly [TFactoryName, K, ...any[]];
+    [K in keyof TQueries]: (...args: Parameters<TQueries[K]>) => readonly [TFactoryName, K, ...unknown[]];
   };
 
   type QueryOptions = {
     [K in keyof TQueries]: (...args: Parameters<TQueries[K]>) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      queryKey: readonly [TFactoryName, K, ...any[]];
+      queryKey: readonly [TFactoryName, K, ...unknown[]];
       queryFn: () => ReturnType<ReturnType<TQueries[K]>['queryFn']>;
     };
   };
@@ -98,33 +98,83 @@ export function createQueryFactory<TFactoryName extends string, TQueries extends
   const keys = {} as QueryKeys;
   const options = {} as QueryOptions;
 
-  for (const key in queries) {
+  (Object.keys(queries) as Array<keyof TQueries>).forEach(key => {
     const queryFn = queries[key];
-    if (!queryFn) continue;
+    if (!queryFn) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    keys[key] = ((...args: any[]) => {
-      const config = queryFn(...args);
+    keys[key] = ((...args: unknown[]) => {
+      const config = queryFn(...(args as Parameters<TQueries[typeof key]>));
       const { queryFn: _fn, ...params } = config;
       return [factoryName, key, ...(Object.keys(params).length > 0 ? [params] : [])] as const;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }) as any;
+    }) as QueryKeys[typeof key];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    options[key] = ((...args: any[]) => {
-      const config = queryFn(...args);
+    options[key] = ((...args: unknown[]) => {
+      const config = queryFn(...(args as Parameters<TQueries[typeof key]>));
       const { queryFn: fn, ...params } = config;
       return {
         queryKey: [factoryName, key, ...(Object.keys(params).length > 0 ? [params] : [])] as const,
         queryFn: fn,
       };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }) as any;
-  }
+    }) as QueryOptions[typeof key];
+  });
 
   return {
     keys,
     ...options,
     _factoryName: factoryName,
   } as { keys: QueryKeys } & QueryOptions & { _factoryName: TFactoryName };
+}
+
+/**
+ * Optimistic Update 헬퍼
+ *
+ * @example
+ * ```ts
+ * export const useCreatePost = () => {
+ *   const queryClient = useQueryClient();
+ *
+ *   return useMutation({
+ *     mutationFn: postApi.create,
+ *     ...createOptimisticUpdate({
+ *       queryClient,
+ *       queryKey: postQueries.keys.list(),
+ *       updater: (oldData: Post[], newPost: Post) => [newPost, ...oldData],
+ *     }),
+ *   });
+ * };
+ * ```
+ */
+export function createOptimisticUpdate<TData, TVariables>({
+  queryClient,
+  queryKey,
+  updater,
+  invalidateKeys = [queryKey],
+}: {
+  queryClient: QueryClient;
+  queryKey: QueryKey;
+  updater: (oldData: TData, variables: TVariables) => TData;
+  invalidateKeys?: QueryKey[];
+}) {
+  return {
+    onMutate: async (variables: TVariables) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previousData = queryClient.getQueryData<TData>(queryKey);
+
+      if (previousData) {
+        queryClient.setQueryData<TData>(queryKey, updater(previousData, variables));
+      }
+
+      return { previousData };
+    },
+    onError: (_: unknown, __: TVariables, context?: { previousData?: TData }) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(queryKey, context.previousData);
+      }
+    },
+    onSettled: () => {
+      invalidateKeys.forEach(key => {
+        queryClient.invalidateQueries({ queryKey: key });
+      });
+    },
+  };
 }

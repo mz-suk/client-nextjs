@@ -2,6 +2,7 @@ import { Prefetch } from '@core/lib';
 import { PostListSuspense, postQueries } from '@domains/example';
 import { Suspense } from 'react';
 
+import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
 /**
@@ -24,14 +25,8 @@ async function SlowDataComponent() {
  */
 export default async function StreamingPage() {
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <h1>Suspense Streaming</h1>
-        <p>빠른 데이터는 즉시 표시되고, 느린 데이터는 준비되는 대로 스트리밍됩니다.</p>
-      </header>
-
-      <div className={styles.infoBox}>
-        <h2>💡 동작 원리</h2>
+    <ExampleLayout title="Suspense Streaming" description="빠른 데이터는 즉시 표시되고, 느린 데이터는 준비되는 대로 스트리밍됩니다.">
+      <InfoBox title="💡 동작 원리">
         <ul>
           <li>
             <strong>점진적 렌더링:</strong> 빠른 콘텐츠를 먼저 보여주고, 느린 콘텐츠는 나중에 스트리밍
@@ -43,7 +38,7 @@ export default async function StreamingPage() {
             <strong>사용자 경험:</strong> 로딩 시간이 길어도 빠르게 느껴짐
           </li>
         </ul>
-      </div>
+      </InfoBox>
 
       <section className={styles.section}>
         <h2>빠른 데이터 (즉시 렌더링)</h2>
@@ -66,6 +61,6 @@ export default async function StreamingPage() {
           <SlowDataComponent />
         </Suspense>
       </section>
-    </div>
+    </ExampleLayout>
   );
 }

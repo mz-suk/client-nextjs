@@ -1,8 +1,9 @@
 'use client';
 
 import { PostCard, useInfinitePosts } from '@domains/example';
-import { useEffect, useRef } from 'react';
+import { useIntersectionObserver } from '@shared/hooks';
 
+import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
 /**
@@ -21,30 +22,13 @@ import styles from './page.module.scss';
  */
 export default function InfiniteScrollPage() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfinitePosts();
-  const observerTarget = useRef<HTMLDivElement>(null);
 
-  // Intersection Observer로 무한 스크롤 구현
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const currentTarget = observerTarget.current;
-    if (currentTarget) {
-      observer.observe(currentTarget);
-    }
-
-    return () => {
-      if (currentTarget) {
-        observer.unobserve(currentTarget);
-      }
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+  // 커스텀 훅을 사용하여 무한 스크롤 구현
+  const observerRef = useIntersectionObserver({
+    onIntersect: fetchNextPage,
+    enabled: hasNextPage && !isFetchingNextPage,
+    threshold: 0.1,
+  });
 
   if (isLoading) {
     return (
@@ -57,25 +41,18 @@ export default function InfiniteScrollPage() {
   const allPosts = data?.pages.flatMap(page => page) ?? [];
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <h1>무한 스크롤 (Infinite Scroll)</h1>
-        <p>
-          스크롤을 내리면 자동으로 다음 페이지를 불러옵니다.
-          <br />
-          useInfiniteQuery를 사용하여 페이지네이션을 관리합니다.
-        </p>
-      </header>
-
-      <div className={styles.infoBox}>
-        <h2>💡 동작 원리</h2>
+    <ExampleLayout
+      title="무한 스크롤 (Infinite Scroll)"
+      description="스크롤을 내리면 자동으로 다음 페이지를 불러옵니다. useInfiniteQuery를 사용하여 페이지네이션을 관리합니다."
+    >
+      <InfoBox title="💡 동작 원리">
         <ul>
-          <li>• Intersection Observer API로 스크롤 위치 감지</li>
+          <li>• useIntersectionObserver 훅으로 스크롤 위치 감지</li>
           <li>• 하단 도달 시 자동으로 fetchNextPage() 호출</li>
           <li>• 페이지별 데이터는 자동으로 캐싱되어 중복 요청 방지</li>
           <li>• 전역 로딩으로 페이지 로드 상태 표시</li>
         </ul>
-      </div>
+      </InfoBox>
 
       <div className={styles.statusBox}>
         <strong>📊 현재 상태:</strong> {allPosts.length}개 게시글 로드됨
@@ -91,7 +68,7 @@ export default function InfiniteScrollPage() {
       </div>
 
       {/* Intersection Observer 타겟 */}
-      <div ref={observerTarget} className={styles.observerTarget} />
+      <div ref={observerRef} className={styles.observerTarget} />
 
       {/* 로딩 상태 표시 */}
       {isFetchingNextPage && (
@@ -107,16 +84,14 @@ export default function InfiniteScrollPage() {
         </div>
       )}
 
-      {/* 가이드 */}
-      <div className={styles.guide}>
-        <h3>🎯 테스트 방법</h3>
+      <InfoBox title="🎯 테스트 방법" variant="info">
         <ol>
           <li>1. 페이지 하단으로 스크롤</li>
           <li>2. 자동으로 다음 페이지가 로드됩니다</li>
           <li>3. 전역 로딩이 표시되는 것을 확인</li>
           <li>4. 총 100개의 게시글까지 로드됩니다</li>
         </ol>
-      </div>
-    </div>
+      </InfoBox>
+    </ExampleLayout>
   );
 }

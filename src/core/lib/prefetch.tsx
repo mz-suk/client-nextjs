@@ -1,4 +1,4 @@
-import { dehydrate, HydrationBoundary, type FetchQueryOptions, type QueryKey } from '@tanstack/react-query';
+import { dehydrate, type FetchQueryOptions, HydrationBoundary, type QueryKey } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
 import { getQueryClient } from './query-client';

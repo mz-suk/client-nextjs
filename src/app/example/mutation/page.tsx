@@ -3,6 +3,7 @@
 import { useCreatePost, useDeletePost, useUpdatePost } from '@domains/example';
 import { useState } from 'react';
 
+import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
 /**
@@ -65,14 +66,8 @@ export default function MutationPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <h1>Mutation (데이터 변경) 예제</h1>
-        <p>생성, 수정, 삭제 작업 시 전역 로딩이 자동으로 표시됩니다.</p>
-      </header>
-
-      <div className={styles.infoBox}>
-        <h2>💡 동작 원리</h2>
+    <ExampleLayout title="Mutation (데이터 변경) 예제" description="생성, 수정, 삭제 작업 시 전역 로딩이 자동으로 표시됩니다.">
+      <InfoBox title="💡 동작 원리">
         <ul>
           <li>
             • Mutation 실행 중 <code>useIsMutating()</code>이 감지되어 전역 로딩 표시
@@ -81,7 +76,7 @@ export default function MutationPage() {
           <li>• 에러 발생 시 GlobalErrorHandler에서 처리</li>
           <li>• Optimistic Update, Rollback 등 고급 패턴도 지원</li>
         </ul>
-      </div>
+      </InfoBox>
 
       {/* 생성 폼 */}
       <section className={styles.section}>
@@ -111,15 +106,14 @@ export default function MutationPage() {
       {/* 결과 표시 */}
       {result && <div className={`${styles.result} ${result.startsWith('✅') ? styles.success : styles.error}`}>{result}</div>}
 
-      <div className={styles.guide}>
-        <h3>🎯 테스트 방법</h3>
+      <InfoBox title="🎯 테스트 방법" variant="info">
         <ol>
           <li>1. 제목과 내용을 입력하고 &quot;게시글 생성&quot; 클릭</li>
           <li>2. 전역 로딩이 표시되고 1초 후 완료 메시지 표시</li>
           <li>3. &quot;수정&quot; 또는 &quot;삭제&quot; 버튼 클릭하여 다른 Mutation 테스트</li>
           <li>4. 각 작업마다 전역 로딩이 자동으로 표시됩니다</li>
         </ol>
-      </div>
-    </div>
+      </InfoBox>
+    </ExampleLayout>
   );
 }
