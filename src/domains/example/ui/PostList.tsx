@@ -10,7 +10,7 @@ export function PostList() {
   if (isLoading) {
     return (
       <div className={styles.container}>
-        <div style={{ textAlign: 'center', padding: '2rem' }}>로딩 중...</div>
+        <div className={styles.messageContainer}>로딩 중...</div>
       </div>
     );
   }
@@ -18,7 +18,7 @@ export function PostList() {
   if (error) {
     return (
       <div className={styles.container}>
-        <div style={{ textAlign: 'center', padding: '2rem', color: '#dc2626' }}>게시글을 불러올 수 없습니다.</div>
+        <div className={`${styles.messageContainer} ${styles.error}`}>게시글을 불러올 수 없습니다.</div>
       </div>
     );
   }
@@ -26,7 +26,7 @@ export function PostList() {
   if (!posts || posts.length === 0) {
     return (
       <div className={styles.container}>
-        <div style={{ textAlign: 'center', padding: '2rem' }}>게시글이 없습니다.</div>
+        <div className={styles.messageContainer}>게시글이 없습니다.</div>
       </div>
     );
   }

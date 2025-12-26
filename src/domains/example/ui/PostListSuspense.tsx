@@ -16,7 +16,7 @@ export function PostListSuspense() {
   if (!posts || posts.length === 0) {
     return (
       <div className={styles.container}>
-        <div style={{ textAlign: 'center', padding: '2rem' }}>게시글이 없습니다.</div>
+        <div className={styles.messageContainer}>게시글이 없습니다.</div>
       </div>
     );
   }

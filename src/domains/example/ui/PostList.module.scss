@@ -9,6 +9,15 @@
   padding: 0;
 }
 
+.messageContainer {
+  text-align: center;
+  padding: 2rem;
+  
+  &.error {
+    color: #dc2626;
+  }
+}
+
 @media (max-width: 768px) {
   .grid {
     grid-template-columns: 1fr;

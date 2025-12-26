@@ -7,6 +7,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
 
+import styles from './GlobalErrorHandler.module.scss';
+
 interface GlobalErrorHandlerProps {
   children: ReactNode;
   /**
@@ -132,83 +134,32 @@ export function GlobalErrorHandler({ children, loginPath = '/login' }: GlobalErr
     const isServerError = isApiError && error.isServerError();
     const isForbidden = isApiError && error.status === 403;
 
+    const toastClass = isForbidden ? styles.forbidden : isServerError ? styles.serverError : styles.default;
+
     return (
       <>
         {children}
-        <div
-          style={{
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            maxWidth: '400px',
-            padding: '16px 20px',
-            background: isForbidden ? '#fef3c7' : isServerError ? '#fee2e2' : '#fff7ed',
-            border: `2px solid ${isForbidden ? '#f59e0b' : isServerError ? '#dc2626' : '#f59e0b'}`,
-            borderRadius: '8px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            zIndex: 10000,
-            animation: 'slideIn 0.3s ease-out',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-            <div style={{ fontSize: '1.5rem' }}>{isForbidden ? '🔒' : isServerError ? '❌' : '⚠️'}</div>
-            <div style={{ flex: 1 }}>
-              <h4 style={{ margin: '0 0 8px', fontSize: '1rem', fontWeight: '600', color: '#1f2937' }}>
-                {isForbidden ? '접근 권한 없음' : isServerError ? '서버 오류' : '오류 발생'}
-              </h4>
-              <p style={{ margin: '0 0 12px', fontSize: '0.875rem', color: '#4b5563', lineHeight: '1.5' }}>{message}</p>
-              {isApiError && error.code && (
-                <p style={{ margin: '0 0 12px', fontSize: '0.75rem', color: '#6b7280', fontFamily: 'monospace' }}>코드: {error.code}</p>
-              )}
-              {isForbidden && <p style={{ margin: '0 0 12px', fontSize: '0.75rem', color: '#6b7280' }}>로그인 페이지로 이동합니다...</p>}
-              <div style={{ display: 'flex', gap: '8px' }}>
+        <div className={`${styles.toast} ${toastClass}`}>
+          <div className={styles.content}>
+            <div className={styles.icon}>{isForbidden ? '🔒' : isServerError ? '❌' : '⚠️'}</div>
+            <div className={styles.body}>
+              <h4>{isForbidden ? '접근 권한 없음' : isServerError ? '서버 오류' : '오류 발생'}</h4>
+              <p>{message}</p>
+              {isApiError && error.code && <p className={styles.code}>코드: {error.code}</p>}
+              {isForbidden && <p className={styles.redirect}>로그인 페이지로 이동합니다...</p>}
+              <div className={styles.actions}>
                 {!isForbidden && (
-                  <button
-                    onClick={handleReset}
-                    style={{
-                      padding: '6px 12px',
-                      fontSize: '0.875rem',
-                      background: '#3b82f6',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontWeight: '500',
-                    }}
-                  >
+                  <button onClick={handleReset} className={styles.retry}>
                     재시도
                   </button>
                 )}
-                <button
-                  onClick={handleClose}
-                  style={{
-                    padding: '6px 12px',
-                    fontSize: '0.875rem',
-                    background: 'transparent',
-                    color: '#6b7280',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                  }}
-                >
+                <button onClick={handleClose} className={styles.close}>
                   닫기
                 </button>
               </div>
             </div>
           </div>
         </div>
-        <style>{`
-          @keyframes slideIn {
-            from {
-              transform: translateX(100%);
-              opacity: 0;
-            }
-            to {
-              transform: translateX(0);
-              opacity: 1;
-            }
-          }
-        `}</style>
       </>
     );
   }

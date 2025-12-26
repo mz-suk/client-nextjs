@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 
+import styles from './page.module.scss';
+
 /**
  * 예제 목록 페이지
  */
@@ -40,58 +42,20 @@ export default function ExampleIndexPage() {
   ];
 
   return (
-    <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <header style={{ marginBottom: '48px', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '12px' }}>데이터 패칭 예제</h1>
-        <p style={{ fontSize: '1.125rem', color: '#6b7280' }}>TanStack Query를 활용한 다양한 데이터 패칭 패턴</p>
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <h1>데이터 패칭 예제</h1>
+        <p>TanStack Query를 활용한 다양한 데이터 패칭 패턴</p>
       </header>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: '24px',
-        }}
-      >
+      <div className={styles.grid}>
         {examples.map(example => (
-          <Link
-            key={example.path}
-            href={example.path}
-            style={{
-              display: 'block',
-              padding: '24px',
-              border: '2px solid #e5e7eb',
-              borderRadius: '12px',
-              textDecoration: 'none',
-              transition: 'all 0.2s',
-              background: 'white',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.borderColor = '#3b82f6';
-              e.currentTarget.style.transform = 'translateY(-4px)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.08)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.borderColor = '#e5e7eb';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '12px', color: '#1f2937' }}>{example.title}</h2>
-            <p style={{ color: '#6b7280', marginBottom: '16px', lineHeight: '1.6' }}>{example.description}</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          <Link key={example.path} href={example.path} className={styles.card}>
+            <h2>{example.title}</h2>
+            <p>{example.description}</p>
+            <div className={styles.tags}>
               {example.tags.map(tag => (
-                <span
-                  key={tag}
-                  style={{
-                    padding: '4px 12px',
-                    background: '#eff6ff',
-                    color: '#1e40af',
-                    borderRadius: '12px',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                  }}
-                >
+                <span key={tag} className={styles.tag}>
                   {tag}
                 </span>
               ))}
@@ -100,9 +64,9 @@ export default function ExampleIndexPage() {
         ))}
       </div>
 
-      <div style={{ marginTop: '64px', padding: '24px', background: '#f9fafb', borderRadius: '12px' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '16px' }}>📚 학습 순서 추천</h3>
-        <ol style={{ lineHeight: '2', color: '#4b5563', paddingLeft: '20px' }}>
+      <div className={styles.guide}>
+        <h3>📚 학습 순서 추천</h3>
+        <ol>
           <li>
             <strong>SSG + CSR 하이브리드</strong> - 가장 일반적인 패턴, 프로덕션에서 권장
           </li>
