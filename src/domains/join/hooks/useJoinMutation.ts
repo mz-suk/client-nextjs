@@ -1,3 +1,4 @@
+import { logger } from '@core/lib';
 import { useMutation } from '@tanstack/react-query';
 
 import * as joinService from '../services/joinService';
@@ -20,7 +21,7 @@ export function useRequestVerification() {
       // 본인인증 요청 성공
     },
     onError: error => {
-      console.error('본인인증 요청 실패:', error);
+      logger.error('본인인증 요청 실패:', error);
     },
   });
 }
@@ -39,7 +40,7 @@ export function useConfirmVerification() {
       }
     },
     onError: error => {
-      console.error('본인인증 실패:', error);
+      logger.error('본인인증 실패:', error);
     },
   });
 }
@@ -57,7 +58,7 @@ export function useCreateAccount() {
       resetForm();
     },
     onError: error => {
-      console.error('회원가입 실패:', error);
+      logger.error('회원가입 실패:', error);
     },
   });
 }

@@ -57,34 +57,32 @@ class ApiClient {
     }
   }
 
+  private async getServerAuthHeader(): Promise<string | null> {
+    try {
+      const { cookies } = await import('next/headers');
+      const cookieStore = await cookies();
+      return cookieStore.get('accessToken')?.value ?? null;
+    } catch (error) {
+      logger.debug('Server auth header injection failed:', error);
+      return null;
+    }
+  }
+
+  private getClientAuthHeader(): string | null {
+    const authConfig = getAuthConfig();
+    if (!authConfig) return null;
+
+    const { accessToken } = authConfig.store.getState();
+    return accessToken ?? null;
+  }
+
   private async injectAuthHeader(headers: HeadersInit, skipAuth?: boolean): Promise<HeadersInit> {
     if (skipAuth) return headers;
 
-    // Server Component (RSC) 환경
-    if (typeof window === 'undefined') {
-      try {
-        const { cookies } = await import('next/headers');
-        const cookieStore = await cookies();
-        const accessToken = cookieStore.get('accessToken')?.value;
+    const isServer = typeof window === 'undefined';
+    const accessToken = isServer ? await this.getServerAuthHeader() : this.getClientAuthHeader();
 
-        if (accessToken) {
-          return { ...headers, Authorization: `Bearer ${accessToken}` };
-        }
-      } catch (error) {
-        // next/headers를 사용할 수 없는 환경(예: 정적 생성 중)에서는 무시
-        logger.debug('서버 환경 인증 헤더 주입 실패 (비로그인 상태로 진행):', error);
-      }
-      return headers;
-    }
-
-    // Client Component 환경 (기존 로직)
-    const authConfig = getAuthConfig();
-    if (!authConfig) return headers;
-
-    const { accessToken } = authConfig.store.getState();
-    if (!accessToken) return headers;
-
-    return { ...headers, Authorization: `Bearer ${accessToken}` };
+    return accessToken ? { ...headers, Authorization: `Bearer ${accessToken}` } : headers;
   }
 
   private async handleTokenRefresh(endpoint: string, config: FetchConfig): Promise<Response> {
