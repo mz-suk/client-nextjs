@@ -1,0 +1,50 @@
+.carrierList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.carrierItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 2rem 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--gray20);
+  cursor: pointer;
+  transition: background-color 200ms ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: var(--gray10);
+  }
+
+  &:active {
+    background-color: var(--gray20);
+  }
+
+  &.selected {
+    .carrierLabel {
+      color: var(--success);
+      font-weight: 600;
+    }
+  }
+}
+
+.carrierLabel {
+  font-size: 1.7rem;
+  font-weight: 400;
+  color: var(--gray100);
+  text-align: left;
+  transition: color 200ms ease;
+}
+
+.checkIcon {
+  color: var(--success);
+  flex-shrink: 0;
+}
