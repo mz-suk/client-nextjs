@@ -113,11 +113,20 @@ API_TARGET_URL=http://backend:8080
 
 ### API 클라이언트
 
-- 자동 토큰 갱신 및 인증 관리
+- 자동 토큰 갱신 및 인증 관리 (401 에러 자동 처리)
 - 요청/응답 인터셉터
 - 자동 재시도 (네트워크 에러, 5xx)
 - 타임아웃 처리
 - 타입 안전성
+
+### 에러 처리
+
+- **401**: 자동 토큰 갱신 + 재시도 (투명 처리)
+- **403, 5xx**: 전역 토스트 표시 (GlobalErrorHandler)
+- **400, 404, 422**: 로컬 처리 (각 컴포넌트)
+- **페이지 에러**: error.tsx, global-error.tsx, not-found.tsx
+
+자세한 내용은 [에러 처리 가이드](./docs/error-handling-guide.md) 참고
 
 ### 상태 관리
 
@@ -133,7 +142,7 @@ API_TARGET_URL=http://backend:8080
 ### UI 컴포넌트
 
 - BottomSheet (모바일 최적화)
-- ErrorBoundary / QueryErrorBoundary (에러 처리)
+- GlobalErrorHandler (전역 에러 토스트)
 - GlobalLoading (전역 로딩 UI)
 - 폰트: Pretendard Variable, SUITE Variable
 
@@ -147,3 +156,25 @@ API_TARGET_URL=http://backend:8080
 ## 라이선스
 
 MIT
+
+## 에러 처리 아키텍처
+
+### 계층별 처리
+
+| 에러 타입     | 처리 위치          | UI          | 설명                    |
+| ------------- | ------------------ | ----------- | ----------------------- |
+| 401           | client.ts          | 없음        | 자동 토큰 갱신 + 재시도 |
+| 403           | GlobalErrorHandler | 토스트      | 권한 없음 → 로그인 이동 |
+| 5xx           | GlobalErrorHandler | 토스트      | 서버 에러 안내          |
+| 400, 404, 422 | 로컬 (컴포넌트)    | 커스텀      | 비즈니스 로직 에러      |
+| 페이지 에러   | error.tsx          | 전체 페이지 | 렌더링 에러             |
+| 루트 에러     | global-error.tsx   | 전체 페이지 | 치명적 에러             |
+| 페이지 404    | not-found.tsx      | 전체 페이지 | 존재하지 않는 페이지    |
+
+### 중복 제거
+
+- ❌ **ErrorBoundary**: Next.js error.tsx로 대체
+- ❌ **QueryErrorBoundary**: GlobalErrorHandler로 통합
+- ✅ **단일 책임**: 각 계층이 명확한 역할 수행
+
+자세한 내용: [에러 처리 가이드](./docs/error-handling-guide.md) | [error.tsx vs global-error.tsx](./docs/error-boundaries-explained.md)

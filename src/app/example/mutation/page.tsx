@@ -10,7 +10,7 @@ import { useState } from 'react';
  * 1. useMutation 훅으로 생성/수정/삭제 작업 수행
  * 2. Mutation 실행 중 전역 로딩이 자동으로 표시됨
  * 3. 성공 시 관련 쿼리를 자동으로 무효화하여 최신 데이터 유지
- * 4. 에러 발생 시 QueryErrorBoundary에서 처리
+ * 4. 에러 발생 시 GlobalErrorHandler에서 처리
  */
 export default function MutationPage() {
   const [title, setTitle] = useState('');
@@ -76,7 +76,7 @@ export default function MutationPage() {
             • Mutation 실행 중 <code>useIsMutating()</code>이 감지되어 전역 로딩 표시
           </li>
           <li>• 성공 시 관련 쿼리를 자동으로 무효화하여 최신 데이터 유지</li>
-          <li>• 에러 발생 시 QueryErrorBoundary에서 처리</li>
+          <li>• 에러 발생 시 GlobalErrorHandler에서 처리</li>
           <li>• Optimistic Update, Rollback 등 고급 패턴도 지원</li>
         </ul>
       </div>

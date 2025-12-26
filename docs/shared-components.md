@@ -162,16 +162,16 @@ function MyComponent() {
 - `height?: 'auto' | 'full' | '${number}vh' | '${number}px'` - 높이
 - `className?: string` - 커스텀 클래스
 
-### ErrorBoundary
+### Next.js error.tsx
 
 React 에러를 처리하는 컴포넌트입니다.
 
 ```typescript
-import { ErrorBoundary } from '@shared/ui';
+import { Next.js error.tsx } from '@shared/ui';
 
 function MyComponent() {
   return (
-    <ErrorBoundary
+    <Next.js error.tsx
       fallback={(error, reset) => (
         <div>
           <h2>에러 발생</h2>
@@ -185,7 +185,7 @@ function MyComponent() {
       }}
     >
       <MyFeature />
-    </ErrorBoundary>
+    </Next.js error.tsx>
   );
 }
 ```
@@ -250,17 +250,17 @@ import { pretendard, suite } from '@shared/styles/fonts';
 <BottomSheet height="full">
 ```
 
-### 3. ErrorBoundary 배치
+### 3. Next.js error.tsx 배치
 
 ```typescript
-// ✅ 기능별로 ErrorBoundary 배치
-<ErrorBoundary>
+// ✅ 기능별로 Next.js error.tsx 배치
+<Next.js error.tsx>
   <UserProfile />
-</ErrorBoundary>
+</Next.js error.tsx>
 
-<ErrorBoundary>
+<Next.js error.tsx>
   <ProductList />
-</ErrorBoundary>
+</Next.js error.tsx>
 ```
 
 ### 4. Provider Props 활용

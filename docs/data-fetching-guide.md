@@ -132,20 +132,20 @@ export function PostList() {
 
 ### 에러 처리
 
-`QueryErrorBoundary`를 사용하여 선언적으로 에러를 처리합니다.
+`GlobalErrorHandler`를 사용하여 선언적으로 에러를 처리합니다.
 
 ```typescript
-import { QueryErrorBoundary } from '@shared/ui';
+import { GlobalErrorHandler } from '@shared/ui';
 
-<QueryErrorBoundary>
+<GlobalErrorHandler>
   <YourComponent />
-</QueryErrorBoundary>
+</GlobalErrorHandler>
 ```
 
 커스텀 에러 UI가 필요한 경우:
 
 ```typescript
-<QueryErrorBoundary
+<GlobalErrorHandler
   fallback={(error, reset) => (
     <div>
       <p>{error.message}</p>
@@ -154,7 +154,7 @@ import { QueryErrorBoundary } from '@shared/ui';
   )}
 >
   <YourComponent />
-</QueryErrorBoundary>
+</GlobalErrorHandler>
 ```
 
 ## 베스트 프랙티스
@@ -259,17 +259,17 @@ if (isLoading) return <div>로컬 로딩...</div>;
 ### 기본 사용법
 
 ```typescript
-import { QueryErrorBoundary } from '@shared/ui';
+import { GlobalErrorHandler } from '@shared/ui';
 
-<QueryErrorBoundary>
+<GlobalErrorHandler>
   <YourComponent />
-</QueryErrorBoundary>
+</GlobalErrorHandler>
 ```
 
 ### 커스텀 에러 UI
 
 ```typescript
-<QueryErrorBoundary
+<GlobalErrorHandler
   fallback={(error, reset) => (
     <div>
       <h2>커스텀 에러 화면</h2>
@@ -279,12 +279,12 @@ import { QueryErrorBoundary } from '@shared/ui';
   )}
 >
   <YourComponent />
-</QueryErrorBoundary>
+</GlobalErrorHandler>
 ```
 
 ### ApiError 타입 감지
 
-`QueryErrorBoundary`는 자동으로 `ApiError`를 감지하여 적절한 메시지를 표시합니다:
+`GlobalErrorHandler`는 자동으로 `ApiError`를 감지하여 적절한 메시지를 표시합니다:
 
 ```typescript
 if (error instanceof ApiError) {

@@ -1,4 +1,4 @@
-import { PostList, postQueries } from '@domains/example';
+import { PostListSuspense, postQueries } from '@domains/example';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 
 /**
@@ -29,7 +29,7 @@ export default async function SSGPage() {
       </header>
 
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <PostList />
+        <PostListSuspense />
       </HydrationBoundary>
     </div>
   );
