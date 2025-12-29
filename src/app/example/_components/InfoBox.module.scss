@@ -1,13 +1,13 @@
 .box {
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 24px;
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-xl);
 }
 
 .title {
   font-size: 1.125rem;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-md);
 }
 
 .content {
@@ -15,11 +15,11 @@
 
   ul,
   ol {
-    margin-left: 20px;
+    margin-left: var(--spacing-xl);
   }
 
   li {
-    margin-bottom: 4px;
+    margin-bottom: var(--spacing-xs);
   }
 }
 
@@ -49,4 +49,3 @@
     color: var(--brand100);
   }
 }
-
