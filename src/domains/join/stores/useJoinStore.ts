@@ -28,6 +28,7 @@ const initialFormData: JoinFormData = {
   verificationCode: '',
   isVerified: false,
   userId: '',
+  password: '',
   referralCode: '',
   onboarding: {
     groupInfo: [],

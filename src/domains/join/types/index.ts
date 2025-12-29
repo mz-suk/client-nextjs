@@ -17,6 +17,7 @@ export interface JoinFormData {
 
   // Step 7-8: 계정 정보
   userId: string;
+  password: string;
   referralCode: string;
 
   // Step 10: 프로필 (온보딩)

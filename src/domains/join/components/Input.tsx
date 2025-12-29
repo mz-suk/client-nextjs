@@ -38,11 +38,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className={styles.container}>
-        <div className={styles.inputWrapper}>
+        <div className={`${styles.inputWrapper} ${children ? styles.hasAction : ''}`}>
           {label && <label className={`${styles.label} ${isFocused ? styles.focused : ''}`}>{label}</label>}
           <input
             ref={ref}
-            className={`${styles.input} ${hasError ? styles.error : ''} ${isFocused ? styles.focused : ''} ${className || ''}`}
+            className={`${styles.input} ${hasError ? styles.error : ''} ${isFocused ? styles.focused : ''} ${children ? styles.hasActionButton : ''} ${className || ''}`}
             value={value}
             onChange={onChange}
             onFocus={e => {

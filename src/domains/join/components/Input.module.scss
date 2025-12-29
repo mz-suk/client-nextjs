@@ -40,6 +40,10 @@
   box-shadow: 0px 16px 20px 0px #00000014;
   transition: all 0.2s ease-in-out;
 
+  &.hasActionButton {
+    padding-right: 8rem; // 중복 확인 버튼이 있을 때 더 넓은 패딩
+  }
+
   &::placeholder {
     color: #c5c8ce;
     font-size: 1.7rem;
