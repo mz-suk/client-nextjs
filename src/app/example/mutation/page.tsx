@@ -3,16 +3,13 @@
 import { useCreatePost, useDeletePost, useUpdatePost } from '@domains/example';
 import { useState } from 'react';
 
+import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
 /**
  * Mutation (데이터 변경) 예제
  *
- * 동작 방식:
- * 1. useMutation 훅으로 생성/수정/삭제 작업 수행
- * 2. Mutation 실행 중 전역 로딩이 자동으로 표시됨
- * 3. 성공 시 관련 쿼리를 자동으로 무효화하여 최신 데이터 유지
- * 4. 에러 발생 시 GlobalErrorHandler에서 처리
+ * 생성, 수정, 삭제 작업과 자동 캐시 무효화를 보여줍니다.
  */
 export default function MutationPage() {
   const [title, setTitle] = useState('');
@@ -35,11 +32,11 @@ export default function MutationPage() {
         body,
         userId: 1,
       });
-      setResult(`✅ 게시글 생성 완료! ID: ${newPost.id}`);
+      setResult(`✅ 생성 완료! ID: ${newPost.id}`);
       setTitle('');
       setBody('');
     } catch (error) {
-      setResult(`❌ 생성 실패: ${error}`);
+      setResult(`❌ 실패: ${error}`);
     }
   };
 
@@ -49,39 +46,30 @@ export default function MutationPage() {
         id: 1,
         data: { title: '수정된 제목', body: '수정된 내용' },
       });
-      setResult('✅ 게시글 수정 완료! ID: 1');
+      setResult('✅ 수정 완료! ID: 1');
     } catch (error) {
-      setResult(`❌ 수정 실패: ${error}`);
+      setResult(`❌ 실패: ${error}`);
     }
   };
 
   const handleDelete = async () => {
     try {
       await deletePost.mutateAsync(1);
-      setResult('✅ 게시글 삭제 완료! ID: 1');
+      setResult('✅ 삭제 완료! ID: 1');
     } catch (error) {
-      setResult(`❌ 삭제 실패: ${error}`);
+      setResult(`❌ 실패: ${error}`);
     }
   };
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <h1>Mutation (데이터 변경) 예제</h1>
-        <p>생성, 수정, 삭제 작업 시 전역 로딩이 자동으로 표시됩니다.</p>
-      </header>
-
-      <div className={styles.infoBox}>
-        <h2>💡 동작 원리</h2>
+    <ExampleLayout title="Mutation (데이터 변경)" description="생성, 수정, 삭제 작업 및 자동 캐시 무효화 예제입니다.">
+      <InfoBox title="💡 동작 원리">
         <ul>
-          <li>
-            • Mutation 실행 중 <code>useIsMutating()</code>이 감지되어 전역 로딩 표시
-          </li>
-          <li>• 성공 시 관련 쿼리를 자동으로 무효화하여 최신 데이터 유지</li>
-          <li>• 에러 발생 시 GlobalErrorHandler에서 처리</li>
-          <li>• Optimistic Update, Rollback 등 고급 패턴도 지원</li>
+          <li>Mutation 실행 중 `useIsMutating()`이 감지되어 전역 로딩이 표시됩니다.</li>
+          <li>성공 시 `queryClient.invalidateQueries()`를 통해 목록을 자동으로 갱신합니다.</li>
+          <li>에러 발생 시 GlobalErrorHandler에서 처리됩니다.</li>
         </ul>
-      </div>
+      </InfoBox>
 
       {/* 생성 폼 */}
       <section className={styles.section}>
@@ -97,7 +85,7 @@ export default function MutationPage() {
 
       {/* 수정/삭제 */}
       <section className={styles.section}>
-        <h3>2. 게시글 수정 / 삭제</h3>
+        <h3>2. 수정 / 삭제 (ID: 1)</h3>
         <div className={styles.buttonGroup}>
           <button onClick={handleUpdate} disabled={updatePost.isPending} className={`${styles.button} ${styles.success}`}>
             {updatePost.isPending ? '수정 중...' : 'ID 1 수정'}
@@ -110,16 +98,6 @@ export default function MutationPage() {
 
       {/* 결과 표시 */}
       {result && <div className={`${styles.result} ${result.startsWith('✅') ? styles.success : styles.error}`}>{result}</div>}
-
-      <div className={styles.guide}>
-        <h3>🎯 테스트 방법</h3>
-        <ol>
-          <li>1. 제목과 내용을 입력하고 &quot;게시글 생성&quot; 클릭</li>
-          <li>2. 전역 로딩이 표시되고 1초 후 완료 메시지 표시</li>
-          <li>3. &quot;수정&quot; 또는 &quot;삭제&quot; 버튼 클릭하여 다른 Mutation 테스트</li>
-          <li>4. 각 작업마다 전역 로딩이 자동으로 표시됩니다</li>
-        </ol>
-      </div>
-    </div>
+    </ExampleLayout>
   );
 }
