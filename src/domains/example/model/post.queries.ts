@@ -1,46 +1,51 @@
-import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
+import { createInfiniteQuery, createQuery, createQueryKeys } from '@core/lib';
 
 import { postApi } from './post.api';
-import type { PostListParams } from './post.types';
+import type { Post, PostListParams } from './post.types';
 
 /**
  * Post Query Keys Factory
- * 쿼리 키를 중앙에서 관리하여 일관성 유지
+ *
+ * 개선된 createQueryKeys 헬퍼로 타입 안전성 강화
+ * 쿼리 키를 중앙에서 일관성 있게 관리
  */
-export const postKeys = {
-  all: () => ['posts'] as const,
-  lists: () => [...postKeys.all(), 'list'] as const,
-  list: (params?: PostListParams) => [...postKeys.lists(), params] as const,
-  details: () => [...postKeys.all(), 'detail'] as const,
-  detail: (id: number) => [...postKeys.details(), id] as const,
-  infinite: () => [...postKeys.all(), 'infinite'] as const,
-} as const;
+export const postKeys = createQueryKeys('posts', {
+  all: null,
+  lists: null,
+  list: (params: unknown) => params as PostListParams | undefined,
+  details: null,
+  detail: (id: unknown) => id as number,
+  infinite: null,
+});
 
 /**
  * Post Query Options Factory
- * TanStack Query v5의 queryOptions를 활용한 타입 안전한 쿼리 정의
+ *
+ * React Query v5 + React 19 최적화 패턴
+ * createQuery 헬퍼로 타입 추론 강화 및 코드 간소화
  */
 export const postQueries = {
-  list: (params?: PostListParams) =>
-    queryOptions({
-      queryKey: postKeys.list(params),
-      queryFn: () => postApi.getPosts(params),
-    }),
+  /**
+   * 게시글 목록 조회
+   */
+  list: createQuery<Post[], PostListParams | undefined>(postKeys.lists(), params => postApi.getPosts(params), {
+    staleTime: 60000,
+  }),
 
-  detail: (id: number) =>
-    queryOptions({
-      queryKey: postKeys.detail(id),
-      queryFn: () => postApi.getPost(id),
-    }),
+  /**
+   * 게시글 상세 조회
+   */
+  detail: createQuery<Post, number>(postKeys.details(), id => postApi.getPost(id), {
+    staleTime: 300000,
+  }),
 
-  infinite: () =>
-    infiniteQueryOptions({
-      queryKey: postKeys.infinite(),
-      queryFn: ({ pageParam }) => postApi.getPostsPaginated(pageParam),
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, allPages) => {
-        // 페이지당 10개씩, 총 100개까지
-        return lastPage.length === 10 && allPages.length < 10 ? allPages.length + 1 : undefined;
-      },
-    }),
-} as const;
+  /**
+   * 무한 스크롤 게시글 목록
+   */
+  infinite: createInfiniteQuery<Post[], void>(postKeys.infinite(), ({ pageParam }) => postApi.getPostsPaginated(pageParam), {
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      return lastPage.length === 10 && allPages.length < 10 ? lastPageParam + 1 : undefined;
+    },
+    staleTime: 60000,
+  }),
+};

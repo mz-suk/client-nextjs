@@ -9,4 +9,4 @@ export { PostCard } from './ui/PostCard';
 export { PostList } from './ui/PostList';
 export { PostListSuspense } from './ui/PostListSuspense';
 export { useInfinitePosts } from './ui/useInfinitePosts';
-export { usePost, usePosts, usePostsSuspense } from './ui/usePosts';
+export { usePost, usePosts, useSuspensePost, useSuspensePosts } from './ui/usePosts';

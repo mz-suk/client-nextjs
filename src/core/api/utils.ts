@@ -53,3 +53,16 @@ export const buildURL = (baseURL: string, endpoint: string, params?: Record<stri
 
   return url;
 };
+
+/**
+ * Zod 스키마를 사용하여 데이터 유효성 검사
+ * @param schema Zod 스키마
+ * @param data 검사할 데이터
+ * @returns 유효성 검사가 통과된 데이터
+ * @throws ZodError 유효성 검사 실패 시
+ */
+import type { z } from 'zod';
+
+export const validateResponse = <T>(schema: z.ZodType<T>, data: unknown): T => {
+  return schema.parse(data);
+};
