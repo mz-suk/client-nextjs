@@ -34,6 +34,12 @@ export default function ExampleIndexPage() {
       tags: ['Infinite', 'Scroll', 'Pagination'],
     },
     {
+      title: 'Virtual Scroll',
+      path: '/example/virtual-scroll',
+      description: 'TanStack Virtual을 활용한 대용량 데이터 최적화 및 스크롤 위치 복원',
+      tags: ['Virtual', 'Performance', 'Optimization'],
+    },
+    {
       title: '병렬 데이터 패칭',
       path: '/example/parallel-fetching',
       description: 'PrefetchBoundary(Promise.all)를 사용하여 여러 쿼리를 동시에 실행',
@@ -93,6 +99,9 @@ export default function ExampleIndexPage() {
           </li>
           <li>
             <strong>무한 스크롤</strong> - 페이지네이션 및 무한 스크롤 패턴
+          </li>
+          <li>
+            <strong>Virtual Scroll</strong> - 대용량 데이터 렌더링 최적화 및 스크롤 복원
           </li>
           <li>
             <strong>전역 기능 테스트</strong> - 로딩과 에러 처리 동작 원리 이해

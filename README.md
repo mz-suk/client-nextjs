@@ -113,6 +113,7 @@ API_TARGET_URL=http://backend:8080  # SSR 전용
 | `/example/csr`             | 순수 CSR 데이터 패칭  |
 | `/example/mutation`        | 데이터 생성/수정/삭제 |
 | `/example/infinite-scroll` | 무한 스크롤           |
+| `/example/virtual-scroll`  | Virtual Scroll        |
 | `/example/features-demo`   | 전역 로딩/에러 처리   |
 
 ## 문서
@@ -120,6 +121,7 @@ API_TARGET_URL=http://backend:8080  # SSR 전용
 - [아키텍처 가이드](./docs/architecture.md)
 - [데이터 패칭 가이드](./docs/data-fetching.md)
 - [에러 처리 가이드](./docs/error-handling.md)
+- [Virtual Scroll 가이드](./docs/virtual-scroll.md)
 
 ## 라이선스
 
