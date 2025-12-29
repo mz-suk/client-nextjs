@@ -14,7 +14,7 @@
   padding: 2rem;
   
   &.error {
-    color: #dc2626;
+    color: var(--color-error);
   }
 }
 

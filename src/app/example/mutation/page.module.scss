@@ -14,7 +14,7 @@
   }
 
   p {
-    color: #6b7280;
+    color: var(--color-text-secondary);
     line-height: 1.6;
   }
 }
@@ -22,7 +22,7 @@
 .infoBox {
   margin-bottom: 32px;
   padding: 20px;
-  background: #f3f4f6;
+  background: var(--gray10);
   border-radius: 8px;
 
   h2 {
@@ -33,11 +33,11 @@
 
   ul {
     line-height: 1.8;
-    color: #4b5563;
+    color: var(--gray80);
 
     code {
       padding: 2px 6px;
-      background: #e5e7eb;
+      background: var(--gray20);
       border-radius: 3px;
       font-family: monospace;
       font-size: 0.9em;
@@ -48,7 +48,7 @@
 .section {
   margin-bottom: 32px;
   padding: 24px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--color-border-base);
   border-radius: 8px;
 
   h3 {
@@ -66,14 +66,14 @@
 
 .input {
   padding: 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--gray40);
   border-radius: 6px;
   font-size: 1rem;
 }
 
 .textarea {
   padding: 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--gray40);
   border-radius: 6px;
   font-size: 1rem;
   resize: vertical;
@@ -89,31 +89,31 @@
   transition: opacity 0.2s;
 
   &:disabled {
-    background: #d1d5db !important;
+    background: var(--color-bg-disabled) !important;
     cursor: not-allowed;
   }
 
   &.primary {
-    background: #3b82f6;
+    background: var(--color-secondary);
 
     &:hover:not(:disabled) {
-      background: #2563eb;
+      background: var(--color-secondary-hover);
     }
   }
 
   &.success {
-    background: #10b981;
+    background: var(--color-success);
 
     &:hover:not(:disabled) {
-      background: #059669;
+      background: var(--color-success);
     }
   }
 
   &.danger {
-    background: #ef4444;
+    background: var(--color-error);
 
     &:hover:not(:disabled) {
-      background: #dc2626;
+      background: var(--color-error);
     }
   }
 }
@@ -133,19 +133,19 @@
   margin-bottom: 32px;
 
   &.success {
-    background: #d1fae5;
-    color: #065f46;
+    background: var(--brand10);
+    color: var(--brand100);
   }
 
   &.error {
-    background: #fee2e2;
-    color: #991b1b;
+    background: var(--orange10);
+    color: var(--orange100);
   }
 }
 
 .guide {
   padding: 20px;
-  background: #eff6ff;
+  background: var(--blue10);
   border-radius: 8px;
 
   h3 {
@@ -156,7 +156,7 @@
 
   ol {
     line-height: 1.8;
-    color: #1e40af;
+    color: var(--blue90);
   }
 }
 

@@ -12,20 +12,20 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #1f2937;
+  color: var(--color-text-primary);
 }
 
 .description {
-  color: #6b7280;
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
 .tip {
   margin-bottom: 24px;
   padding: 16px;
-  background: #fef3c7;
+  background: var(--yellow10);
   border-radius: 8px;
   font-size: 0.9375rem;
-  color: #92400e;
+  color: var(--yellow100);
 }
 
