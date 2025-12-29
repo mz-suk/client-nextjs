@@ -3,8 +3,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  text-align: center;
+  margin-top: 17.4rem;
+  gap: 1.6rem;
 }
 
 .iconWrapper {
@@ -12,48 +12,13 @@
   animation: scaleIn 0.5s ease-out;
 }
 
-.checkIcon {
-  svg {
-    filter: drop-shadow(0 4px 12px rgba(43, 179, 191, 0.3));
-  }
-}
-
 .content {
   margin-bottom: 4rem;
 }
 
 .title {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   font-weight: 700;
-  color: var(--gray100);
-  margin-bottom: 1.2rem;
+  color: #111111;
+  font-family: 'SUITE', sans-serif;
 }
-
-.description {
-  font-size: 1.5rem;
-  color: var(--gray60);
-  line-height: 1.6;
-}
-
-.button {
-  width: 100%;
-  max-width: 32rem;
-}
-
-.autoRedirect {
-  margin-top: 1.6rem;
-  font-size: 1.3rem;
-  color: var(--gray50);
-}
-
-@keyframes scaleIn {
-  from {
-    transform: scale(0);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-

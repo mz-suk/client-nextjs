@@ -37,22 +37,12 @@ export default function JoinPage() {
         </div>
 
         <form onSubmit={e => e.preventDefault()} className={styles.form}>
-          {/* Step 3: 휴대폰 번호 (맨 위) */}
-          {currentStep !== 'name' && currentStep !== 'carrier' && (
-            <div className={`${styles.section} ${styles.fadeIn}`}>
-              <FormInput
-                name="phoneNumber"
-                control={control}
-                label="휴대폰 번호"
-                type="tel"
-                placeholder="010-1234-5678"
-                onChange={handlePhoneChange}
-                autoFocus
-              />
-            </div>
-          )}
+          {/* Step 1: 이름 입력 */}
+          <div className={`${styles.section} ${styles.fadeIn}`}>
+            <FormInput name="name" control={control} label="이름" type="text" placeholder="이름을 입력해 주세요" onBlur={handleNameBlur} autoFocus />
+          </div>
 
-          {/* Step 2: 통신사 선택 (중간) */}
+          {/* Step 2: 통신사 선택 (이름 입력 후 표시) */}
           {currentStep !== 'name' && (
             <div className={`${styles.section} ${styles.fadeIn}`}>
               <FormInput
@@ -71,10 +61,20 @@ export default function JoinPage() {
             </div>
           )}
 
-          {/* Step 1: 이름 입력 (맨 아래, 계속 밑으로 이동) */}
-          <div className={`${styles.section} ${styles.slideDown}`}>
-            <FormInput name="name" control={control} label="이름" type="text" placeholder="이름을 입력해 주세요" onBlur={handleNameBlur} autoFocus />
-          </div>
+          {/* Step 3: 휴대폰 번호 (통신사 선택 후 표시) */}
+          {currentStep !== 'name' && currentStep !== 'carrier' && (
+            <div className={`${styles.section} ${styles.fadeIn}`}>
+              <FormInput
+                name="phoneNumber"
+                control={control}
+                label="휴대폰 번호"
+                type="tel"
+                placeholder="010-1234-5678"
+                onChange={handlePhoneChange}
+                autoFocus
+              />
+            </div>
+          )}
 
           {/* Step 4: 약관 동의 (전화번호 입력 후 표시) */}
           {currentStep === 'agreement' && (

@@ -10,7 +10,7 @@ export default function Home() {
         <p className={styles.description}>Next.js 16 + React 19 기반 DDD 아키텍처 템플릿</p>
 
         <div className={styles.exampleLink}>
-          <Link href="/example">예제 페이지 보기 →</Link>
+          <Link href="/join">회원가입 페이지 보기 →</Link>
         </div>
 
         <h2>주요 기능</h2>

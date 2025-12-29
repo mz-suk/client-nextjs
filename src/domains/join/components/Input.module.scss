@@ -48,10 +48,25 @@
   &:focus {
     outline: none;
     border: 1px solid #66bb6a;
+    background-color: #ffffff;
+  }
+
+  &:active {
+    background-color: #ffffff;
+  }
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:hover {
+    box-shadow: 0 0 0px 1000px #ffffff inset;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    caret-color: var(--gray100);
+    border: 1px solid #66bb6a;
   }
 
   &.focused {
     border-color: #66bb6a;
+    background-color: #ffffff;
   }
 
   &:disabled {
