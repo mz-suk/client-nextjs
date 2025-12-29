@@ -1,53 +1,69 @@
 'use client';
 
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
+
+import { ClearIcon } from '@/shared/ui';
 
 import styles from './Input.module.scss';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  error?: string;
+  error?: string | boolean;
   helperText?: string;
+  showClearButton?: boolean;
   onClear?: () => void;
-  rightIcon?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-export function Input({ label, error, helperText, className, value, onClear, rightIcon, ...props }: InputProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const hasValue = value !== undefined && value !== null && String(value).length > 0;
+/**
+ * 독립형 Input 컴포넌트
+ * - label, helperText, error 표시 기능 포함
+ * - react-hook-form 없이 독립적으로 사용 가능
+ */
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ label, error, helperText, showClearButton = true, onClear, className, value, onChange, children, ...props }, ref) => {
+    const [isFocused, setIsFocused] = useState(false);
+    const hasValue = value !== undefined && value !== null && String(value).length > 0;
+    const errorMessage = typeof error === 'string' ? error : undefined;
+    const hasError = !!error;
 
-  const handleClear = () => {
-    if (onClear) {
-      onClear();
-    }
-  };
+    const handleClear = () => {
+      if (onClear) {
+        onClear();
+      } else if (onChange) {
+        // @ts-expect-error - onChange expects native event, but we're creating a synthetic clear event
+        onChange({ target: { value: '' } });
+      }
+    };
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.inputWrapper}>
-        {label && <label className={styles.label}>{label}</label>}
-        <input
-          className={`${styles.input} ${error ? styles.error : ''} ${isFocused ? styles.focused : ''} ${className || ''}`}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          value={value}
-          {...props}
-        />
-        {rightIcon
-          ? rightIcon
-          : hasValue &&
-            !props.disabled &&
-            !props.readOnly && (
-              <button type="button" className={styles.clearButton} onClick={handleClear} aria-label="입력 내용 지우기">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="9" cy="9" r="9" fill="#E2E5EB" />
-                  <path d="M11.5 6.5L6.5 11.5M6.5 6.5L11.5 11.5" stroke="#5F646F" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </button>
-            )}
+    return (
+      <div className={styles.container}>
+        <div className={styles.inputWrapper}>
+          {label && <label className={`${styles.label} ${isFocused ? styles.focused : ''}`}>{label}</label>}
+          <input
+            ref={ref}
+            className={`${styles.input} ${hasError ? styles.error : ''} ${isFocused ? styles.focused : ''} ${className || ''}`}
+            value={value}
+            onChange={onChange}
+            onFocus={e => {
+              setIsFocused(true);
+              props.onFocus?.(e);
+            }}
+            onBlur={e => {
+              setIsFocused(false);
+              props.onBlur?.(e);
+            }}
+            {...props}
+          />
+          {children
+            ? children
+            : showClearButton && hasValue && !props.disabled && !props.readOnly && <ClearIcon className={styles.clearButton} onClick={handleClear} />}
+        </div>
+        {errorMessage && <span className={styles.errorMessage}>{errorMessage}</span>}
+        {helperText && !errorMessage && <span className={styles.helperText}>{helperText}</span>}
       </div>
-      {error && <span className={styles.errorMessage}>{error}</span>}
-      {!error && helperText && <span className={styles.helperText}>{helperText}</span>}
-    </div>
-  );
-}
+    );
+  }
+);
+
+Input.displayName = 'Input';

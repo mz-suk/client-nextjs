@@ -51,17 +51,7 @@ export function JoinLayout({
     return () => clearTimeout(timer);
   }, [currentStep, isProfileStep, profileStep, profileTotalSteps, setPreviousProgress]);
 
-  const handleBack = () => {
-    if (onBack) {
-      onBack();
-      return;
-    }
-
-    const previousStep = goBack();
-    if (previousStep && canGoBack()) {
-      router.back();
-    }
-  };
+  const handleBack = () => router.back();
 
   return (
     <div className={styles.container}>

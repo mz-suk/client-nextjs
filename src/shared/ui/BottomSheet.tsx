@@ -4,6 +4,7 @@ import { ScrollArea } from '@base-ui/react/scroll-area';
 import * as React from 'react';
 
 import styles from './BottomSheet.module.scss';
+import { ClearIconSVG } from './icon';
 
 export interface BottomSheetProps {
   /** BottomSheet 열림/닫힘 상태 (controlled) */
@@ -83,7 +84,7 @@ export function BottomSheet({
                           {title && <Dialog.Title className={styles.Title}>{title}</Dialog.Title>}
                           {showCloseButton && (
                             <Dialog.Close className={styles.Close} aria-label="닫기">
-                              <XIcon className={styles.CloseIcon} />
+                              <ClearIconSVG size={24} />
                             </Dialog.Close>
                           )}
                         </>

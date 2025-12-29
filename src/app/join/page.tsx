@@ -6,6 +6,7 @@ import { FormCheckbox } from '@/domains/join/components/FormCheckbox';
 import { FormInput } from '@/domains/join/components/FormInput';
 import { useJoinForm } from '@/domains/join/hooks/useJoinForm';
 import { stepTitles } from '@/domains/join/types';
+import { ArrowDownIcon } from '@/shared/ui';
 import styles from './page.module.scss';
 
 export default function JoinPage() {
@@ -36,34 +37,7 @@ export default function JoinPage() {
         </div>
 
         <form onSubmit={e => e.preventDefault()} className={styles.form}>
-          {/* Step 1: 이름 입력 */}
-          <div className={`${styles.section} ${styles.fadeIn}`}>
-            <FormInput name="name" control={control} label="이름" type="text" placeholder="이름을 입력해 주세요" onBlur={handleNameBlur} autoFocus />
-          </div>
-
-          {/* Step 2: 통신사 선택 (이름 입력 후 표시) */}
-          {currentStep !== 'name' && (
-            <div className={`${styles.section} ${styles.fadeIn}`}>
-              <FormInput
-                name="carrier"
-                control={control}
-                label="통신사"
-                type="text"
-                placeholder="선택해주세요"
-                readOnly
-                onClick={() => setShowCarrierBottomSheet(true)}
-                rightIcon={
-                  <div className={styles.arrowIcon}>
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                }
-              />
-            </div>
-          )}
-
-          {/* Step 3: 휴대폰 번호 (통신사 선택 후 표시) */}
+          {/* Step 3: 휴대폰 번호 (맨 위) */}
           {currentStep !== 'name' && currentStep !== 'carrier' && (
             <div className={`${styles.section} ${styles.fadeIn}`}>
               <FormInput
@@ -77,6 +51,30 @@ export default function JoinPage() {
               />
             </div>
           )}
+
+          {/* Step 2: 통신사 선택 (중간) */}
+          {currentStep !== 'name' && (
+            <div className={`${styles.section} ${styles.fadeIn}`}>
+              <FormInput
+                name="carrier"
+                control={control}
+                label="통신사"
+                type="text"
+                placeholder="선택해주세요"
+                readOnly
+                onClick={() => setShowCarrierBottomSheet(true)}
+              >
+                <div className={styles.arrowIcon}>
+                  <ArrowDownIcon />
+                </div>
+              </FormInput>
+            </div>
+          )}
+
+          {/* Step 1: 이름 입력 (맨 아래, 계속 밑으로 이동) */}
+          <div className={`${styles.section} ${styles.slideDown}`}>
+            <FormInput name="name" control={control} label="이름" type="text" placeholder="이름을 입력해 주세요" onBlur={handleNameBlur} autoFocus />
+          </div>
 
           {/* Step 4: 약관 동의 (전화번호 입력 후 표시) */}
           {currentStep === 'agreement' && (

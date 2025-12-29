@@ -164,11 +164,10 @@
 .PopupHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 1rem;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--gray20);
 }
 
 .Title {
@@ -187,18 +186,9 @@
 }
 
 .Close {
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 3.6rem;
-  height: 3.6rem;
-  border: none;
-  border-radius: 50%;
-  background-color: var(--gray10);
-  color: var(--gray70);
-  cursor: pointer;
-  transition: background-color 200ms ease;
+  position: absolute;
+  right: 20px;
+  top: 20px;
 
   @media (hover: hover) {
     &:hover {
@@ -214,11 +204,6 @@
     outline: 2px solid var(--success);
     outline-offset: 2px;
   }
-}
-
-.CloseIcon {
-  width: 2rem;
-  height: 2rem;
 }
 
 .Body {
