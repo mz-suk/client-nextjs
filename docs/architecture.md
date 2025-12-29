@@ -115,21 +115,22 @@ export const postApi = {
 };
 
 // model/post.queries.ts
-import { queryOptions } from '@tanstack/react-query';
+import { createQuery, createQueryKeys } from '@core/lib';
+
+export const postKeys = createQueryKeys('posts', {
+  lists: null,
+  list: (params?: PostListParams) => params,
+});
 
 export const postQueries = {
-  list: () =>
-    queryOptions({
-      queryKey: ['posts'],
-      queryFn: postApi.list,
-    }),
+  list: createQuery(postKeys.lists(), (params?: PostListParams) => postApi.getPosts(params), { staleTime: 60000 }),
 };
 
 // ui/usePosts.ts
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
-export const usePosts = () => {
-  return useQuery(postQueries.list());
+export const useSuspensePosts = (params?: PostListParams) => {
+  return useSuspenseQuery(postQueries.list(params));
 };
 ```
 

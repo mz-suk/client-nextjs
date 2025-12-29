@@ -1,7 +1,7 @@
 'use client';
 
 import { PostCard, useInfinitePosts } from '@domains/example';
-import { useEffect, useRef } from 'react';
+import { useIntersectionObserver } from '@shared/hooks';
 
 import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
@@ -15,29 +15,11 @@ import styles from './page.module.scss';
  */
 export default function InfiniteScrollPage() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfinitePosts();
-  const observerTarget = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const currentTarget = observerTarget.current;
-    if (currentTarget) {
-      observer.observe(currentTarget);
-    }
-
-    return () => {
-      if (currentTarget) {
-        observer.unobserve(currentTarget);
-      }
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+  const observerRef = useIntersectionObserver({
+    onIntersect: fetchNextPage,
+    enabled: hasNextPage && !isFetchingNextPage,
+  });
 
   if (isLoading) {
     return (
@@ -73,7 +55,7 @@ export default function InfiniteScrollPage() {
       </div>
 
       {/* Intersection Observer 타겟 */}
-      <div ref={observerTarget} className={styles.observerTarget} />
+      <div ref={observerRef} className={styles.observerTarget} />
 
       {isFetchingNextPage && (
         <div className={styles.loadingMessage}>

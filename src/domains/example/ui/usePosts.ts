@@ -1,28 +1,60 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 
-import type { PostListParams } from '../model';
-import { postQueries } from '../model';
+import { type PostListParams, postQueries } from '../model';
 
 /**
- * 게시글 목록 조회 훅 (일반 쿼리)
- * CSR에서 사용하거나 에러 처리가 필요한 경우 사용
+ * Post Query Hooks
+ *
+ * React Query v5 + React 19 최적화 훅
+ * Suspense 버전과 일반 버전 제공
+ */
+
+/**
+ * 게시글 목록 조회 (Suspense) - 권장
+ *
+ * SSG/SSR prefetch와 함께 사용 시 최적의 성능
+ * ErrorBoundary + Suspense 필요
+ *
+ * @example
+ * // Server Component (prefetch)
+ * <PrefetchBoundary queryOptions={postQueries.list()}>
+ *   <PostListSuspense />
+ * </PrefetchBoundary>
+ *
+ * // Client Component (use)
+ * const { data } = useSuspensePosts();
+ */
+export const useSuspensePosts = (params?: PostListParams) => {
+  const options = postQueries.list(params);
+  return useSuspenseQuery({
+    ...options,
+    queryFn: typeof options.queryFn === 'function' ? options.queryFn : () => Promise.reject(new Error('Invalid queryFn')),
+  });
+};
+
+/**
+ * 게시글 목록 조회 (일반)
+ *
+ * 조건부 렌더링이나 커스텀 에러 처리가 필요한 경우
+ * isLoading, isError 상태를 직접 관리
  */
 export const usePosts = (params?: PostListParams) => {
   return useQuery(postQueries.list(params));
 };
 
 /**
- * 게시글 목록 조회 훅 (Suspense)
- * SSR/SSG에서 prefetch된 데이터를 hydrate하여 사용
- * 주의: CSR 전용 페이지에서는 사용하지 말 것 (무한 호출 발생)
+ * 게시글 상세 조회 (Suspense)
  */
-export const usePostsSuspense = (params?: PostListParams) => {
-  return useSuspenseQuery(postQueries.list(params));
+export const useSuspensePost = (id: number) => {
+  const options = postQueries.detail(id);
+  return useSuspenseQuery({
+    ...options,
+    queryFn: typeof options.queryFn === 'function' ? options.queryFn : () => Promise.reject(new Error('Invalid queryFn')),
+  });
 };
 
 /**
- * 게시글 상세 조회 훅
- * 필요 시점에 데이터를 가져오는 일반 쿼리
+ * 게시글 상세 조회 (일반)
  */
 export const usePost = (id: number) => {
   return useQuery(postQueries.detail(id));

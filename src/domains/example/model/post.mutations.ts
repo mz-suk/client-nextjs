@@ -1,62 +1,69 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createMutation, createOptimisticDeleteMutation, createOptimisticListMutation } from '@core/lib';
 
 import { postKeys } from './post.queries';
 import type { Post } from './post.types';
 
 /**
- * Post 생성 Mutation Hook
+ * Post Mutations
+ *
+ * React Query v5 + React 19 최적화 패턴
+ * Optimistic Updates 지원으로 더 나은 사용자 경험 제공
  */
-export const useCreatePost = () => {
-  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (data: Omit<Post, 'id'>) => {
-      // 실제로는 POST 요청을 보내지만, 예제에서는 시뮬레이션
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return {
-        id: Math.floor(Math.random() * 10000),
-        ...data,
-      } as Post;
-    },
-    onSuccess: () => {
-      // 성공 시 목록 쿼리 무효화하여 자동 refetch
-      queryClient.invalidateQueries({ queryKey: postKeys.lists() });
-    },
-  });
-};
+type CreatePostInput = Omit<Post, 'id'>;
+type UpdatePostInput = { id: number; data: Partial<Post> };
 
 /**
- * Post 수정 Mutation Hook
+ * Post 생성 Mutation (Optimistic Update)
+ *
+ * 목록에 즉시 반영되어 빠른 피드백 제공
  */
-export const useUpdatePost = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: Partial<Post> }) => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return { id, ...data } as Post;
-    },
-    onSuccess: (_, variables) => {
-      // 특정 게시글 쿼리 무효화
-      queryClient.invalidateQueries({ queryKey: postKeys.detail(variables.id) });
-      queryClient.invalidateQueries({ queryKey: postKeys.lists() });
-    },
-  });
-};
+export const useCreatePost = createOptimisticListMutation<Post, CreatePostInput>(
+  async data => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return {
+      id: Math.floor(Math.random() * 10000),
+      ...data,
+    };
+  },
+  {
+    listQueryKey: postKeys.lists(),
+    generateOptimisticItem: data => ({
+      id: -Date.now(),
+      ...data,
+    }),
+    position: 'start',
+    invalidateKeys: [postKeys.lists()],
+  }
+);
 
 /**
- * Post 삭제 Mutation Hook
+ * Post 수정 Mutation
+ *
+ * 특정 게시글과 목록 캐시 무효화
  */
-export const useDeletePost = () => {
-  const queryClient = useQueryClient();
+export const useUpdatePost = createMutation<Post, UpdatePostInput>(
+  async ({ id, data }) => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return { id, ...data } as Post;
+  },
+  {
+    invalidateKeys: [postKeys.details(), postKeys.lists()],
+  }
+);
 
-  return useMutation({
-    mutationFn: async (id: number) => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return id;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: postKeys.lists() });
-    },
-  });
-};
+/**
+ * Post 삭제 Mutation (Optimistic Update)
+ *
+ * 목록에서 즉시 제거되어 빠른 피드백 제공
+ */
+export const useDeletePost = createOptimisticDeleteMutation<Post, number>(
+  async _id => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  },
+  {
+    listQueryKey: postKeys.lists(),
+    getId: id => id,
+    invalidateKeys: [postKeys.details()],
+  }
+);

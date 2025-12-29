@@ -72,8 +72,19 @@ src/
 
 ### 상태 관리
 
-- **TanStack Query**: 서버 상태 캐싱, 자동 리페치
+- **TanStack Query v5.90**: 서버 상태 캐싱, Optimistic Updates
 - **Zustand**: 클라이언트 전역 상태, localStorage 동기화
+
+### 데이터 패칭 (v2.0)
+
+> - Query/Mutation Factory 헬퍼로 타입 안전성 강화
+> - Optimistic Updates 지원
+> - 개선된 서버 프리패칭 (PrefetchBoundary)
+
+- `createQuery` / `createInfiniteQuery`: 타입 안전한 쿼리 정의
+- `createMutation` / `createOptimisticMutation`: Optimistic Updates 지원
+- `PrefetchBoundary`: 선언적 서버 프리패칭
+- `createQueryKeys`: 일관된 쿼리 키 관리
 
 ### UI 컴포넌트
 
