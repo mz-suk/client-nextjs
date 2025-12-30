@@ -1,4 +1,12 @@
-import { type QueryClient, type QueryKey, useMutation, type UseMutationOptions, useQueryClient } from '@tanstack/react-query';
+import {
+  type DefaultError,
+  type QueryClient,
+  type QueryKey,
+  useMutation,
+  type UseMutationOptions,
+  type UseMutationResult,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 /**
  * Mutation Factory Helpers
@@ -7,7 +15,7 @@ import { type QueryClient, type QueryKey, useMutation, type UseMutationOptions, 
  * Optimistic Updates, 자동 캐시 무효화 등의 기능 제공
  */
 
-type MutationConfig<TData, TVariables, TError = Error, TContext = unknown> = Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'mutationFn'>;
+type MutationConfig<TData, TVariables, TError = DefaultError, TContext = unknown> = Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'mutationFn'>;
 
 interface MutationContext<TData> {
   previousData?: TData;
@@ -21,26 +29,31 @@ interface OptimisticUpdateConfig<TData, TVariables> {
 /**
  * 기본 Mutation Hook 생성
  *
+ * @param mutationFn Mutation 함수
+ * @param config Mutation 옵션 (invalidateKeys 포함)
+ * @returns Mutation hook
+ *
  * @example
- * export const useCreatePost = createMutation(
- *   (data: CreatePostDto) => postApi.create(data),
+ * export const useUpdatePost = createMutation(
+ *   ({ id, data }: UpdatePostParams) => postApi.update(id, data),
  *   {
- *     invalidateKeys: [['posts', 'list']],
- *     onSuccess: () => toast.success('생성 완료'),
+ *     invalidateKeys: [postKeys.details(), postKeys.lists()],
+ *     onSuccess: () => toast.success('수정 완료'),
  *   }
  * );
  */
-export const createMutation = <TData, TVariables, TContext = unknown>(
+export const createMutation = <TData, TVariables, TError = DefaultError, TContext = unknown>(
   mutationFn: (variables: TVariables) => Promise<TData>,
-  config?: MutationConfig<TData, TVariables, Error, TContext> & {
+  config?: Omit<MutationConfig<TData, TVariables, TError, TContext>, 'onSuccess'> & {
     invalidateKeys?: QueryKey[];
+    onSuccess?: (data: TData, variables: TVariables, context: TContext) => void;
   }
-) => {
+): (() => UseMutationResult<TData, TError, TVariables, TContext>) => {
   return () => {
     const queryClient = useQueryClient();
-    const { invalidateKeys, onSuccess, ...restConfig } = config ?? {};
+    const { invalidateKeys, onSuccess: customOnSuccess, ...restConfig } = config ?? {};
 
-    const options: UseMutationOptions<TData, Error, TVariables, TContext> = {
+    const options: UseMutationOptions<TData, TError, TVariables, TContext> = {
       ...restConfig,
       mutationFn,
       onSuccess: (data, variables, context) => {
@@ -49,8 +62,8 @@ export const createMutation = <TData, TVariables, TContext = unknown>(
             queryClient.invalidateQueries({ queryKey: key });
           });
         }
-        if (onSuccess) {
-          (onSuccess as (data: TData, variables: TVariables, context: TContext) => void)(data, variables, context);
+        if (customOnSuccess) {
+          customOnSuccess(data, variables, context);
         }
       },
     };
@@ -62,12 +75,20 @@ export const createMutation = <TData, TVariables, TContext = unknown>(
 /**
  * Optimistic Update를 지원하는 Mutation Hook 생성
  *
+ * @param mutationFn Mutation 함수
+ * @param optimisticConfig Optimistic update 설정
+ * @param config 추가 Mutation 옵션
+ * @returns Mutation hook
+ *
  * @example
  * export const useUpdatePost = createOptimisticMutation(
  *   ({ id, data }: UpdatePostParams) => postApi.update(id, data),
  *   {
- *     queryKey: ['posts', 'detail'],
+ *     queryKey: postKeys.detail(id),
  *     updater: (oldPost, { data }) => ({ ...oldPost, ...data }),
+ *   },
+ *   {
+ *     invalidateKeys: [postKeys.lists()],
  *   }
  * );
  */
@@ -76,21 +97,21 @@ interface OptimisticMutationContext<TData, TContext = unknown> {
   userContext?: TContext;
 }
 
-export const createOptimisticMutation = <TData, TVariables, TContext = unknown>(
+export const createOptimisticMutation = <TData, TVariables, TError = DefaultError, TContext = unknown>(
   mutationFn: (variables: TVariables) => Promise<TData>,
   optimisticConfig: OptimisticUpdateConfig<TData, TVariables>,
-  config?: Omit<MutationConfig<TData, TVariables>, 'onMutate' | 'onError' | 'onSuccess'> & {
+  config?: Omit<MutationConfig<TData, TVariables, TError>, 'onMutate' | 'onError' | 'onSuccess'> & {
     invalidateKeys?: QueryKey[];
     onMutate?: (variables: TVariables) => Promise<TContext | void> | TContext | void;
-    onError?: (error: Error, variables: TVariables, context: TContext | undefined) => void;
+    onError?: (error: TError, variables: TVariables, context: TContext | undefined) => void;
     onSuccess?: (data: TData, variables: TVariables, context: TContext | undefined) => void;
   }
-) => {
+): (() => UseMutationResult<TData, TError, TVariables, OptimisticMutationContext<TData, TContext>>) => {
   return () => {
     const queryClient = useQueryClient();
     const { invalidateKeys, onMutate, onError, onSuccess, ...mutationConfig } = config ?? {};
 
-    const options: UseMutationOptions<TData, Error, TVariables, OptimisticMutationContext<TData, TContext>> = {
+    const options: UseMutationOptions<TData, TError, TVariables, OptimisticMutationContext<TData, TContext>> = {
       mutationFn,
       ...mutationConfig,
       onMutate: async variables => {
@@ -129,20 +150,26 @@ export const createOptimisticMutation = <TData, TVariables, TContext = unknown>(
 /**
  * List 추가를 위한 Optimistic Mutation
  *
+ * @param mutationFn Mutation 함수
+ * @param config List mutation 설정
+ * @returns Mutation hook
+ *
  * @example
- * export const useAddPost = createOptimisticListMutation(
+ * export const useCreatePost = createOptimisticListMutation(
  *   (data: CreatePostDto) => postApi.create(data),
  *   {
- *     listQueryKey: ['posts', 'list'],
+ *     listQueryKey: postKeys.lists(),
  *     generateOptimisticItem: (variables) => ({
- *       id: `temp-${Date.now()}`,
+ *       id: -Date.now(),
  *       ...variables,
  *       createdAt: new Date().toISOString(),
  *     }),
+ *     position: 'start',
+ *     invalidateKeys: [postKeys.lists()],
  *   }
  * );
  */
-export const createOptimisticListMutation = <TData extends { id: string | number }, TVariables>(
+export const createOptimisticListMutation = <TData extends { id: string | number }, TVariables, TError = DefaultError>(
   mutationFn: (variables: TVariables) => Promise<TData>,
   config: {
     listQueryKey: QueryKey;
@@ -150,12 +177,12 @@ export const createOptimisticListMutation = <TData extends { id: string | number
     position?: 'start' | 'end';
     invalidateKeys?: QueryKey[];
   }
-) => {
+): (() => UseMutationResult<TData, TError, TVariables, MutationContext<TData[]>>) => {
   return () => {
     const queryClient = useQueryClient();
     const { listQueryKey, generateOptimisticItem, position = 'start', invalidateKeys } = config;
 
-    const options: UseMutationOptions<TData, Error, TVariables, MutationContext<TData[]>> = {
+    const options: UseMutationOptions<TData, TError, TVariables, MutationContext<TData[]>> = {
       mutationFn,
       onMutate: async variables => {
         await queryClient.cancelQueries({ queryKey: listQueryKey });
@@ -193,28 +220,33 @@ export const createOptimisticListMutation = <TData extends { id: string | number
 /**
  * List 삭제를 위한 Optimistic Mutation
  *
+ * @param mutationFn Mutation 함수
+ * @param config Delete mutation 설정
+ * @returns Mutation hook
+ *
  * @example
  * export const useDeletePost = createOptimisticDeleteMutation(
  *   (id: number) => postApi.delete(id),
  *   {
- *     listQueryKey: ['posts', 'list'],
+ *     listQueryKey: postKeys.lists(),
  *     getId: (id) => id,
+ *     invalidateKeys: [postKeys.details()],
  *   }
  * );
  */
-export const createOptimisticDeleteMutation = <TData extends { id: string | number }, TVariables>(
+export const createOptimisticDeleteMutation = <TData extends { id: string | number }, TVariables, TError = DefaultError>(
   mutationFn: (variables: TVariables) => Promise<void>,
   config: {
     listQueryKey: QueryKey;
     getId: (variables: TVariables) => string | number;
     invalidateKeys?: QueryKey[];
   }
-) => {
+): (() => UseMutationResult<void, TError, TVariables, MutationContext<TData[]>>) => {
   return () => {
     const queryClient = useQueryClient();
     const { listQueryKey, getId, invalidateKeys } = config;
 
-    const options: UseMutationOptions<void, Error, TVariables, MutationContext<TData[]>> = {
+    const options: UseMutationOptions<void, TError, TVariables, MutationContext<TData[]>> = {
       mutationFn,
       onMutate: async variables => {
         await queryClient.cancelQueries({ queryKey: listQueryKey });
