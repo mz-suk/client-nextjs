@@ -1,6 +1,6 @@
 'use client';
 
-import successCheckJson from '@/assets/lotties/success-check.json';
+import successCheckJson from '@/shared/assets/lotties/success-check.json';
 import lottie, { type AnimationItem } from 'lottie-web';
 import { useEffect, useRef } from 'react';
 

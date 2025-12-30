@@ -4,22 +4,65 @@
   height: 100%;
 }
 
+.matchingContent {
+  flex: 1;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+// Fade in 애니메이션
+.fadeIn {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .header {
   margin-bottom: 3.2rem;
+  animation: fadeInDown 0.6s ease-out 0.2s both;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .title {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
+  font-family: 'SUITE';
   font-weight: 700;
-  line-height: 1.4;
-  color: var(--gray100);
-  margin-bottom: 1.2rem;
+  line-height: 3rem;
+  color: #111111;
+  margin-bottom: 1.8rem;
+}
+.subTitle {
+  font-family: 'SUITE';
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 2rem;
+  color: #5f646f;
+  margin-bottom: 0.8rem;
 }
 
 .description {
-  font-size: 1.5rem;
-  color: var(--gray60);
-  line-height: 1.5;
+  font-size: 1.4rem;
+  color: #589e3a;
+  line-height: 2rem;
+  font-weight: 600;
 }
 
 .optionGrid {
@@ -68,27 +111,74 @@
 }
 
 .buttonGroup {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
-  margin-top: auto;
-}
+  align-items: center;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  letter-spacing: 0px;
+  border: none;
+  gap: 1rem;
+  transition: all 0.3s ease-in-out;
 
-.button {
-  width: 100%;
+  button {
+    padding: 1.2rem;
+    transition: all 0.3s ease-in-out;
+  }
 }
 
 .skipButton {
   font-size: 1.4rem;
-  color: var(--gray60);
-  text-decoration: underline;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 1.2rem;
+  color: #003223;
+  background: #fff;
+  opacity: 1;
+  max-height: 5rem;
+  margin-top: 1rem;
+  overflow: hidden;
+  transition: all 0.4s ease-in-out;
 
-  &:hover {
-    color: var(--gray80);
+  &.hidden {
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0;
+    padding: 0;
+    pointer-events: none;
   }
 }
 
+.buttonGroupTitle {
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1;
+  text-align: center;
+  color: #2f403b;
+  margin-bottom: 1.8rem;
+  opacity: 1;
+  max-height: 5rem;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 2rem;
+  right: 2rem;
+
+  // 초기 상태: 아래에서 시작
+  animation: slideUpFooter 0.5s ease-out forwards;
+}
+
+@keyframes slideUpFooter {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

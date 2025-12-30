@@ -110,10 +110,10 @@ export default function JoinPage() {
 
           {/* 취소/다음 버튼 */}
           <div className={styles.buttonContainer}>
-            <Button type="button" variant="secondary" size="full" onClick={handleCancel} className={styles.cancelButton}>
+            <Button type="button" variant="secondary" onClick={handleCancel} className={styles.cancelButton}>
               취소
             </Button>
-            <Button type="button" variant="default" size="full" onClick={handleNext} disabled={isNextButtonDisabled()} className={styles.nextButton}>
+            <Button type="button" variant="default" onClick={handleNext} disabled={isNextButtonDisabled()} className={styles.nextButton}>
               {getNextButtonText()}
             </Button>
           </div>

@@ -2,13 +2,12 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useJoinStore } from '@/domains/join';
 import { JoinLayout } from '@/domains/join/components';
-import { Button } from '@/domains/join/components/Button';
 import { FormInput } from '@/domains/join/components/FormInput';
 
 import styles from './page.module.scss';
@@ -40,7 +39,7 @@ export default function JoinAccountPage() {
   const [isUserIdAvailable, setIsUserIdAvailable] = useState(false);
   const [userIdCheckMessage, setUserIdCheckMessage] = useState('');
 
-  const { control, handleSubmit, watch, setError } = useForm<AccountFormData>({
+  const { control, handleSubmit, watch, setError, formState } = useForm<AccountFormData>({
     resolver: zodResolver(accountSchema),
     mode: 'onChange',
     defaultValues: {
@@ -51,6 +50,9 @@ export default function JoinAccountPage() {
   });
 
   const userId = watch('userId');
+  const password = watch('password');
+  const passwordConfirm = watch('passwordConfirm');
+  const { isValid } = formState;
 
   const checkUserIdAvailability = async () => {
     if (!userId || userId.length < 4) {
@@ -83,10 +85,28 @@ export default function JoinAccountPage() {
       return;
     }
 
-    setFormData({ userId: data.userId, password: data.password });
+    setFormData({ userId: data.userId });
     goToStep('join-complete');
     router.push('/join/complete');
   };
+
+  // 모든 필드가 유효하면 자동으로 제출
+  useEffect(() => {
+    if (isValid && isUserIdAvailable && userId && password && passwordConfirm) {
+      const data: AccountFormData = {
+        userId,
+        password,
+        passwordConfirm,
+      };
+
+      // 약간의 딜레이를 주어 사용자가 입력을 완료했음을 인지하도록
+      const timer = setTimeout(() => {
+        onSubmit(data);
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isValid, isUserIdAvailable, userId, password, passwordConfirm]);
 
   return (
     <JoinLayout title="아이디 설정" showProgress currentStep={5} totalStep={10}>
@@ -118,14 +138,14 @@ export default function JoinAccountPage() {
               }}
               autoFocus
             >
-              <Button
+              <button
                 type="button"
                 onClick={checkUserIdAvailability}
                 disabled={!userId || userId.length < 4 || isCheckingUserId}
                 className={styles.checkButton}
               >
                 {isCheckingUserId ? '확인 중' : '중복 확인'}
-              </Button>
+              </button>
             </FormInput>
           </div>
 

@@ -24,49 +24,32 @@ export default function JoinCompletePage() {
   };
 
   return (
-    <JoinLayout title="가입 완료" showBackButton={false} showProgress currentStep={6} totalStep={10}>
+    <JoinLayout showBackButton={false} showProgress currentStep={6} totalStep={10}>
       <div className={styles.container}>
         <div className={styles.iconWrapper}>
-          <div className={styles.celebrationIcon}>
-            <span role="img" aria-label="축하">
-              🎉
-            </span>
-          </div>
+          <img src="/img/ceremony.png" />
         </div>
 
         <div className={styles.content}>
           <h2 className={styles.title}>
-            환영합니다!
+            회원가입을 완료했어요!
             <br />
-            회원가입이 완료되었습니다
+            환영합니다~
           </h2>
           <p className={styles.description}>
-            <strong>{formData.name}</strong>님, 가입을 진심으로 축하드립니다!
+            프로필을 작성하면 더욱 세심한 관리를
             <br />
-            아이디: <strong>{formData.userId}</strong>
-          </p>
-        </div>
-
-        <div className={styles.nextStep}>
-          <h3 className={styles.nextStepTitle}>
-            더 나은 서비스를 위해
-            <br />
-            프로필을 작성해주세요
-          </h3>
-          <p className={styles.nextStepDescription}>
-            프로필 작성은 약 2분 정도 소요되며,
-            <br />
-            나중에도 언제든 작성하실 수 있습니다.
+            받으실 수 있어요
           </p>
         </div>
 
         <div className={styles.buttonGroup}>
-          <Button variant="default" size="lg" onClick={handleStartOnboarding} className={styles.button}>
+          <Button variant="default" size="lg" onClick={handleStartOnboarding}>
             프로필 작성하기
           </Button>
-          <button type="button" className={styles.skipButton} onClick={handleSkipOnboarding}>
-            나중에 하기
-          </button>
+          <Button type="button" className={styles.skipButton} onClick={handleSkipOnboarding}>
+            홈으로
+          </Button>
         </div>
       </div>
     </JoinLayout>

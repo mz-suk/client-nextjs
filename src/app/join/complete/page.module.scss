@@ -5,7 +5,6 @@
   justify-content: center;
   height: 100%;
   text-align: center;
-  padding: 2rem;
 }
 
 .iconWrapper {
@@ -13,13 +12,8 @@
   animation: bounce 1s ease-in-out;
 }
 
-.celebrationIcon {
-  font-size: 8rem;
-  line-height: 1;
-}
-
 .content {
-  margin-bottom: 4rem;
+  margin-bottom: 2.4rem;
 }
 
 .title {
@@ -31,61 +25,35 @@
 }
 
 .description {
-  font-size: 1.5rem;
-  color: var(--gray60);
-  line-height: 1.6;
-
-  strong {
-    color: var(--brand60);
-    font-weight: 600;
-  }
-}
-
-.nextStep {
-  width: 100%;
-  padding: 2.4rem;
-  background: linear-gradient(135deg, var(--brand10) 0%, var(--blue10) 100%);
-  border-radius: var(--radius-lg);
-  margin-bottom: 2.4rem;
-}
-
-.nextStepTitle {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--gray100);
-  margin-bottom: 0.8rem;
-  line-height: 1.4;
-}
-
-.nextStepDescription {
+  font-weight: 500;
   font-size: 1.4rem;
-  color: var(--gray70);
-  line-height: 1.5;
+  color: #6c6c6c;
+  line-height: 2rem;
 }
 
 .buttonGroup {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
-}
+  align-items: center;
+  gap: 1.6rem;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  letter-spacing: 0px;
+  border: none;
 
-.button {
-  width: 100%;
+  button {
+    width: 24rem;
+    padding: 1.2rem;
+  }
 }
 
 .skipButton {
   font-size: 1.4rem;
-  color: var(--gray60);
-  text-decoration: underline;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 1.2rem;
-
-  &:hover {
-    color: var(--gray80);
-  }
+  color: #003223;
+  background: #fff;
 }
 
 @keyframes bounce {
@@ -97,4 +65,3 @@
     transform: translateY(-20px);
   }
 }
-

@@ -36,20 +36,22 @@ export function JoinLayout({
 
   const [progress, setProgress] = useState(previousProgress);
 
-  // 프로그레스 바 부드럽게 채우기
+  // 프로그레스 바 부드럽게 채우기 (5.8rem 단위)
   useEffect(() => {
     if (!isProfileStep) return;
 
-    const targetProgress = (profileStep / profileTotalSteps) * 100;
+    // 한 칸당 5.8rem, 총 4단계
+    const stepWidthRem = 5.8;
+    const targetProgressRem = profileStep * stepWidthRem;
 
     // 짧은 딜레이 후 목표 값으로 이동 (이전 값에서 시작)
     const timer = setTimeout(() => {
-      setProgress(targetProgress);
-      setPreviousProgress(targetProgress);
+      setProgress(targetProgressRem);
+      setPreviousProgress(targetProgressRem);
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [currentStep, isProfileStep, profileStep, profileTotalSteps, setPreviousProgress]);
+  }, [currentStep, isProfileStep, profileStep, setPreviousProgress]);
 
   const handleBack = () => router.back();
 
@@ -70,7 +72,7 @@ export function JoinLayout({
       {/* Progress Bar - 프로필 작성(Step 7) 이후부터만 표시 */}
       {showProgress && isProfileStep && (
         <div className={styles.progressBar}>
-          <div className={styles.progressFill} style={{ width: `${progress}%` }}>
+          <div className={styles.progressFill} style={{ width: `${progress}rem` }}>
             {/* 빛나는 효과 */}
             <div className={styles.progressGlow} />
           </div>

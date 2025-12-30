@@ -62,8 +62,16 @@
   margin: 0.8rem 0;
 }
 
-.submitButton {
-  width: 100%;
+.cancelButton {
+  height: 5.2rem;
+  border-radius: 1.6rem;
+  flex: 1;
+}
+
+.nextButton {
+  height: 5.2rem;
+  border-radius: 1.6rem;
+  flex: 2;
 }
 
 .buttonContainer {
