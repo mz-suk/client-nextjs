@@ -1,4 +1,5 @@
-export type { BottomSheetProps } from './BottomSheet';
 export { BottomSheet, BottomSheetExample } from './BottomSheet';
-export * from './ErrorBoundary';
+export type { BottomSheetProps } from './BottomSheet';
+export { GlobalLoading } from './GlobalLoading';
 export * from './icon';
+export { VirtualList } from './VirtualList';

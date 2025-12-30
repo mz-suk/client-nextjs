@@ -30,14 +30,14 @@ Thumbs.db
 *.pem
 
 # IDEs
-.vscode/
+.vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
 !.vscode/launch.json
 .idea/
 *.swp
 *.swo
-.cursor/
+.cursor/*
 !.cursor/rules/
 
 # TypeScript

@@ -56,6 +56,20 @@
   border-radius: var(--radius-md);
 }
 
+.allAgree {
+  cursor: pointer;
+  
+  .content {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  
+  input {
+    cursor: pointer;
+  }
+}
+
 .divider {
   height: 1px;
   background-color: var(--gray30);

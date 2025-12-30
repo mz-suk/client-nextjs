@@ -1,0 +1,101 @@
+.container {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 32px;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+}
+
+.loadingContainer {
+  padding: 40px 20px;
+  text-align: center;
+
+  p {
+    color: var(--color-text-secondary);
+  }
+}
+
+.infoBox {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--gray10);
+  border-radius: 8px;
+
+  h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  ul {
+    line-height: 1.8;
+    color: var(--gray80);
+    margin-left: 20px;
+  }
+}
+
+.statusBox {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--blue10);
+  border-radius: 6px;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.observerTarget {
+  height: 20px;
+  margin: 20px 0;
+}
+
+.loadingMessage {
+  text-align: center;
+  padding: 20px;
+  color: var(--color-text-secondary);
+}
+
+.endMessage {
+  text-align: center;
+  padding: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.guide {
+  margin-top: 40px;
+  padding: 20px;
+  background: var(--yellow10);
+  border-radius: 8px;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  ol {
+    line-height: 1.8;
+    color: var(--yellow100);
+  }
+}

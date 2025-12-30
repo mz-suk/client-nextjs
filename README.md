@@ -1,6 +1,6 @@
 # Next.js 16 + React 19 프로젝트
 
-DDD 아키텍처 기반 범용 Next.js 템플릿
+FSD + DDD 혼합 아키텍처 기반 프로덕션급 Next.js 템플릿
 
 ## 시작하기
 
@@ -17,81 +17,111 @@ pnpm start
 
 # 린트
 pnpm lint
+
+# 빌드 분석
+pnpm analyze
 ```
 
 ## 기술 스택
 
 - **Next.js 16** - App Router, Turbopack
-- **React 19** - use() hook, Server Components
-- **TypeScript 5.9**
-- **TanStack Query** - 서버 상태 관리
+- **React 19** - Server Components, React Compiler
+- **TypeScript 5.9** - Strict mode
+- **TanStack Query v5** - 서버 상태 관리
 - **Zustand** - 클라이언트 상태 관리
-- **Native Fetch** - HTTP 클라이언트
+- **Zod** - 스키마 검증
+- **Sass** - 스타일링
+- **React Hook Form** - 폼 관리
 
 ## 프로젝트 구조
 
 ```
 src/
-├── app/          # Next.js 페이지
-├── core/         # API, Config (인프라)
-├── domains/      # 비즈니스 로직
-└── shared/       # 공통 리소스 (UI, Types)
+├── app/          # Next.js 페이지 및 라우팅
+├── core/         # 공통 환경 (API, Config, Logger)
+├── domains/      # 비즈니스 로직 (도메인별 분리)
+└── shared/       # 공용 컴포넌트 (UI, Providers, Styles)
 ```
 
-### 주요 디렉토리
+### 디렉토리 역할
 
-- **app/**: Next.js App Router 페이지 및 라우팅
-- **core/**: API 클라이언트, 환경 설정 등 인프라 레벨 코드
-- **domains/**: 도메인별 비즈니스 로직 (services, hooks, stores, types)
-- **shared/**: UI 컴포넌트, Provider, 유틸리티 등 공통 코드
+- **app/**: Next.js App Router 페이지, 레이아웃, 에러 처리
+- **core/**: API 클라이언트, 환경 설정, 로거, 공통 타입
+- **domains/**: 도메인별 비즈니스 로직 (auth, user, join 등)
+- **shared/**: 재사용 가능한 UI 컴포넌트, Provider, 스타일
 
-## 예제 페이지
+## 주요 기능
 
-| 경로               | 설명                   |
-| ------------------ | ---------------------- |
-| `/example/ssg`     | SSG + TanStack Query   |
-| `/example/csr`     | CSR + TanStack Query   |
-| `/example/zustand` | Zustand 전역 상태 관리 |
+### API 클라이언트
 
-### SSG + TanStack Query
+- 자동 토큰 갱신 (401 에러 자동 처리)
+- 요청/응답 인터셉터
+- 타임아웃 처리
+- 타입 안전성
 
-빌드 타임에 데이터를 prefetch하고 클라이언트에서 TanStack Query로 관리합니다.
+### 에러 처리
 
-- 초기 페이지 로딩 속도 향상
-- SEO 최적화
-- 자동 리페치 및 캐싱
+| 에러 타입     | 처리 방식               |
+| ------------- | ----------------------- |
+| 401           | 자동 토큰 갱신 + 재시도 |
+| 403, 5xx      | 전역 토스트 표시        |
+| 400, 404, 422 | 로컬 처리 (각 컴포넌트) |
+| 페이지 에러   | error.tsx               |
+| 루트 에러     | global-error.tsx        |
+| 페이지 404    | not-found.tsx           |
 
-### CSR + TanStack Query
+### 상태 관리
 
-완전히 클라이언트에서 데이터를 페칭하고 관리합니다.
+- **TanStack Query v5.90**: 서버 상태 캐싱, Optimistic Updates
+- **Zustand**: 클라이언트 전역 상태, localStorage 동기화
 
-- 로딩, 에러 상태 자동 관리
-- 백그라운드 업데이트
-- 캐싱 및 리페치 전략
+### 데이터 패칭 (v2.0)
 
-### Zustand
+> - Query/Mutation Factory 헬퍼로 타입 안전성 강화
+> - Optimistic Updates 지원
+> - 개선된 서버 프리패칭 (PrefetchBoundary)
 
-간단하고 직관적한 전역 상태 관리 라이브러리입니다.
+- `createQuery` / `createInfiniteQuery`: 타입 안전한 쿼리 정의
+- `createMutation` / `createOptimisticMutation`: Optimistic Updates 지원
+- `PrefetchBoundary`: 선언적 서버 프리패칭
+- `createQueryKeys`: 일관된 쿼리 키 관리
 
-- DevTools 지원
-- localStorage 자동 동기화
-- TypeScript 완벽 지원
+### UI 컴포넌트
+
+- BottomSheet (모바일 최적화)
+- GlobalErrorHandler (전역 에러 토스트)
+- GlobalLoading (전역 로딩 UI)
 
 ## 환경 설정
 
-`.env.local` 파일:
+`.env.local`:
 
 ```env
-NEXT_PUBLIC_API_URL=https://jsonplaceholder.typicode.com
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
 NEXT_PUBLIC_API_TIMEOUT=30000
+NEXT_PUBLIC_API_ACCEPT_LANGUAGE=ko-KR
 NEXT_PUBLIC_FEATURE_DEBUG=true
+API_TARGET_URL=http://backend:8080  # SSR 전용
 ```
 
-## 성능 최적화
+## 예제 페이지
 
-- React Compiler v1.0 (자동 메모이제이션)
-- Next.js Image 최적화
-- 번들 분석: `pnpm analyze`
+| 경로                       | 설명                  |
+| -------------------------- | --------------------- |
+| `/example`                 | 예제 목록             |
+| `/example/ssg`             | SSG + CSR 하이브리드  |
+| `/example/csr`             | 순수 CSR 데이터 패칭  |
+| `/example/mutation`        | 데이터 생성/수정/삭제 |
+| `/example/infinite-scroll` | 무한 스크롤           |
+| `/example/virtual-scroll`  | Virtual Scroll        |
+| `/example/features-demo`   | 전역 로딩/에러 처리   |
+
+## 문서
+
+- [아키텍처 가이드](./docs/architecture.md)
+- [데이터 패칭 가이드](./docs/data-fetching.md)
+- [에러 처리 가이드](./docs/error-handling.md)
+- [Virtual Scroll 가이드](./docs/virtual-scroll.md)
 
 ## 라이선스
 

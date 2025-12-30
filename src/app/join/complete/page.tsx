@@ -1,10 +1,9 @@
 'use client';
 
+import { useJoinStore } from '@domains/join';
+import { JoinLayout } from '@domains/join/components';
+import { Button } from '@domains/join/components/Button';
 import { useRouter } from 'next/navigation';
-
-import { useJoinStore } from '@/domains/join';
-import { JoinLayout } from '@/domains/join/components';
-import { Button } from '@/domains/join/components/Button';
 
 import styles from './page.module.scss';
 

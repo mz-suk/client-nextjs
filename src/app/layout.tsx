@@ -1,10 +1,9 @@
-import '@/shared/styles/index.scss';
+import '@shared/styles/index.scss';
 
+import { API_CONFIG } from '@core/config';
+import { AuthProvider, QueryProvider } from '@shared/providers';
+import { pretendard, suite } from '@shared/styles/fonts';
 import type { Metadata } from 'next';
-
-import { API_CONFIG } from '@/core/config';
-import { QueryProvider } from '@/shared/providers';
-import { pretendard, suite } from '@/shared/styles/fonts';
 
 export const metadata: Metadata = {
   title: 'Next.js 범용 템플릿',
@@ -25,7 +24,9 @@ export default function RootLayout({
       </head>
       <body className={`${pretendard.variable} ${suite.variable}`}>
         <div className="root">
-          <QueryProvider>{children}</QueryProvider>
+          <AuthProvider>
+            <QueryProvider>{children}</QueryProvider>
+          </AuthProvider>
         </div>
       </body>
     </html>

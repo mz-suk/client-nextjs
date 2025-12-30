@@ -1,0 +1,51 @@
+.box {
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+}
+
+.content {
+  line-height: 1.8;
+
+  ul,
+  ol {
+    margin-left: var(--spacing-xl);
+  }
+
+  li {
+    margin-bottom: var(--spacing-xs);
+  }
+}
+
+.info {
+  background: var(--gray10);
+  color: var(--gray80);
+
+  .title {
+    color: var(--gray100);
+  }
+}
+
+.warning {
+  background: var(--yellow10);
+  color: var(--yellow100);
+
+  .title {
+    color: var(--yellow100);
+  }
+}
+
+.success {
+  background: var(--brand10);
+  color: var(--brand90);
+
+  .title {
+    color: var(--brand100);
+  }
+}

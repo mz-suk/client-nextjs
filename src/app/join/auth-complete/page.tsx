@@ -1,12 +1,10 @@
 'use client';
 
+import SucessCheckLottie from '@/shared/ui/lotties/SucessCheckLottie';
+import { useJoinStore } from '@domains/join';
+import { JoinLayout } from '@domains/join/components';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
-
-import { useJoinStore } from '@/domains/join';
-import { JoinLayout } from '@/domains/join/components';
-
-import SucessCheckLottie from '@/shared/ui/lotties/SucessCheckLottie';
 import styles from './page.module.scss';
 
 export default function JoinAuthCompletePage() {
