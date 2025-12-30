@@ -36,16 +36,16 @@ function DetailContent() {
             <h3>🔄 스크롤 위치 복원 메커니즘</h3>
             <ol>
               <li>
-                <strong>저장:</strong> 목록에서 아이템 클릭 시 현재 스크롤 위치와 데이터 길이를 Zustand store에 저장
+                <strong>저장:</strong> 아이템 클릭 시 해당 인덱스와 데이터 길이를 Store에 저장
               </li>
               <li>
                 <strong>이동:</strong> 상세 페이지로 네비게이션
               </li>
               <li>
-                <strong>복원:</strong> 뒤로가기 시 저장된 데이터 길이만큼 페이지를 자동 로드하고 스크롤 위치 복원
+                <strong>복원:</strong> 뒤로가기 시 필요한 페이지를 자동 로드 후, 클릭한 인덱스를 리스트 상단에 배치
               </li>
               <li>
-                <strong>정리:</strong> 복원 완료 후 1초 뒤 저장된 상태 자동 제거
+                <strong>정리:</strong> 복원 완료 시 저장된 상태를 정리
               </li>
             </ol>
           </div>

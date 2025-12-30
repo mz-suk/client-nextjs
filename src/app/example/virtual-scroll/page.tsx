@@ -12,7 +12,7 @@ import { useVirtualScrollList } from './useVirtualScrollList';
  * TanStack Virtual + 무한 스크롤 + 스크롤 위치 복원 데모
  */
 export default function VirtualScrollPage() {
-  const { posts, isLoading, isFetchingNextPage, hasNextPage, restoreState, isRestoring, handleScrollChange, markRestored, navigateToDetail, fetchNextPage } =
+  const { posts, isLoading, isFetchingNextPage, hasNextPage, restoreState, isRestoring, markRestored, navigateToDetail, fetchNextPage } =
     useVirtualScrollList();
 
   if (isLoading) {
@@ -31,8 +31,8 @@ export default function VirtualScrollPage() {
         <ul>
           <li>화면에 보이는 영역의 아이템만 DOM에 렌더링합니다.</li>
           <li>스크롤 시 동적으로 아이템을 교체하여 성능을 최적화합니다.</li>
-          <li>상세 페이지 이동 시 스크롤 위치(인덱스)를 저장합니다.</li>
-          <li>뒤로가기 시 해당 인덱스로 정확하게 복원합니다.</li>
+          <li>상세 페이지 이동 시 클릭한 아이템의 인덱스를 저장합니다.</li>
+          <li>뒤로가기 시 해당 인덱스가 리스트 상단에 오도록 복원합니다.</li>
           <li>하단 근처 도달 시 자동으로 다음 페이지를 불러옵니다.</li>
         </ul>
       </InfoBox>
@@ -49,22 +49,26 @@ export default function VirtualScrollPage() {
           estimateSize={120}
           restoreState={restoreState}
           onRestoreComplete={markRestored}
-          onScrollChange={handleScrollChange}
           onLoadMore={fetchNextPage}
           hasMore={hasNextPage}
           isLoadingMore={isFetchingNextPage}
+          renderLoader={({ isLoadingMore: loading }) => (
+            <div className={styles.loadingIndicator}>
+              <p>{loading ? '다음 페이지를 불러오는 중...' : '스크롤하면 자동으로 더 불러옵니다'}</p>
+            </div>
+          )}
           overscan={5}
           renderItem={(post, index) => (
             <div
               key={post.id}
               className={styles.listItem}
-              onClick={() => navigateToDetail(post.id)}
+              onClick={() => navigateToDetail(post.id, index)}
               role="button"
               tabIndex={0}
               onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  navigateToDetail(post.id);
+                  navigateToDetail(post.id, index);
                 }
               }}
             >
@@ -77,12 +81,6 @@ export default function VirtualScrollPage() {
             </div>
           )}
         />
-
-        {isFetchingNextPage && (
-          <div className={styles.loadingIndicator}>
-            <p>다음 페이지를 불러오는 중...</p>
-          </div>
-        )}
 
         {!hasNextPage && posts.length > 0 && (
           <div className={styles.endMessage}>

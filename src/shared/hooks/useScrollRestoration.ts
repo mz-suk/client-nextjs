@@ -2,8 +2,6 @@ import { useVirtualScrollStore } from '@shared/stores/useVirtualScrollStore';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
-const SCROLL_SAVE_THROTTLE = 100;
-
 interface UseScrollRestorationOptions {
   /** 스크롤 상태를 저장할 고유 키 (기본값: pathname) */
   key?: string;
@@ -11,19 +9,28 @@ interface UseScrollRestorationOptions {
   autoClear?: boolean;
 }
 
-interface ScrollInfo {
+interface ScrollState {
   startIndex: number;
   offsetInItem: number;
   dataLength: number;
 }
 
 /**
- * 스크롤 위치 저장 및 복원을 관리하는 커스텀 훅
+ * 가상 스크롤 위치 저장 및 복원 훅
  *
- * 인덱스 기반 저장으로 정확한 위치 복원 보장
+ * 인덱스 기반으로 스크롤 위치를 저장하고 복원합니다.
+ * Zustand store를 사용하여 상태를 관리하며, 복원 후 자동 정리합니다.
  *
  * @example
- * const { savedState, saveScroll, clearScroll } = useScrollRestoration({ key: 'my-list' });
+ * ```tsx
+ * const { savedState, rememberIndex, markRestored } = useScrollRestoration({ key: 'my-list' });
+ *
+ * // 상세 이동 시
+ * <button onClick={() => rememberIndex(index, data.length)}>상세 보기</button>
+ *
+ * // 복원 시
+ * <VirtualList restoreState={savedState} onRestoreComplete={markRestored} />
+ * ```
  */
 export function useScrollRestoration(options: UseScrollRestorationOptions = {}) {
   const pathname = usePathname();
@@ -34,52 +41,65 @@ export function useScrollRestoration(options: UseScrollRestorationOptions = {}) 
   const getScrollState = useVirtualScrollStore(state => state.getScrollState);
   const clearScrollState = useVirtualScrollStore(state => state.clearScrollState);
 
-  // 마운트 시점의 저장 상태 캐싱
   const savedState = useMemo(() => getScrollState(key), [getScrollState, key]);
-  const hasRestored = useRef(false);
-  const lastSaveTime = useRef(0);
+  const hasRestoredRef = useRef(false);
 
-  // 스크롤 위치 저장 (Throttle 적용)
-  const saveScroll = useCallback(
-    (info: ScrollInfo) => {
-      const now = Date.now();
-      if (now - lastSaveTime.current >= SCROLL_SAVE_THROTTLE) {
-        saveScrollState(key, info);
-        lastSaveTime.current = now;
-      }
+  /**
+   * 상세 이동 시 클릭한 인덱스 저장
+   *
+   * @param index - 클릭한 아이템 인덱스
+   * @param dataLength - 현재 데이터 총 개수
+   * @param offsetInItem - 아이템 내 세부 오프셋 (기본값: 0)
+   */
+  const rememberIndex = useCallback(
+    (index: number, dataLength: number, offsetInItem = 0) => {
+      const state: ScrollState = {
+        startIndex: Math.max(0, index),
+        offsetInItem: Math.max(0, offsetInItem),
+        dataLength: Math.max(dataLength, index + 1),
+      };
+      saveScrollState(key, state);
     },
     [key, saveScrollState]
   );
 
-  // 스크롤 상태 삭제
-  const clearScroll = useCallback(() => {
-    clearScrollState(key);
-  }, [key, clearScrollState]);
-
-  // 복원 완료 표시 및 자동 삭제
+  /**
+   * 복원 완료 표시 및 자동 정리
+   */
   const markRestored = useCallback(() => {
-    if (hasRestored.current || !savedState) return;
-    hasRestored.current = true;
+    if (hasRestoredRef.current || !savedState) return;
+    hasRestoredRef.current = true;
 
     if (autoClear) {
-      clearScroll();
+      clearScrollState(key);
     }
-  }, [autoClear, clearScroll, savedState]);
+  }, [autoClear, clearScrollState, key, savedState]);
 
-  // 언마운트 시 복원되지 않은 상태 유지
+  /**
+   * 저장된 상태 수동 삭제
+   */
+  const clearScroll = useCallback(() => {
+    clearScrollState(key);
+    hasRestoredRef.current = false;
+  }, [key, clearScrollState]);
+
+  // 컴포넌트 언마운트 시 정리 (복원되지 않은 경우 상태 유지)
   useEffect(() => {
     return () => {
-      if (!hasRestored.current && savedState) {
-        // 복원 안됐으면 상태 유지 (다른 페이지로 이동한 경우)
-      }
+      // 복원 안된 상태는 유지 (다른 페이지로 이동 후 뒤로가기 대응)
     };
-  }, [savedState]);
+  }, []);
 
   return {
+    /** 저장된 스크롤 상태 */
     savedState,
-    saveScroll,
-    clearScroll,
+    /** 상세 이동 시 인덱스 저장 */
+    rememberIndex,
+    /** 복원 완료 표시 */
     markRestored,
-    isRestoring: !!savedState && !hasRestored.current,
+    /** 상태 수동 삭제 */
+    clearScroll,
+    /** 복원 진행 중 여부 */
+    isRestoring: !!savedState && !hasRestoredRef.current,
   };
 }

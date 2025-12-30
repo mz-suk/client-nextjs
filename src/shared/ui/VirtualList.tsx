@@ -1,86 +1,95 @@
 'use client';
 
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import styles from './VirtualList.module.scss';
 
-interface ScrollInfo {
-  startIndex: number;
-  offsetInItem: number;
-  dataLength: number;
-}
-
 interface VirtualListProps<T> {
+  /** 렌더링할 데이터 배열 */
   data: T[];
+  /** 각 아이템의 예상 높이 (px) - measureElement로 실제 측정됨 */
   estimateSize: number;
+  /** 아이템 렌더링 함수 */
   renderItem: (item: T, index: number) => React.ReactNode;
-  /** 스크롤 정보 변경 콜백 (인덱스 기반) */
-  onScrollChange?: (info: ScrollInfo) => void;
-  /** 복원할 스크롤 정보 */
+  /** 복원할 스크롤 상태 */
   restoreState?: { startIndex: number; offsetInItem: number } | null;
   /** 복원 완료 콜백 */
   onRestoreComplete?: () => void;
+  /** 뷰포트 밖 미리 렌더링 아이템 수 (기본: 5) */
   overscan?: number;
+  /** 로더 행이 뷰포트에 들어올 때 호출 */
   onLoadMore?: () => void;
+  /** 더 로드할 데이터 존재 여부 */
   hasMore?: boolean;
+  /** 로딩 중 여부 */
   isLoadingMore?: boolean;
+  /** 로더 행 UI 커스터마이즈 */
+  renderLoader?: (state: { hasMore: boolean; isLoadingMore: boolean }) => React.ReactNode;
+  /** 추가 CSS 클래스 */
   className?: string;
 }
 
-const LOAD_MORE_THRESHOLD = 300;
-
 /**
- * 재사용 가능한 Virtual List 컴포넌트
+ * TanStack Virtual 기반 가상 스크롤 리스트 컴포넌트
+ *
+ * - measureElement로 가변 높이 자동 측정
+ * - 무한 스크롤 지원 (loader-row 패턴)
+ * - 인덱스 기반 스크롤 위치 복원
  *
  * @example
+ * ```tsx
  * <VirtualList
- *   data={items}
+ *   data={posts}
  *   estimateSize={120}
- *   renderItem={(item, index) => <ItemCard item={item} />}
- *   onScrollChange={(info) => saveScroll(info)}
- *   restoreState={savedState}
- *   onRestoreComplete={markRestored}
+ *   renderItem={(post) => <PostCard post={post} />}
+ *   onLoadMore={fetchNextPage}
+ *   hasMore={hasNextPage}
+ *   isLoadingMore={isFetchingNextPage}
  * />
+ * ```
  */
 export function VirtualList<T>({
   data,
   estimateSize,
   renderItem,
-  onScrollChange,
   restoreState,
   onRestoreComplete,
   overscan = 5,
   onLoadMore,
   hasMore = false,
   isLoadingMore = false,
+  renderLoader,
   className,
 }: VirtualListProps<T>) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
   const isRestoredRef = useRef(false);
+  const isFetchingRef = useRef(false);
+
+  const hasLoaderRow = hasMore || isLoadingMore;
+  const itemCount = hasLoaderRow ? data.length + 1 : data.length;
 
   const virtualizer = useVirtualizer({
-    count: data.length,
-    getScrollElement: () => scrollContainerRef.current,
+    count: itemCount,
+    getScrollElement: () => parentRef.current,
     estimateSize: () => estimateSize,
     overscan,
   });
 
-  // 스크롤 위치 복원 (인덱스 기반)
+  const virtualItems = virtualizer.getVirtualItems();
+
+  // 스크롤 위치 복원
   useEffect(() => {
     if (!restoreState || isRestoredRef.current || data.length === 0) return;
 
     const targetIndex = Math.min(restoreState.startIndex, data.length - 1);
-
-    // 다음 프레임에서 복원하여 DOM 렌더링 완료 보장
     requestAnimationFrame(() => {
       virtualizer.scrollToIndex(targetIndex, { align: 'start' });
 
-      // 세부 오프셋 적용
-      if (restoreState.offsetInItem > 0 && scrollContainerRef.current) {
+      if (restoreState.offsetInItem > 0 && parentRef.current) {
         requestAnimationFrame(() => {
-          if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollTop += restoreState.offsetInItem;
+          if (parentRef.current) {
+            parentRef.current.scrollTop += restoreState.offsetInItem;
           }
           isRestoredRef.current = true;
           onRestoreComplete?.();
@@ -92,48 +101,27 @@ export function VirtualList<T>({
     });
   }, [data.length, restoreState, virtualizer, onRestoreComplete]);
 
-  // 스크롤 이벤트 핸들러
-  const handleScroll = useCallback(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const { scrollTop, scrollHeight, clientHeight } = container;
-
-    // 현재 보이는 첫 번째 아이템 정보 추출
-    if (onScrollChange && data.length > 0) {
-      const virtualItems = virtualizer.getVirtualItems();
-      const firstItem = virtualItems[0];
-      if (firstItem) {
-        onScrollChange({
-          startIndex: firstItem.index,
-          offsetInItem: Math.max(0, scrollTop - firstItem.start),
-          dataLength: data.length,
-        });
-      }
-    }
-
-    // 무한 스크롤
-    if (onLoadMore && hasMore && !isLoadingMore) {
-      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-      if (distanceFromBottom < LOAD_MORE_THRESHOLD) {
-        onLoadMore();
-      }
-    }
-  }, [onScrollChange, onLoadMore, hasMore, isLoadingMore, data.length, virtualizer]);
-
-  // 스크롤 이벤트 리스너
+  // isLoadingMore 변경 시 ref 동기화
   useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
+    isFetchingRef.current = isLoadingMore;
+  }, [isLoadingMore]);
 
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+  // 무한 스크롤 트리거 (TanStack Virtual Infinite Scroll 패턴)
+  useEffect(() => {
+    const [lastItem] = [...virtualItems].reverse();
+    if (!lastItem || !onLoadMore) return;
 
-  const virtualItems = virtualizer.getVirtualItems();
+    // 마지막 아이템이 로드 임계값에 도달하고, 페치 중이 아닐 때만 호출
+    if (lastItem.index >= data.length - 1 && hasMore && !isFetchingRef.current) {
+      isFetchingRef.current = true;
+      onLoadMore();
+    }
+  }, [hasMore, onLoadMore, data.length, virtualItems]);
+
+  const containerClassName = className ? `${styles.scrollContainer} ${className}` : styles.scrollContainer;
 
   return (
-    <div ref={scrollContainerRef} className={`${styles.scrollContainer} ${className || ''}`}>
+    <div ref={parentRef} className={containerClassName}>
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,
@@ -142,8 +130,8 @@ export function VirtualList<T>({
         }}
       >
         {virtualItems.map(virtualItem => {
+          const isLoaderRow = virtualItem.index >= data.length;
           const item = data[virtualItem.index];
-          if (!item) return null;
 
           return (
             <div
@@ -158,7 +146,17 @@ export function VirtualList<T>({
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >
-              {renderItem(item, virtualItem.index)}
+              {isLoaderRow ? (
+                renderLoader ? (
+                  renderLoader({ hasMore, isLoadingMore })
+                ) : (
+                  <div style={{ padding: '20px', textAlign: 'center' }}>
+                    {isLoadingMore ? 'Loading more...' : hasMore ? 'Scroll to load more' : 'No more items'}
+                  </div>
+                )
+              ) : item ? (
+                renderItem(item, virtualItem.index)
+              ) : null}
             </div>
           );
         })}
