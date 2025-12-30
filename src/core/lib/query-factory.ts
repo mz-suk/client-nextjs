@@ -1,4 +1,5 @@
 import {
+  type DefaultError,
   type InfiniteData,
   infiniteQueryOptions,
   type QueryFunction,
@@ -17,27 +18,36 @@ import {
  * 타입 안전성과 DX를 개선한 헬퍼 함수들
  */
 
-type QueryConfig<TData, TError = Error> = Partial<UndefinedInitialDataOptions<TData, TError, TData, QueryKey>>;
-
-type InfiniteQueryConfig<TData, TError = Error> = Partial<UndefinedInitialDataInfiniteOptions<TData, TError, InfiniteData<TData>, QueryKey, number>>;
-
 /**
  * 일반 Query Options 생성
  *
- * useSuspenseQuery와 호환되도록 queryFn이 필수인 타입으로 반환
+ * @param keyBase 쿼리 키의 기본 값 (배열)
+ * @param fetcher 데이터 패칭 함수
+ * @param config 추가 옵션 (staleTime, gcTime 등)
+ * @returns Query options factory 함수
+ *
+ * @example
+ * export const postQueries = {
+ *   list: createQuery(
+ *     postKeys.lists(),
+ *     (params?: PostListParams) => postApi.getPosts(params),
+ *     { staleTime: 60000 }
+ *   ),
+ * };
  */
-export const createQuery = <TData, TParams = void>(keyBase: readonly unknown[], fetcher: (params: TParams) => Promise<TData>, config?: QueryConfig<TData>) => {
-  return (params: TParams extends void ? void : TParams) => {
-    const queryKey = params !== undefined ? [...keyBase, params] : keyBase;
+export const createQuery = <TData, TParams = void, TError = DefaultError>(
+  keyBase: readonly unknown[],
+  fetcher: (params: TParams) => Promise<TData>,
+  config?: Partial<Omit<UndefinedInitialDataOptions<TData, TError, TData, QueryKey>, 'queryKey' | 'queryFn'>>
+) => {
+  return (params?: TParams extends void ? void : TParams) => {
+    const queryKey: QueryKey = params !== undefined ? [...keyBase, params] : [...keyBase];
 
-    const options = queryOptions({
-      queryKey: queryKey as QueryKey,
+    return queryOptions({
+      queryKey,
       queryFn: () => fetcher(params as TParams),
       ...config,
-    });
-
-    // useSuspenseQuery 호환성을 위해 타입 단언
-    return options as UseQueryOptions<TData, Error, TData, QueryKey> & {
+    }) as UseQueryOptions<TData, TError, TData, QueryKey> & {
       queryKey: QueryKey;
       queryFn: QueryFunction<TData, QueryKey>;
     };
@@ -47,33 +57,81 @@ export const createQuery = <TData, TParams = void>(keyBase: readonly unknown[], 
 /**
  * Infinite Query Options 생성
  *
- * UseInfiniteQueryOptions 제네릭 인자 수정 (TanStack Query v5 기준 5개)
- * <TQueryFnData, TError, TData, TQueryKey, TPageParam>
+ * @param keyBase 쿼리 키의 기본 값 (배열)
+ * @param fetcher 데이터 패칭 함수 (pageParam 포함)
+ * @param config 추가 옵션 (getNextPageParam, initialPageParam 필수)
+ * @returns Infinite query options factory 함수
+ *
+ * @example
+ * export const postQueries = {
+ *   infinite: createInfiniteQuery(
+ *     postKeys.infinite(),
+ *     ({ pageParam }) => postApi.getPostsPaginated(pageParam),
+ *     {
+ *       initialPageParam: 1,
+ *       getNextPageParam: (lastPage, allPages, lastPageParam) => {
+ *         return lastPage.length > 0 ? lastPageParam + 1 : undefined;
+ *       },
+ *     }
+ *   ),
+ * };
  */
-export const createInfiniteQuery = <TData, TParams = void>(
+export const createInfiniteQuery = <TData, TParams = void, TPageParam = number, TError = DefaultError>(
   keyBase: readonly unknown[],
-  fetcher: (params: TParams & { pageParam: number }) => Promise<TData>,
-  config: Omit<InfiniteQueryConfig<TData>, 'queryKey' | 'queryFn' | 'initialPageParam'> & {
-    getNextPageParam: (lastPage: TData, allPages: TData[], lastPageParam: number) => number | undefined;
-  }
+  fetcher: (params: TParams & { pageParam: TPageParam }) => Promise<TData>,
+  config: {
+    initialPageParam: TPageParam;
+    getNextPageParam: (lastPage: TData, allPages: TData[], lastPageParam: TPageParam, allPageParams: TPageParam[]) => TPageParam | undefined | null;
+    getPreviousPageParam?: (firstPage: TData, allPages: TData[], firstPageParam: TPageParam, allPageParams: TPageParam[]) => TPageParam | undefined | null;
+  } & Partial<
+    Omit<
+      UndefinedInitialDataInfiniteOptions<TData, TError, InfiniteData<TData>, QueryKey, TPageParam>,
+      'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam' | 'getPreviousPageParam'
+    >
+  >
 ) => {
   return (params?: TParams extends void ? void : TParams) => {
-    const queryKey = params !== undefined ? [...keyBase, params] : keyBase;
+    const queryKey: QueryKey = params !== undefined ? [...keyBase, params] : [...keyBase];
     const baseParams = (params ?? {}) as Record<string, unknown>;
 
-    const options = infiniteQueryOptions({
-      queryKey: queryKey as QueryKey,
-      queryFn: ({ pageParam }) => fetcher({ ...baseParams, pageParam } as TParams & { pageParam: number }),
-      initialPageParam: 1,
-      ...config,
-    });
+    const { initialPageParam, getNextPageParam, getPreviousPageParam, ...restConfig } = config;
 
-    return options as UseInfiniteQueryOptions<TData, Error, InfiniteData<TData>, QueryKey, number>;
+    return infiniteQueryOptions({
+      queryKey,
+      queryFn: ({ pageParam }) => fetcher({ ...baseParams, pageParam } as TParams & { pageParam: TPageParam }),
+      initialPageParam,
+      getNextPageParam,
+      getPreviousPageParam,
+      ...restConfig,
+    }) as UseInfiniteQueryOptions<TData, TError, InfiniteData<TData>, QueryKey, TPageParam> & {
+      queryKey: QueryKey;
+      queryFn: QueryFunction<TData, QueryKey, TPageParam>;
+    };
   };
 };
 
 /**
  * Query Key Factory 생성
+ *
+ * 쿼리 키를 중앙에서 관리하고 타입 안전성을 보장하기 위한 헬퍼
+ *
+ * @param base 쿼리 키의 기본 문자열 (도메인명)
+ * @param keys 키 정의 객체
+ * @returns 타입 안전한 쿼리 키 팩토리 함수들
+ *
+ * @example
+ * export const postKeys = createQueryKeys('posts', {
+ *   all: null,
+ *   lists: null,
+ *   list: (params?: PostListParams) => params,
+ *   details: null,
+ *   detail: (id: number) => id,
+ * });
+ *
+ * // 사용
+ * postKeys.all(); // ['posts', 'all']
+ * postKeys.list({ page: 1 }); // ['posts', 'list', { page: 1 }]
+ * postKeys.detail(5); // ['posts', 'detail', 5]
  */
 type KeyFunction<P = unknown> = (arg: P) => unknown;
 type KeyDefinition = KeyFunction | null;
@@ -88,12 +146,15 @@ export const createQueryKeys = <T extends Record<string, KeyDefinition>>(base: s
   for (const key in keys) {
     const keyFn = keys[key];
 
-    if (keyFn === null) {
+    if (keyFn === null || keyFn === undefined) {
+      // null이나 undefined인 경우: 파라미터 없는 키
       result[key] = () => [base, key] as const;
     } else {
+      // 함수인 경우: 파라미터를 변환하여 키에 포함
       result[key] = (arg?: unknown) => {
-        const transformed = keyFn?.(arg);
-        return transformed !== undefined ? [base, key, transformed] : [base, key];
+        const transformed = keyFn(arg);
+        // undefined나 null이 아닌 경우에만 키에 포함
+        return transformed !== undefined && transformed !== null ? [base, key, transformed] : [base, key];
       };
     }
   }

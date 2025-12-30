@@ -43,6 +43,7 @@ export const postQueries = {
    * 무한 스크롤 게시글 목록
    */
   infinite: createInfiniteQuery<Post[], void>(postKeys.infinite(), ({ pageParam }) => postApi.getPostsPaginated(pageParam), {
+    initialPageParam: 1,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       return lastPage.length === 10 && allPages.length < 10 ? lastPageParam + 1 : undefined;
     },

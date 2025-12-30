@@ -1,6 +1,6 @@
 # 데이터 패칭 가이드
 
-React 19 + Next.js 16 + TanStack Query v5 최신 패턴을 활용한 데이터 패칭 가이드입니다.
+React 19.2 + Next.js 16.1 + TanStack Query v5.90 최신 패턴을 활용한 데이터 패칭 가이드입니다.
 
 ## 🎯 패턴 선택 가이드
 
@@ -10,31 +10,12 @@ React 19 + Next.js 16 + TanStack Query v5 최신 패턴을 활용한 데이터 �
 | CSR            | SEO 불필요, 실시간 데이터 필요 | ❌  | 🐢 느림   | ⚡️  |
 | Infinite Query | 대량 데이터, 페이지네이션      | ✅  | ⚡️ 빠름   | ⭐️  |
 
-## 🚀 핵심 개선 사항 (v2.0)
-
-### React 19 + Next.js 16 최적화
-
-- `PrefetchBoundary`로 선언적 서버 프리패칭
-- `serverQuery`로 직접 서버 데이터 패칭 지원
-- React 19 비동기 컴포넌트 패턴 완벽 지원
-
-### 타입 안전성 강화
-
-- `createQuery`, `createInfiniteQuery` 헬퍼로 자동 타입 추론
-- `createQueryKeys` 팩토리로 일관된 키 관리
-- Zod 스키마 기반 런타임 검증
-
-### Optimistic Updates
-
-- `createOptimisticMutation`으로 즉각적인 UI 반영
-- List 추가/삭제 전용 헬퍼 제공
-- 에러 시 자동 롤백
-
 ### 개발자 경험
 
 - 보일러플레이트 코드 최소화
-- 명확한 네이밍과 주석
-- 일관된 패턴 적용
+- 명확한 JSDoc과 타입 주석
+- 일관된 Factory 패턴 적용
+- 모든 도메인에서 통일된 API 사용
 
 ## 📚 패턴 상세
 
@@ -210,16 +191,23 @@ await createPost.mutateAsync({
 
 ### 2. 기본 Mutation
 
-간단한 변경 작업에 사용합니다.
+간단한 변경 작업에 사용합니다. Factory 패턴으로 타입 안전성을 보장합니다.
 
 ```typescript
 import { createMutation } from '@core/lib';
 
-export const useUpdatePost = createMutation(async ({ id, data }: UpdatePostParams) => postApi.update(id, data), {
+export const useUpdatePost = createMutation<Post, UpdatePostParams>(({ id, data }) => postApi.update(id, data), {
   invalidateKeys: [postKeys.detail(), postKeys.lists()],
   onSuccess: () => toast.success('수정 완료'),
 });
 ```
+
+**타입 파라미터**
+
+- `TData`: 응답 데이터 타입
+- `TVariables`: Mutation 입력 파라미터 타입
+- `TError`: 에러 타입 (기본값: `DefaultError`)
+- `TContext`: Context 타입 (기본값: `unknown`)
 
 ### 3. Optimistic Delete Mutation
 
@@ -372,55 +360,84 @@ postKeys.detail(5); // ['posts', 'detail', 5]
 import { createQuery, createInfiniteQuery } from '@core/lib';
 
 export const postQueries = {
-  // 일반 쿼리
-  list: createQuery(postKeys.lists(), (params?: PostListParams) => postApi.getPosts(params), { staleTime: 60000 }),
+  // 일반 쿼리 - 타입 파라미터로 완벽한 타입 추론
+  list: createQuery<Post[], PostListParams | undefined>(postKeys.lists(), params => postApi.getPosts(params), { staleTime: 60000 }),
 
-  // 무한 스크롤 쿼리
-  infinite: createInfiniteQuery(postKeys.infinite(), ({ pageParam }: { pageParam: number }) => postApi.getPostsPaginated(pageParam), {
+  // 상세 쿼리
+  detail: createQuery<Post, number>(postKeys.details(), id => postApi.getPost(id), { staleTime: 300000 }),
+
+  // 무한 스크롤 쿼리 - initialPageParam 필수
+  infinite: createInfiniteQuery<Post[], void, number>(postKeys.infinite(), ({ pageParam }) => postApi.getPostsPaginated(pageParam), {
+    initialPageParam: 1,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      return lastPage.length > 0 ? lastPageParam + 1 : undefined;
+      return lastPage.length === 10 ? lastPageParam + 1 : undefined;
     },
+    staleTime: 60000,
   }),
 };
 ```
 
+**타입 파라미터**
+
+- `createQuery<TData, TParams>`: 데이터 타입과 파라미터 타입
+- `createInfiniteQuery<TData, TParams, TPageParam>`: 데이터, 파라미터, 페이지 파라미터 타입
+
 ### API 레이어 (Zod 검증)
 
+API 레이어에서 Zod를 사용하여 런타임 타입 검증 및 자동 타입 추론을 제공합니다.
+
 ```typescript
-import { apiClient } from '@core/api';
-import { validateResponse } from '@core/api/utils';
+import { apiClient, validateResponse } from '@core/api';
 import { z } from 'zod';
 
+// Zod 스키마 정의 (타입 자동 추론)
 const PostSchema = z.object({
   id: z.number(),
   title: z.string(),
   body: z.string(),
+  userId: z.number(),
 });
 
+// 타입 추론
+export type Post = z.infer<typeof PostSchema>;
+
+// API 함수 (타입 안전성 보장)
 export const postApi = {
   getPosts: async (params?: PostListParams): Promise<Post[]> => {
     const { data } = await apiClient.get('/posts', { params });
     return validateResponse(z.array(PostSchema), data);
   },
-};
+
+  getPost: async (id: number): Promise<Post> => {
+    const { data } = await apiClient.get(`/posts/${id}`);
+    return validateResponse(PostSchema, data);
+  },
+} as const;
 ```
+
+**Zod 검증의 장점**
+
+- 런타임 타입 검증으로 안전성 보장
+- 타입 추론으로 중복 타입 정의 불필요
+- 스키마 기반 문서화
+- 유효성 검사 실패 시 명확한 에러 메시지
 
 ## 💡 Best Practices
 
 ### 1. Suspense 우선 사용
 
 ```typescript
-// ✅ 권장 (Suspense)
+// ✅ 권장 (Suspense) - 서버 프리패칭과 함께 사용
 const { data } = useSuspenseQuery(postQueries.list());
 
-// ⚠️ 필요시에만 (조건부 렌더링)
+// ⚠️ 필요시에만 (조건부 렌더링이 필요한 경우)
 const { data, isLoading } = useQuery(postQueries.list());
 ```
 
 ### 2. 서버 프리패칭 활용
 
 ```typescript
-// ✅ SEO + 빠른 로딩
+// ✅ SEO + 빠른 로딩 + 완벽한 타입 추론
 export default async function Page() {
   return (
     <PrefetchBoundary queryOptions={postQueries.list()}>
@@ -428,32 +445,82 @@ export default async function Page() {
     </PrefetchBoundary>
   );
 }
+
+// 여러 쿼리 동시 프리패칭
+export default async function DashboardPage() {
+  return (
+    <PrefetchBoundary
+      queryOptions={[
+        postQueries.list(),
+        userQueries.me(),
+        statsQueries.summary(),
+      ]}
+    >
+      <Dashboard />
+    </PrefetchBoundary>
+  );
+}
 ```
 
-### 3. Optimistic Updates 활용
+### 3. Factory 패턴 일관성 유지
 
 ```typescript
-// ✅ 빠른 사용자 피드백
-export const useCreatePost = createOptimisticListMutation(postApi.create, {
+// ✅ 권장 - 모든 Mutation에 Factory 패턴 사용
+export const useCreatePost = createOptimisticListMutation<Post, CreatePostDto>(data => postApi.create(data), {
   listQueryKey: postKeys.lists(),
   generateOptimisticItem: data => ({ id: -Date.now(), ...data }),
 });
+
+// ❌ 비권장 - useMutation 직접 사용
+export function useCreatePost() {
+  return useMutation({
+    mutationFn: data => postApi.create(data),
+    // 타입 추론이 약하고 코드 중복 발생
+  });
+}
 ```
 
-### 4. 적절한 캐시 시간 설정
+### 4. 타입 안전성 강화
+
+```typescript
+// ✅ 명시적 타입 파라미터로 안전성 보장
+export const postQueries = {
+  list: createQuery<Post[], PostListParams | undefined>(postKeys.lists(), params => postApi.getPosts(params), { staleTime: 60000 }),
+};
+
+// ✅ Zod 스키마로 런타임 검증
+const { data } = await apiClient.get('/posts');
+return validateResponse(z.array(PostSchema), data);
+```
+
+### 5. 적절한 캐시 시간 설정
 
 ```typescript
 export const postQueries = {
-  // 자주 변경: 1분
-  list: createQuery(postKeys.lists(), postApi.getPosts, {
-    staleTime: 60000,
-  }),
+  // 자주 변경되는 데이터: 1분
+  list: createQuery<Post[], PostListParams | undefined>(postKeys.lists(), postApi.getPosts, { staleTime: 60000 }),
 
-  // 잘 변경되지 않음: 5분
-  detail: createQuery(postKeys.details(), postApi.getPost, {
-    staleTime: 300000,
-  }),
+  // 잘 변경되지 않는 데이터: 5분
+  detail: createQuery<Post, number>(postKeys.details(), postApi.getPost, { staleTime: 300000 }),
 };
+```
+
+### 6. Query Key 중앙 관리
+
+```typescript
+// ✅ createQueryKeys로 타입 안전한 키 관리
+export const postKeys = createQueryKeys('posts', {
+  all: null,
+  lists: null,
+  list: (params?: PostListParams) => params,
+  details: null,
+  detail: (id: number) => id,
+});
+
+// 사용
+postKeys.all(); // ['posts', 'all']
+postKeys.list({ page: 1 }); // ['posts', 'list', { page: 1 }]
+postKeys.detail(5); // ['posts', 'detail', 5]
 ```
 
 ## 📚 참고

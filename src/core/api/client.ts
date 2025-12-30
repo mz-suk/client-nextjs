@@ -13,6 +13,11 @@ const getBaseURL = () => {
   return API_CONFIG.BASE_URL;
 };
 
+/**
+ * Core API Client Wrapper
+ *
+ * Native Fetch API를 기반으로 인터셉터, 토큰 관리, 에러 처리를 캡슐화
+ */
 class ApiClient {
   private baseURL: string;
   private timeout: number;
@@ -33,18 +38,9 @@ class ApiClient {
     this.responseInterceptors.push(interceptor);
   }
 
-  removeRequestInterceptor(interceptor: RequestInterceptor) {
-    this.requestInterceptors = this.requestInterceptors.filter(i => i !== interceptor);
-  }
-
-  removeResponseInterceptor(interceptor: ResponseInterceptor) {
-    this.responseInterceptors = this.responseInterceptors.filter(i => i !== interceptor);
-  }
-
-  private buildURL(endpoint: string, params?: Record<string, unknown>): string {
-    return buildURL(this.baseURL, endpoint, params);
-  }
-
+  /**
+   * Internal fetch wrapper with timeout support
+   */
   private async fetchWithTimeout(url: string, config: RequestInit): Promise<Response> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
@@ -57,6 +53,9 @@ class ApiClient {
     }
   }
 
+  /**
+   * Server-side auth header injection (Next.js App Router compatible)
+   */
   private async getServerAuthHeader(): Promise<string | null> {
     try {
       const { cookies } = await import('next/headers');
@@ -70,10 +69,7 @@ class ApiClient {
 
   private getClientAuthHeader(): string | null {
     const authConfig = getAuthConfig();
-    if (!authConfig) return null;
-
-    const { accessToken } = authConfig.store.getState();
-    return accessToken ?? null;
+    return authConfig?.store.getState().accessToken ?? null;
   }
 
   private async injectAuthHeader(headers: HeadersInit, skipAuth?: boolean): Promise<HeadersInit> {
@@ -82,9 +78,14 @@ class ApiClient {
     const isServer = typeof window === 'undefined';
     const accessToken = isServer ? await this.getServerAuthHeader() : this.getClientAuthHeader();
 
-    return accessToken ? { ...headers, Authorization: `Bearer ${accessToken}` } : headers;
+    if (!accessToken) return headers;
+
+    return { ...headers, Authorization: `Bearer ${accessToken}` };
   }
 
+  /**
+   * Token refresh logic handling 401 errors
+   */
   private async handleTokenRefresh(endpoint: string, config: FetchConfig): Promise<Response> {
     const authConfig = getAuthConfig();
     if (!authConfig) throw new AuthError(AUTH_ERROR_CODES.UNAUTHORIZED);
@@ -106,15 +107,19 @@ class ApiClient {
       const tokens = await this.refreshPromise;
       authConfig.store.getState().setTokens(tokens);
 
-      logger.info('토큰 갱신 성공');
+      logger.info('Token refreshed successfully');
+      // Retry original request with new token
       return this.executeRequest(endpoint, { ...config, _isRetry: true });
     } catch {
-      logger.error('토큰 갱신 실패');
+      logger.error('Token refresh failed');
       authConfig.onAuthFailure();
       throw new AuthError(AUTH_ERROR_CODES.REFRESH_FAILED);
     }
   }
 
+  /**
+   * Global error handler transformer
+   */
   private handleError(error: unknown): never {
     if (error instanceof ApiError || error instanceof AuthError) throw error;
 
@@ -134,12 +139,17 @@ class ApiClient {
     throw new ApiError(0, error.message, undefined, undefined, errorType);
   }
 
+  /**
+   * Main request execution pipeline
+   */
   private async executeRequest(endpoint: string, config: FetchConfig & { _isRetry?: boolean }): Promise<Response> {
-    const url = this.buildURL(endpoint, config.params);
-    const headers = await this.injectAuthHeader(createHeaders(config.body, config.headers, API_CONFIG.ACCEPT_LANGUAGE), config.skipAuth);
+    const url = buildURL(this.baseURL, endpoint, config.params);
+    const rawHeaders = createHeaders(config.body, config.headers, API_CONFIG.ACCEPT_LANGUAGE);
+    const headers = await this.injectAuthHeader(rawHeaders, config.skipAuth);
 
     let finalConfig: RequestInit = { ...config, headers };
 
+    // Apply Request Interceptors
     for (const interceptor of this.requestInterceptors) {
       finalConfig = await interceptor(finalConfig);
     }
@@ -148,21 +158,26 @@ class ApiClient {
 
     let response = await this.fetchWithTimeout(url, finalConfig);
 
+    // Apply Response Interceptors
     for (const interceptor of this.responseInterceptors) {
       response = await interceptor(response);
     }
 
-    // 401 Unauthorized: 토큰 갱신 시도 (자동 처리)
+    // Handle 401 Unauthorized (Auto-Refresh)
     if (response.status === HTTP_STATUS.UNAUTHORIZED && !config._isRetry && !config.skipAuth) {
       return this.handleTokenRefresh(endpoint, config);
     }
 
-    // 403 Forbidden: 권한 없음 (GlobalErrorHandler에서 처리)
-    // 여기서는 응답을 그대로 반환하여 ApiError로 변환되도록 함
-
     return response;
   }
 
+  /**
+   * Generic request method
+   *
+   * @param endpoint API endpoint
+   * @param config Request configuration
+   * @returns Promise with response data
+   */
   async request<T>(endpoint: string, config: FetchConfig & { _isRetry?: boolean } = {}): Promise<T> {
     try {
       const response = await this.executeRequest(endpoint, config);
@@ -174,19 +189,22 @@ class ApiClient {
 
         let errorType: ErrorType = ERROR_TYPES.API;
 
-        // 서버 에러 (5xx)
         if (response.status >= HTTP_STATUS.INTERNAL_SERVER_ERROR) {
           errorType = ERROR_TYPES.SERVER;
           const authConfig = getAuthConfig();
           authConfig?.onError?.(new Error('SERVER_ERROR'));
         }
 
-        logger.error('API Error:', response.status, message, code);
+        logger.error(`API Error ${response.status}:`, message, code);
         throw new ApiError(response.status, message, code, errorData, errorType);
       }
 
+      // Handle empty response body (204 No Content)
+      if (response.status === 204) {
+        return {} as T;
+      }
+
       const data = await response.json();
-      logger.debug('Response:', data);
       return data;
     } catch (error) {
       return this.handleError(error);

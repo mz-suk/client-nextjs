@@ -1,27 +1,13 @@
 'use client';
 
+import { Suspense } from 'react';
+
 import { PostCard } from './PostCard';
 import styles from './PostList.module.scss';
-import { usePosts } from './usePosts';
+import { useSuspensePosts } from './usePosts';
 
-export function PostList() {
-  const { data: posts, isLoading, error } = usePosts();
-
-  if (isLoading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.messageContainer}>로딩 중...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={styles.container}>
-        <div className={`${styles.messageContainer} ${styles.error}`}>게시글을 불러올 수 없습니다.</div>
-      </div>
-    );
-  }
+function PostListContent() {
+  const { data: posts } = useSuspensePosts();
 
   if (!posts || posts.length === 0) {
     return (
@@ -39,5 +25,21 @@ export function PostList() {
         ))}
       </div>
     </div>
+  );
+}
+
+function PostListSkeleton() {
+  return (
+    <div className={styles.container}>
+      <div className={styles.messageContainer}>로딩 중...</div>
+    </div>
+  );
+}
+
+export function PostList() {
+  return (
+    <Suspense fallback={<PostListSkeleton />}>
+      <PostListContent />
+    </Suspense>
   );
 }
