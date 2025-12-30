@@ -1,0 +1,124 @@
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  color: #666;
+}
+
+.statusBox {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 14px;
+
+  strong {
+    color: #333;
+  }
+
+  .restored {
+    color: #0070f3;
+    font-weight: 500;
+  }
+}
+
+.listContainer {
+  height: 600px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.listItem {
+  width: 100%;
+  padding: 20px;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background: #fff;
+  text-align: left;
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #0070f3;
+    outline-offset: -2px;
+  }
+
+  &:active {
+    background-color: #e9ecef;
+  }
+}
+
+.itemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.itemNumber {
+  font-size: 12px;
+  color: #999;
+  font-weight: 500;
+}
+
+.itemCategory {
+  font-size: 12px;
+  padding: 4px 12px;
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.itemTitle {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.itemDescription {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loadingIndicator {
+  padding: 20px;
+  text-align: center;
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+  }
+}
+
+.endMessage {
+  padding: 20px;
+  text-align: center;
+  background: #f0f7ff;
+  border-top: 1px solid #d0e7ff;
+
+  p {
+    margin: 0;
+    color: #0070f3;
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
