@@ -18,3 +18,8 @@
 .full {
   width: 100%;
 }
+
+.button:disabled {
+  background-color: rgba(221, 226, 206, 1);
+  color: #ffffff;
+}
