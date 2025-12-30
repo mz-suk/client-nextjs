@@ -18,18 +18,13 @@ import { type PostListParams, postQueries } from '../model';
  * @example
  * // Server Component (prefetch)
  * <PrefetchBoundary queryOptions={postQueries.list()}>
- *   <PostListSuspense />
+ *   <Suspense fallback={<Loading />}>
+ *     <PostList />
+ *   </Suspense>
  * </PrefetchBoundary>
- *
- * // Client Component (use)
- * const { data } = useSuspensePosts();
  */
 export const useSuspensePosts = (params?: PostListParams) => {
-  const options = postQueries.list(params);
-  return useSuspenseQuery({
-    ...options,
-    queryFn: typeof options.queryFn === 'function' ? options.queryFn : () => Promise.reject(new Error('Invalid queryFn')),
-  });
+  return useSuspenseQuery(postQueries.list(params));
 };
 
 /**
@@ -46,11 +41,7 @@ export const usePosts = (params?: PostListParams) => {
  * 게시글 상세 조회 (Suspense)
  */
 export const useSuspensePost = (id: number) => {
-  const options = postQueries.detail(id);
-  return useSuspenseQuery({
-    ...options,
-    queryFn: typeof options.queryFn === 'function' ? options.queryFn : () => Promise.reject(new Error('Invalid queryFn')),
-  });
+  return useSuspenseQuery(postQueries.detail(id));
 };
 
 /**

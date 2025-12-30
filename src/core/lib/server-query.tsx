@@ -8,14 +8,23 @@ import { cache } from 'react';
  * React의 cache()를 사용하여 요청당 하나의 QueryClient 인스턴스를 보장
  * Next.js 16 App Router에서 서버 컴포넌트 간 QueryClient 공유
  */
-export const getQueryClient = cache(() => new QueryClient());
+export const getQueryClient = cache(() => {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000,
+        gcTime: 5 * 60 * 1000,
+      },
+    },
+  });
+});
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type QueryOptions = FetchQueryOptions<any, any, any, any>;
+type AnyQueryOptions = FetchQueryOptions<any, any, any, any>;
 
 interface PrefetchBoundaryProps {
   children: ReactNode;
-  queryOptions?: QueryOptions | QueryOptions[];
+  queryOptions?: AnyQueryOptions | AnyQueryOptions[];
 }
 
 /**
@@ -52,13 +61,16 @@ export async function PrefetchBoundary({ children, queryOptions }: PrefetchBound
  * 서버 컴포넌트에서 데이터를 직접 가져올 때 사용
  * HydrationBoundary 없이 서버 데이터를 직접 사용하는 경우
  *
+ * @param queryOptions Query options (createQuery로 생성)
+ * @returns 서버에서 패치된 데이터
+ *
  * @example
  * export default async function Page() {
  *   const posts = await serverQuery(postQueries.list());
  *   return <PostList initialData={posts} />;
  * }
  */
-export async function serverQuery<TData>(queryOptions: FetchQueryOptions<TData, unknown, TData, readonly unknown[]>): Promise<TData> {
+export async function serverQuery<TData>(queryOptions: AnyQueryOptions): Promise<TData> {
   const queryClient = getQueryClient();
   return queryClient.fetchQuery(queryOptions);
 }
