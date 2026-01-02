@@ -133,4 +133,4 @@ export const joinPageSchema = z.object({
   agreeMarketing: agreementSchema.shape.agreeMarketing.optional(),
 });
 
-export type JoinPageFormData = z.infer<typeof joinPageSchema>;
+export type JoinPageFormData = z.input<typeof joinPageSchema>;
