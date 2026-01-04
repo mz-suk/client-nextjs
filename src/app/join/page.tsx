@@ -30,7 +30,7 @@ export default function JoinPage() {
   } = useJoinForm();
 
   return (
-    <JoinLayout showBackButton={false} showProgress currentStep={2} totalStep={10}>
+    <JoinLayout showBackButton={false} showProgress currentStep={2}>
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className={styles.title}>{stepTitles[currentStep]}</h2>

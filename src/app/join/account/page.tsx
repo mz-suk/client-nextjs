@@ -109,7 +109,7 @@ export default function JoinAccountPage() {
   }, [isValid, isUserIdAvailable, userId, password, passwordConfirm]);
 
   return (
-    <JoinLayout title="아이디 설정" showProgress currentStep={5} totalStep={10}>
+    <JoinLayout title="아이디 설정" showProgress currentStep={5}>
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className={styles.title}>

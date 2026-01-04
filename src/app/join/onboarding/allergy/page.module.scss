@@ -9,40 +9,54 @@
 }
 
 .title {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
+  font-family: 'SUITE';
   font-weight: 700;
-  line-height: 1.4;
-  color: var(--gray100);
-  margin-bottom: 1.2rem;
+  line-height: 3rem;
+  color: #111111;
+  margin-bottom: 1.8rem;
+}
+
+.subTitle {
+  font-family: 'SUITE';
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 2rem;
+  color: #5f646f;
+  margin-bottom: 0.8rem;
 }
 
 .description {
-  font-size: 1.5rem;
-  color: var(--gray60);
-  line-height: 1.5;
+  font-size: 1.4rem;
+  color: #589e3a;
+  line-height: 2rem;
+  font-weight: 600;
 }
 
 .optionGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.2rem;
   margin-bottom: 2.4rem;
   flex: 1;
 }
 
-.optionCard {
+.optionWrapper {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.8rem;
+  align-items: stretch;
+  gap: 0.4rem;
+}
+
+.optionCard {
+  flex: 1;
   padding: 1.6rem 1.2rem;
   background-color: var(--base-white);
   border: 2px solid var(--gray30);
   border-radius: var(--radius-lg);
+  text-align: left;
   cursor: pointer;
   transition: all 0.2s;
-  min-height: 10rem;
 
   &:hover {
     border-color: var(--brand60);
@@ -57,21 +71,122 @@
   }
 }
 
-.icon {
-  font-size: 2.4rem;
-  line-height: 1;
+.infoButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  padding: 0;
+  background: #f5f5f5;
+  border: 1px solid #e5e9e2;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-size: 1.6rem;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #66bb6a;
+    border-color: #66bb6a;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 .label {
   font-size: 1.3rem;
   font-weight: 600;
   color: var(--gray100);
-  text-align: center;
+}
+
+.footer {
+  position: fixed;
+  bottom: 30px;
+  left: 2rem;
+  right: 2rem;
+  will-change: transform, opacity; // 렌더링 최적화
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .button {
   width: 100%;
-  margin-top: auto;
+  height: 5.2rem;
 }
 
-.error { color: var(--danger); font-size: 1.4rem; margin-top: 0.8rem; }
+.buttonDesc {
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1;
+  text-align: center;
+  color: #2f403b;
+  margin-bottom: 1.8rem;
+  overflow: hidden;
+  will-change: height, opacity, margin; // 렌더링 최적화
+}
+
+// 팝업 스타일
+.popupContent {
+  h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #111111;
+    margin-bottom: 1.6rem;
+  }
+}
+
+.popupDescription {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: #5f646f;
+  margin-bottom: 3.2rem;
+  padding: 1.6rem;
+  background: #f8f9fa;
+  border-radius: 0.8rem;
+}
+
+.popupSection {
+  margin-bottom: 3.2rem;
+
+  h4 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #111111;
+    margin-bottom: 1.2rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      font-size: 1.4rem;
+      line-height: 1.6;
+      color: #5f646f;
+      padding-left: 1.6rem;
+      position: relative;
+      margin-bottom: 0.8rem;
+
+      &::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: #66bb6a;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.popupExamples {
+  font-size: 1.4rem;
+  line-height: 1.6;
+  color: #5f646f;
+  padding: 1.2rem;
+  background: #f8f9fa;
+  border-radius: 0.8rem;
+  border-left: 4px solid #66bb6a;
+}

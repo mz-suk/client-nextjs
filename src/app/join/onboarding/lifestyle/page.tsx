@@ -50,7 +50,7 @@ export default function OnboardingLifestylePage() {
   };
 
   return (
-    <JoinLayout title="프로필 작성" showProgress currentStep={10} totalStep={10}>
+    <JoinLayout title="프로필 작성" showProgress currentStep={10}>
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className={styles.title}>

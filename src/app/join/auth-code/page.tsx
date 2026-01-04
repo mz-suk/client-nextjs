@@ -128,7 +128,7 @@ export default function JoinAuthCodePage() {
   };
 
   return (
-    <JoinLayout title="본인인증" showProgress currentStep={3} totalStep={10}>
+    <JoinLayout title="본인인증" showProgress currentStep={3}>
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className={styles.title}>

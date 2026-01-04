@@ -1,0 +1,222 @@
+// Backdrop (배경 오버레이)
+.Backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  backdrop-filter: blur(4px);
+
+  &[data-open] {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  &[data-closed] {
+    animation: fadeOut 0.2s ease-in;
+  }
+}
+
+// Viewport (Dialog 컨테이너)
+.Viewport {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; // 우측 정렬
+  pointer-events: none;
+}
+
+// Popup (실제 팝업 박스)
+.Popup {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+
+  // 우측에서 슬라이드인
+  &.right[data-open] {
+    animation: slideInFromRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &.right[data-closed] {
+    animation: slideOutToRight 0.3s cubic-bezier(0.5, 0, 0.75, 0);
+  }
+
+  // 좌측에서 슬라이드인
+  &.left[data-open] {
+    animation: slideInFromLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &.left[data-closed] {
+    animation: slideOutToLeft 0.3s cubic-bezier(0.5, 0, 0.75, 0);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+// ScrollArea
+.ScrollRoot {
+  height: 100%;
+  width: 100%;
+}
+
+.ScrollViewport {
+  height: 100%;
+  width: 100%;
+}
+
+.ScrollContent {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.Scrollbar {
+  width: 8px;
+  background-color: transparent;
+  padding: 2px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.ScrollbarThumb {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+// Header
+.PopupHeader {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 2rem 1.6rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e9e2;
+}
+
+.Title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111111;
+  margin: 0;
+}
+
+.Close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #5f646f;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #f5f5f5;
+    color: #111111;
+  }
+
+  &:active {
+    background-color: #e5e9e2;
+  }
+}
+
+.Description {
+  padding: 1.6rem 2rem;
+  font-size: 1.4rem;
+  color: #5f646f;
+  line-height: 1.6;
+}
+
+// Body
+.Body {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+// Footer
+.Footer {
+  position: sticky;
+  bottom: 0;
+  padding: 1.6rem 2rem;
+  background-color: #ffffff;
+  border-top: 1px solid #e5e9e2;
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+

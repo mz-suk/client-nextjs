@@ -21,7 +21,7 @@ export default function OnboardingGroupPage() {
     if (isMounted.current && isMatching) {
       const timer = setTimeout(() => {
         // goToStep('onboarding-allergy');
-        router.push('/join/onboarding/allergy');
+        router.push('/join/onboarding/group/complete');
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -37,7 +37,7 @@ export default function OnboardingGroupPage() {
   const buttonText = isMatching ? '매칭 중입니다...' : '소속 그룹 매칭하기';
 
   return (
-    <JoinLayout title="프로필 작성" showProgress currentStep={7} totalStep={10}>
+    <JoinLayout title="프로필 작성" showProgress currentStep={7}>
       <div className={styles.container}>
         {!isMatching && (
           <div ref={headerRef} className={styles.header}>

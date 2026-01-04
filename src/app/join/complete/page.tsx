@@ -23,7 +23,7 @@ export default function JoinCompletePage() {
   };
 
   return (
-    <JoinLayout showBackButton={false} showProgress currentStep={6} totalStep={10}>
+    <JoinLayout showBackButton={false} showProgress currentStep={6}>
       <div className={styles.container}>
         <div className={styles.iconWrapper}>
           <img src="/img/ceremony.png" />

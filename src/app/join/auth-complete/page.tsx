@@ -26,7 +26,7 @@ export default function JoinAuthCompletePage() {
   }, [handleNext]);
 
   return (
-    <JoinLayout title="본인인증" showBackButton={false} showProgress currentStep={4} totalStep={10}>
+    <JoinLayout title="본인인증" showBackButton={false} showProgress currentStep={4}>
       <div className={styles.container}>
         <SucessCheckLottie />
         <h2 className={styles.title}>인증을 완료했어요!</h2>

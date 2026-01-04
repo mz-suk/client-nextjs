@@ -34,7 +34,7 @@ export default function OnboardingGenderPage() {
   };
 
   return (
-    <JoinLayout title="프로필 작성" showProgress currentStep={9} totalStep={10}>
+    <JoinLayout title="프로필 작성" showProgress currentStep={9}>
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className={styles.title}>
