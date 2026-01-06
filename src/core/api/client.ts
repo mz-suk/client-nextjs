@@ -3,7 +3,7 @@ import { logger } from '../lib';
 import { AUTH_ERROR_CODES, AuthError, type AuthTokens, getAuthConfig } from './auth';
 import { HTTP_STATUS } from './constants';
 import { ApiError, ERROR_TYPES, type ErrorType } from './error';
-import type { ApiResponse, FetchConfig, RequestInterceptor, ResponseInterceptor } from './types';
+import type { FetchConfig, RequestInterceptor, ResponseInterceptor } from './types';
 import { buildURL, createHeaders, serializeBody } from './utils';
 
 const getBaseURL = () => {
@@ -211,44 +211,39 @@ class ApiClient {
     }
   }
 
-  async get<T>(endpoint: string, config?: FetchConfig): Promise<ApiResponse<T>> {
-    const data = await this.request<T>(endpoint, { ...config, method: 'GET' });
-    return { data, success: true };
+  async get<T>(endpoint: string, config?: FetchConfig): Promise<T> {
+    return this.request<T>(endpoint, { ...config, method: 'GET' });
   }
 
-  async post<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<ApiResponse<T>> {
-    const data = await this.request<T>(endpoint, {
+  async post<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<T> {
+    return this.request<T>(endpoint, {
       ...config,
       method: 'POST',
       body: serializeBody(body),
     });
-    return { data, success: true };
   }
 
-  async put<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<ApiResponse<T>> {
-    const data = await this.request<T>(endpoint, {
+  async put<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<T> {
+    return this.request<T>(endpoint, {
       ...config,
       method: 'PUT',
       body: serializeBody(body),
     });
-    return { data, success: true };
   }
 
-  async patch<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<ApiResponse<T>> {
-    const data = await this.request<T>(endpoint, {
+  async patch<T>(endpoint: string, body?: unknown, config?: FetchConfig): Promise<T> {
+    return this.request<T>(endpoint, {
       ...config,
       method: 'PATCH',
       body: serializeBody(body),
     });
-    return { data, success: true };
   }
 
-  async delete<T>(endpoint: string, config?: FetchConfig): Promise<ApiResponse<T>> {
-    const data = await this.request<T>(endpoint, { ...config, method: 'DELETE' });
-    return { data, success: true };
+  async delete<T>(endpoint: string, config?: FetchConfig): Promise<T> {
+    return this.request<T>(endpoint, { ...config, method: 'DELETE' });
   }
 
-  async upload<T>(endpoint: string, data: Record<string, unknown>, config?: FetchConfig): Promise<ApiResponse<T>> {
+  async upload<T>(endpoint: string, data: Record<string, unknown>, config?: FetchConfig): Promise<T> {
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {

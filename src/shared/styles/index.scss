@@ -2,16 +2,19 @@
 @use 'scss/reset';
 @use 'scss/utilities';
 
-$screenSizes: 280, 320, 360, 375, 393, 410, 412, 414, 450;
-@each $size in $screenSizes {
-  @media (min-width: #{$size}px) {
-    html {
-      font-size: calc(($size / 375) * 62.5%);
-    }
-  }
-}
-
 html {
+  --design-width: 360;
+  --min-width-px: 280;
+  --max-width-px: 450;
+
+  --scale-factor: calc(10 / var(--design-width));
+
+  --min-font-size: calc((var(--min-width-px) * var(--scale-factor) / 16) * 100%);
+  --max-font-size: calc((var(--max-width-px) * var(--scale-factor) / 16) * 100%);
+  --dynamic-font-size: calc(var(--scale-factor) * 100vw);
+
+  font-size: clamp(var(--min-font-size), var(--dynamic-font-size), var(--max-font-size));
+
   overscroll-behavior-y: none;
   user-select: none;
   -webkit-user-select: none;

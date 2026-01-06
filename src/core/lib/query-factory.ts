@@ -40,8 +40,8 @@ export const createQuery = <TData, TParams = void, TError = DefaultError>(
   fetcher: (params: TParams) => Promise<TData>,
   config?: Partial<Omit<UndefinedInitialDataOptions<TData, TError, TData, QueryKey>, 'queryKey' | 'queryFn'>>
 ) => {
-  return (params?: TParams extends void ? void : TParams) => {
-    const queryKey: QueryKey = params !== undefined ? [...keyBase, params] : [...keyBase];
+  return (params: TParams extends void ? void : TParams) => {
+    const queryKey: QueryKey = params === undefined || params === null ? [...keyBase] : [...keyBase, params];
 
     return queryOptions({
       queryKey,
@@ -90,8 +90,8 @@ export const createInfiniteQuery = <TData, TParams = void, TPageParam = number, 
     >
   >
 ) => {
-  return (params?: TParams extends void ? void : TParams) => {
-    const queryKey: QueryKey = params !== undefined ? [...keyBase, params] : [...keyBase];
+  return (params: TParams extends void ? void : TParams) => {
+    const queryKey: QueryKey = params === undefined || params === null ? [...keyBase] : [...keyBase, params];
     const baseParams = (params ?? {}) as Record<string, unknown>;
 
     const { initialPageParam, getNextPageParam, getPreviousPageParam, ...restConfig } = config;
