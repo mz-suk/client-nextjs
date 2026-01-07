@@ -1,4 +1,5 @@
-export { PostCard } from './PostCard';
-export { PostList } from './PostList';
-export { useInfinitePosts } from './useInfinitePosts';
-export { usePost, usePosts } from './usePosts';
+export * from './PostCard';
+export * from './PostList';
+export * from './PostListSuspense';
+export * from './useInfinitePosts';
+export * from './usePosts';

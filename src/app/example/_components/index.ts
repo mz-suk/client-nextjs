@@ -1,2 +1,2 @@
-export { ExampleLayout } from './ExampleLayout';
-export { InfoBox } from './InfoBox';
+export * from './ExampleLayout';
+export * from './InfoBox';

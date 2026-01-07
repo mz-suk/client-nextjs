@@ -1,4 +1,4 @@
-export { Button, type ButtonProps } from './components/Button';
+export * from './components/Button';
 export * from './hooks';
 export * from './schemas';
 export * from './services';
