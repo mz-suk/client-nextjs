@@ -14,7 +14,7 @@
   }
 
   p {
-    color: var(--color-text-secondary);
+    color: var(--gray70);
     line-height: 1.6;
   }
 }
@@ -24,7 +24,7 @@
   text-align: center;
 
   p {
-    color: var(--color-text-secondary);
+    color: var(--gray70);
   }
 }
 
@@ -50,7 +50,7 @@
 .statusBox {
   margin-bottom: 16px;
   padding: 12px;
-  background: var(--blue10);
+  background: var(--brand10);
   border-radius: 6px;
 
   strong {
@@ -73,19 +73,19 @@
 .loadingMessage {
   text-align: center;
   padding: 20px;
-  color: var(--color-text-secondary);
+  color: var(--gray70);
 }
 
 .endMessage {
   text-align: center;
   padding: 20px;
-  color: var(--color-text-tertiary);
+  color: var(--gray50);
 }
 
 .guide {
   margin-top: 40px;
   padding: 20px;
-  background: var(--yellow10);
+  background: var(--brand10);
   border-radius: 8px;
 
   h3 {
@@ -96,6 +96,6 @@
 
   ol {
     line-height: 1.8;
-    color: var(--yellow100);
+    color: var(--brand100);
   }
 }

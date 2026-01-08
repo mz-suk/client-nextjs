@@ -1,6 +1,7 @@
-@use 'scss/variables';
-@use 'scss/reset';
-@use 'scss/utilities';
+@use 'base/variables';
+@use 'base/preflight';
+@use 'base/normalize';
+@use 'base/utilities';
 
 html {
   --design-width: 360;

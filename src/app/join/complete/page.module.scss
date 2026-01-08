@@ -44,7 +44,7 @@
 .nextStep {
   width: 100%;
   padding: 2.4rem;
-  background: linear-gradient(135deg, var(--brand10) 0%, var(--blue10) 100%);
+  background: linear-gradient(135deg, var(--brand10) 0%, var(--brand10) 100%);
   border-radius: var(--radius-lg);
   margin-bottom: 2.4rem;
 }
@@ -97,4 +97,3 @@
     transform: translateY(-20px);
   }
 }
-

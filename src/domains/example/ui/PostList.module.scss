@@ -12,9 +12,9 @@
 .messageContainer {
   text-align: center;
   padding: 2rem;
-  
+
   &.error {
-    color: var(--color-error);
+    color: var(--danger);
   }
 }
 

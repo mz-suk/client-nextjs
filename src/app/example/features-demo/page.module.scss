@@ -2,7 +2,7 @@
   display: flex;
   gap: 12px;
   margin-bottom: 32px;
-  border-bottom: 2px solid var(--color-border-base);
+  border-bottom: 2px solid var(--gray30);
 }
 
 .tab {
@@ -13,17 +13,17 @@
   cursor: pointer;
   font-weight: 600;
   background: transparent;
-  color: var(--color-text-secondary);
+  color: var(--gray70);
   transition: all 0.2s;
 
   &.active {
-    background: var(--color-secondary);
+    background: var(--brand70);
     color: white;
-    border-bottom-color: var(--color-secondary);
+    border-bottom-color: var(--brand70);
   }
 
   &:hover:not(.active) {
-    color: var(--color-secondary);
+    color: var(--brand70);
   }
 }
 
@@ -43,31 +43,31 @@
   transition: opacity 0.2s;
 
   &:disabled {
-    background: var(--color-bg-disabled) !important;
+    background: var(--gray20) !important;
     cursor: not-allowed;
   }
 
   &.primary {
-    background: var(--color-secondary);
+    background: var(--brand70);
 
     &:hover:not(:disabled) {
-      background: var(--color-secondary-hover);
+      background: var(--brand80);
     }
   }
 
   &.success {
-    background: var(--color-success);
+    background: var(--success);
 
     &:hover:not(:disabled) {
-      background: var(--color-success);
+      background: var(--success);
     }
   }
 
   &.danger {
-    background: var(--color-error);
+    background: var(--danger);
 
     &:hover:not(:disabled) {
-      background: var(--color-error);
+      background: var(--danger);
     }
   }
 }
@@ -78,8 +78,8 @@
   margin-bottom: 20px;
 
   &.loading {
-    background: var(--yellow10);
-    color: var(--yellow100);
+    background: var(--brand10);
+    color: var(--brand100);
   }
 
   &.success {
@@ -88,14 +88,14 @@
   }
 
   &.error {
-    background: var(--orange10);
-    color: var(--orange100);
+    background: var(--brand10);
+    color: var(--brand100);
   }
 }
 
 .section {
   padding: 24px;
-  border: 2px solid var(--color-border-base);
+  border: 2px solid var(--gray30);
   border-radius: 8px;
   margin-bottom: 24px;
 
@@ -111,4 +111,3 @@
   flex-direction: column;
   gap: 24px;
 }
-
