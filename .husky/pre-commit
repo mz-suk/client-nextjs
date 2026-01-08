@@ -1,2 +1,1 @@
-pnpm tsc --noEmit --skipLibCheck
 pnpm lint-staged

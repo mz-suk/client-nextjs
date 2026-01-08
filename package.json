@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "pnpm build && next start --port 4000",
     "lint": "tsc --noEmit && eslint . --fix",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,css,scss,md}\"",
     "prepare": "husky",
     "analyze": "ANALYZE=true next build",
     "gf": "git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -d",
@@ -20,7 +20,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "^5.90.16",
     "@tanstack/react-query-devtools": "^5.91.2",
-    "@tanstack/react-virtual": "^3.13.16",
+    "@tanstack/react-virtual": "^3.13.18",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -29,23 +29,29 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.3",
     "@next/bundle-analyzer": "16.1.1",
     "@types/node": "^25.0.3",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^9.39.2",
-    "eslint-config-next": "15.5.6",
+    "eslint-config-next": "16.1.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
     "sass": "^1.97.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.52.0"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx,json,css,md}": [
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "tsc --noEmit",
+      "eslint --fix"
+    ],
+    "*.{js,mjs,cjs,json,css,scss,md}": [
       "prettier --write"
     ]
   },
