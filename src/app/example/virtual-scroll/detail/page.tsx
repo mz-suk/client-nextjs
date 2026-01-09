@@ -1,9 +1,9 @@
 'use client';
 
+import { ExampleLayout } from '@domains/example';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
-import { ExampleLayout } from '../../_components';
 import styles from './page.module.scss';
 
 function DetailContent() {

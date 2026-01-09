@@ -1,7 +1,5 @@
 import { PrefetchBoundary } from '@core/lib';
-import { PostListSuspense, postQueries } from '@domains/example';
-
-import { ExampleLayout } from '../_components';
+import { ExampleLayout, PostListSuspense, postQueries } from '@domains/example';
 
 /**
  * SSG + CSR 하이브리드 예제 (프로덕션 권장 패턴)

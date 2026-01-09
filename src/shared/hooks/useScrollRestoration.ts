@@ -1,6 +1,7 @@
-import { useVirtualScrollStore } from '@shared/stores/useVirtualScrollStore';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+
+import { useVirtualScrollStore } from './useVirtualScrollStore';
 
 interface UseScrollRestorationOptions {
   key?: string;

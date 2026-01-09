@@ -1,10 +1,8 @@
 'use client';
 
-import { PostList } from '@domains/example';
+import { ExampleLayout, PostList } from '@domains/example';
 
 import { Accordion } from '@/shared/ui';
-
-import { ExampleLayout } from '../_components';
 
 /**
  * CSR (Client-Side Rendering) 데이터 패칭 예제

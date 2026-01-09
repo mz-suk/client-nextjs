@@ -1,6 +1,6 @@
 # Next.js 16 + React 19 프로젝트
 
-FSD + DDD 혼합 아키텍처 기반 프로덕션급 Next.js 템플릿
+FSD + DDD 혼합 아키텍처 기반 Next.js 템플릿
 
 ## 시작하기
 
@@ -18,37 +18,41 @@ pnpm start
 # 린트
 pnpm lint
 
+# 포맷
+pnpm format
+
 # 빌드 분석
 pnpm analyze
 ```
 
 ## 기술 스택
 
-- **Next.js 16** - App Router, Turbopack
-- **React 19** - Server Components, React Compiler
+- **Next.js 16.1** - App Router, Static Export
+- **React 19.2** - Server Components, React Compiler
 - **TypeScript 5.9** - Strict mode
-- **TanStack Query v5** - 서버 상태 관리
-- **Zustand** - 클라이언트 상태 관리
-- **Zod** - 스키마 검증
-- **Sass** - 스타일링
-- **React Hook Form** - 폼 관리
+- **TanStack Query v5.90** - 서버 상태 관리
+- **TanStack Virtual v3.13** - Virtual Scroll
+- **Zustand v5.0** - 클라이언트 상태 관리
+- **Zod v4.3** - 스키마 검증
+- **Sass v1.97** - 스타일링
+- **React Hook Form v7.70** - 폼 관리
 
 ## 프로젝트 구조
 
 ```
 src/
 ├── app/          # Next.js 페이지 및 라우팅
-├── core/         # 공통 환경 (API, Config, Logger)
+├── core/         # 공통 환경 (API, Config, Logger, Factory)
 ├── domains/      # 비즈니스 로직 (도메인별 분리)
-└── shared/       # 공용 컴포넌트 (UI, Providers, Styles)
+└── shared/       # 공용 컴포넌트 (UI, Providers, Hooks, Stores)
 ```
 
 ### 디렉토리 역할
 
 - **app/**: Next.js App Router 페이지, 레이아웃, 에러 처리
-- **core/**: API 클라이언트, 환경 설정, 로거, 공통 타입
-- **domains/**: 도메인별 비즈니스 로직 (auth, user, join 등)
-- **shared/**: 재사용 가능한 UI 컴포넌트, Provider, 스타일
+- **core/**: API 클라이언트, 환경 설정, Query/Mutation Factory, 로거
+- **domains/**: 도메인별 비즈니스 로직 (auth, example, join)
+- **shared/**: UI 컴포넌트, Provider, Custom Hooks, Zustand Store
 
 ## 주요 기능
 
@@ -73,55 +77,79 @@ src/
 ### 상태 관리
 
 - **TanStack Query v5.90**: 서버 상태 캐싱, Optimistic Updates
-- **Zustand**: 클라이언트 전역 상태, localStorage 동기화
+- **Zustand v5.0**: 클라이언트 전역 상태, localStorage 동기화
 
-### 데이터 패칭 (v2.0)
+### 데이터 패칭
 
-> - Query/Mutation Factory 헬퍼로 타입 안전성 강화
-> - Optimistic Updates 지원
-> - 개선된 서버 프리패칭 (PrefetchBoundary)
+**Query/Mutation Factory 패턴:**
 
 - `createQuery` / `createInfiniteQuery`: 타입 안전한 쿼리 정의
-- `createMutation` / `createOptimisticMutation`: Optimistic Updates 지원
+- `createMutation`: 기본 Mutation 생성
+- `createOptimisticMutation`: Optimistic Updates 지원
+- `createOptimisticListMutation`: List 추가 Optimistic Update
+- `createOptimisticDeleteMutation`: List 삭제 Optimistic Update
+- `createQueryKeys`: 타입 안전한 쿼리 키 관리
 - `PrefetchBoundary`: 선언적 서버 프리패칭
-- `createQueryKeys`: 일관된 쿼리 키 관리
 
 ### UI 컴포넌트
 
-- BottomSheet (모바일 최적화)
-- GlobalErrorHandler (전역 에러 토스트)
-- GlobalLoading (전역 로딩 UI)
+- `VirtualList`: TanStack Virtual 기반 가상 스크롤
+- `BottomSheet`: 모바일 최적화 바텀시트
+- `Accordion`: 아코디언 컴포넌트
+- `GlobalLoading`: 전역 로딩 UI (Query/Mutation 자동 감지)
+- `GlobalErrorHandler`: 전역 에러 처리 (401, 403, 5xx 자동 처리)
 
 ## 환경 설정
 
 `.env.local`:
 
 ```env
+# 클라이언트 API 엔드포인트 (브라우저에서 접근)
 NEXT_PUBLIC_API_URL=http://localhost:3000/api
+
+# API 요청 타임아웃 (밀리초)
 NEXT_PUBLIC_API_TIMEOUT=30000
+
+# API Accept-Language 헤더
 NEXT_PUBLIC_API_ACCEPT_LANGUAGE=ko-KR
+
+# 디버그 모드 활성화
 NEXT_PUBLIC_FEATURE_DEBUG=true
-API_TARGET_URL=http://backend:8080  # SSR 전용
+
+# SSR 전용 API 엔드포인트 (개발 환경에서만 사용)
+API_TARGET_URL=http://backend:8080
 ```
 
-## 예제 페이지
+## 예제
 
-| 경로                       | 설명                  |
-| -------------------------- | --------------------- |
-| `/example`                 | 예제 목록             |
-| `/example/ssg`             | SSG + CSR 하이브리드  |
-| `/example/csr`             | 순수 CSR 데이터 패칭  |
-| `/example/mutation`        | 데이터 생성/수정/삭제 |
-| `/example/infinite-scroll` | 무한 스크롤           |
-| `/example/virtual-scroll`  | Virtual Scroll        |
-| `/example/features-demo`   | 전역 로딩/에러 처리   |
+| 경로                         | 설명                      |
+| ---------------------------- | ------------------------- |
+| `/example`                   | 예제 목록                 |
+| `/example/ssg`               | SSG + CSR 하이브리드 패턴 |
+| `/example/csr`               | 순수 CSR 패턴             |
+| `/example/mutation`          | Mutation & Optimistic     |
+| `/example/infinite-scroll`   | Infinite Scroll           |
+| `/example/virtual-scroll`    | Virtual Scroll            |
+| `/example/streaming`         | Suspense Streaming        |
+| `/example/parallel-fetching` | 병렬 데이터 패칭          |
+| `/example/features-demo`     | 전역 로딩/에러 처리       |
+
+## 실제 페이지
+
+| 경로                  | 설명                 |
+| --------------------- | -------------------- |
+| `/join/account`       | 회원가입 - 계정 정보 |
+| `/join/auth-code`     | 회원가입 - 인증 코드 |
+| `/join/auth-complete` | 회원가입 - 인증 완료 |
+| `/join/onboarding`    | 회원가입 - 온보딩    |
+| `/join/complete`      | 회원가입 - 완료      |
 
 ## 문서
 
-- [아키텍처 가이드](./docs/architecture.md)
-- [데이터 패칭 가이드](./docs/data-fetching.md)
-- [에러 처리 가이드](./docs/error-handling.md)
-- [Virtual Scroll 가이드](./docs/virtual-scroll.md)
+- [아키텍처 가이드](./docs/architecture.md) - FSD+DDD 아키텍처, 프로젝트 구조
+- [데이터 패칭 가이드](./docs/data-fetching.md) - TanStack Query, Factory 패턴
+- [에러 처리 가이드](./docs/error-handling.md) - 계층별 에러 처리 전략
+- [Virtual Scroll 가이드](./docs/virtual-scroll.md) - TanStack Virtual 활용
 
 ## 라이선스
 

@@ -6,17 +6,17 @@ TanStack Virtual을 활용한 대용량 데이터 렌더링 최적화
 
 화면에 보이는 영역의 아이템만 DOM에 렌더링하여 대용량 데이터를 효율적으로 처리하는 가상 스크롤 구현입니다.
 
-## 주요 기능
+## 기능
 
-- **성능 최적화**: 가상화를 통해 수천 개 아이템 부드럽게 렌더링
-- **가변 높이 지원**: `measureElement`로 동적 높이 자동 측정 및 캐싱
-- **무한 스크롤**: TanStack Query의 `useInfiniteQuery`와 loader-row 패턴 결합
-- **중복 호출 방지**: `useRef` 기반 페치 상태 관리로 API 중복 호출 차단
-- **정확한 복원**: 인덱스 기반 스크롤 위치 저장 및 복원
-- **접근성**: ARIA 속성, 시맨틱 HTML, 키보드 네비게이션 지원
-- **타입 안전**: 완전한 TypeScript 지원
+- **성능 최적화**: 가상화로 대량 아이템 렌더링
+- **가변 높이**: `measureElement`로 동적 높이 자동 측정
+- **무한 스크롤**: `useInfiniteQuery`와 loader-row 패턴
+- **중복 방지**: `useRef` 기반 페치 상태 관리
+- **스크롤 복원**: 인덱스 기반 위치 저장/복원
+- **접근성**: ARIA 속성, 시맨틱 HTML 지원
+- **타입 안전**: TypeScript 완벽 지원
 
-참고: [TanStack Virtual](https://tanstack.com/virtual/latest)
+→ [TanStack Virtual 공식 문서](https://tanstack.com/virtual/latest)
 
 ## 아키텍처
 
@@ -144,22 +144,22 @@ const {
 3. **자동 조정**: 측정된 높이로 스크롤 위치 재계산
 4. **캐싱**: 측정된 높이는 캐싱되어 재사용
 
-### 주의사항
+### 주의
 
 - `estimateSize`는 실제 평균 높이에 가깝게 설정
-- 이미지 등 비동기 콘텐츠는 로드 완료 후 자동 재측정
+- 이미지 등 비동기 콘텐츠 로드 완료 후 자동 재측정
 - 아이템 내용 변경 시 자동 재측정
 
 ## 무한 스크롤 중복 호출 방지
 
-### 문제점
+### 문제
 
 - `virtualItems`를 useEffect 의존성에 포함하면 스크롤마다 effect 재실행
-- `isFetchingNextPage`가 즉시 true로 바뀌지 않아 중복 호출 가능
+- `isFetchingNextPage`가 즉시 true로 바뀌지 않아 중복 호출
 
-### 해결 방법
+### 해결
 
-`useRef`로 페치 상태를 직접 관리:
+`useRef`로 페치 상태 관리:
 
 ```tsx
 const isFetchingRef = useRef(false);
@@ -179,14 +179,13 @@ useEffect(() => {
 }, [hasMore, onLoadMore, data.length, virtualItems]);
 ```
 
-## 스크롤 복원 메커니즘
+## 스크롤 복원
 
-1. **저장**: `rememberIndex(index, dataLength)`로 클릭 인덱스 저장
-2. **복원 준비**: 필요한 페이지를 자동 로드
-3. **위치 복원**: `scrollToIndex(..., { align: 'start' })`로 인덱스를 상단에 배치
-4. **정리**: `markRestored()` 호출 후 상태 자동 정리
+1. **저장**: `rememberIndex(index, dataLength)`로 인덱스 저장
+2. **복원 준비**: 필요한 페이지 자동 로드
+3. **위치 복원**: `scrollToIndex(..., { align: 'start' })`로 상단 배치
+4. **정리**: `markRestored()` 호출 후 자동 정리
 
 ## 예제
 
-- 목록: `/example/virtual-scroll`
-- 상세: `/example/virtual-scroll/detail?id={postId}`
+`/example/virtual-scroll`에서 확인 가능

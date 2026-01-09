@@ -1,6 +1,6 @@
 # 에러 처리 가이드
 
-프로젝트는 다층 에러 처리 전략을 사용하여 각 에러를 적절한 계층에서 처리합니다.
+계층별 에러 처리 전략으로 각 에러를 적절한 위치에서 처리합니다.
 
 ## 계층별 처리
 
@@ -45,11 +45,11 @@ if (error instanceof ApiError && error.status === 404) {
 }
 ```
 
-**왜 로컬에서 처리하나요?**
+**로컬 처리 이유:**
 
-- 404, 422 등은 비즈니스 로직에 따라 다른 UI를 보여줘야 함
-- 전역 토스트보다 컨텍스트에 맞는 메시지가 더 유용함
-- 예: 게시글 404 vs 댓글 404는 다른 UI 필요
+- 비즈니스 로직에 따라 다른 UI 필요
+- 컨텍스트에 맞는 메시지 제공
+- 예: 게시글 404 vs 댓글 404는 다른 UI
 
 ### Mutation 에러
 
@@ -97,10 +97,10 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
 
 루트 레이아웃(`app/layout.tsx`)에서 발생한 에러를 처리합니다.
 
-**주의사항:**
+**주의:**
 
-- 프로덕션에서만 작동 (개발 모드에서는 Next.js 에러 오버레이 표시)
-- 매우 드물게 발생 (루트 레이아웃 에러는 치명적)
+- 프로덕션에서만 작동 (개발 모드는 Next.js 에러 오버레이)
+- 드물게 발생 (루트 레이아웃 에러는 치명적)
 
 ```typescript
 // app/global-error.tsx
@@ -139,13 +139,14 @@ export default function NotFound() {
 }
 ```
 
-**트리거:**
+**사용:**
 
 ```typescript
 import { notFound } from 'next/navigation';
 
-export default async function PostPage({ params }) {
-  const post = await fetchPost(params.id);
+export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const post = await fetchPost(id);
   if (!post) notFound();
   return <PostDetail post={post} />;
 }
@@ -169,14 +170,13 @@ error.shouldHandleLocally(); // 로컬 처리 대상인가?
 const message = error.getUserFriendlyMessage();
 ```
 
-**사용 예시:**
+**사용:**
 
 ```typescript
-const { error } = useQuery(postQueries.detail(id));
+const { data, error } = useQuery(postQueries.detail(id));
 
 if (error instanceof ApiError) {
   if (error.shouldHandleLocally()) {
-    // 로컬에서 처리
     return <ErrorMessage>{error.getUserFriendlyMessage()}</ErrorMessage>;
   }
   // 전역 처리 대상은 GlobalErrorHandler가 자동 처리

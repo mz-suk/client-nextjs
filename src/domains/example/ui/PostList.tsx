@@ -2,9 +2,9 @@
 
 import { Suspense } from 'react';
 
+import { useSuspensePosts } from '../hooks/usePosts';
 import { PostCard } from './PostCard';
 import styles from './PostList.module.scss';
-import { useSuspensePosts } from './usePosts';
 
 function PostListContent() {
   const { data: posts } = useSuspensePosts();

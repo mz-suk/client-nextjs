@@ -1,6 +1,6 @@
 # 데이터 패칭 가이드
 
-React 19.2 + Next.js 16.1 + TanStack Query v5.90 최신 패턴을 활용한 데이터 패칭 가이드입니다.
+React 19.2 + Next.js 16.1 + TanStack Query v5.90 기반 데이터 패칭 가이드입니다.
 
 ## 🎯 패턴 선택 가이드
 
@@ -10,24 +10,24 @@ React 19.2 + Next.js 16.1 + TanStack Query v5.90 최신 패턴을 활용한 데�
 | CSR            | SEO 불필요, 실시간 데이터 필요 | ❌  | 🐢 느림   | ⚡️  |
 | Infinite Query | 대량 데이터, 페이지네이션      | ✅  | ⚡️ 빠름   | ⭐️  |
 
-### 개발자 경험
+### 특징
 
-- 보일러플레이트 코드 최소화
-- 명확한 JSDoc과 타입 주석
-- 일관된 Factory 패턴 적용
-- 모든 도메인에서 통일된 API 사용
+- Factory 패턴으로 보일러플레이트 최소화
+- 완벽한 타입 안전성
+- 일관된 API 디자인
+- Optimistic Updates 내장 지원
 
 ## 📚 패턴 상세
 
-### 1. SSG + CSR (권장) ⭐️
+### 1. SSG + CSR (권장)
 
-서버에서 데이터를 prefetch하고 클라이언트에서 hydrate하는 하이브리드 패턴입니다.
+서버에서 데이터를 prefetch하고 클라이언트에서 hydrate하는 패턴입니다.
 
-**언제 사용?**
+**사용 시기:**
 
 - SEO가 중요한 페이지
 - 초기 로딩 속도가 중요한 경우
-- 빌드 시점에 데이터를 가져올 수 있는 경우
+- 정적 빌드 가능한 데이터
 
 **Server Component (데이터 프리패칭)**
 
@@ -84,22 +84,22 @@ export function PostListSuspense() {
 }
 ```
 
-**장점**
+**장점:**
 
-- ⚡️ 빠른 초기 로딩 (서버 프리렌더링)
-- ✅ SEO 최적화 (HTML에 데이터 포함)
-- 🔄 클라이언트 실시간 업데이트
-- 🎯 Suspense Streaming 지원
+- 빠른 초기 로딩 (정적 빌드)
+- SEO 최적화 (HTML에 데이터 포함)
+- 클라이언트 실시간 업데이트
+- Suspense Streaming 지원
 
 ### 2. CSR (Client-Side Rendering)
 
 클라이언트에서만 데이터를 패칭합니다.
 
-**언제 사용?**
+**사용 시기:**
 
 - SEO가 필요 없는 페이지 (대시보드, 마이페이지)
 - 사용자별 개인화 데이터
-- 실시간 데이터가 필요한 경우
+- 실시간 데이터
 
 **Page Component**
 
@@ -138,22 +138,22 @@ export function PostList() {
 }
 ```
 
-**장점**
+**장점:**
 
-- 🚀 간단한 구현
-- ⚡️ 실시간 데이터
-- 🔐 인증된 사용자 데이터
+- 간단한 구현
+- 실시간 데이터
+- 인증 기반 데이터 처리
 
-## ✏️ Mutation (데이터 변경)
+## Mutation (데이터 변경)
 
 데이터 생성/수정/삭제 작업을 처리합니다.
 
-### 기본 기능
+### 기능
 
-- ⚡️ 자동 전역 로딩 표시
-- 🔄 성공 시 관련 쿼리 자동 무효화
-- ❌ 에러 자동 처리 (GlobalErrorHandler)
-- ⭐️ Optimistic Updates 지원 (NEW!)
+- 자동 전역 로딩 표시
+- 성공 시 관련 쿼리 자동 무효화
+- 에러 자동 처리 (GlobalErrorHandler)
+- Optimistic Updates 지원
 
 ### 1. Optimistic List Mutation (추천)
 
@@ -223,16 +223,16 @@ export const useDeletePost = createOptimisticDeleteMutation(async (id: number) =
 });
 ```
 
-## 🔄 Infinite Scroll
+## Infinite Scroll
 
-무한 스크롤 및 페이지네이션을 구현합니다.
+무한 스크롤 패턴을 구현합니다.
 
-### 주요 기능
+### 기능
 
-- 📦 자동 페이지 캐싱
-- ⚡️ 스크롤 기반 자동 로딩
-- 🚫 중복 요청 방지
-- 🎯 타입 안전한 구현
+- 자동 페이지 캐싱
+- 스크롤 기반 자동 로딩
+- 중복 요청 방지
+- 타입 안전성
 
 ### Query 정의
 
@@ -309,13 +309,9 @@ export function InfinitePostList() {
 }
 ```
 
-## 🎨 전역 로딩
+## 전역 로딩
 
-`GlobalLoading` 컴포넌트가 모든 Query와 Mutation을 자동으로 감지하여 로딩 UI를 표시합니다.
-
-### 자동 감지
-
-별도 설정 없이 자동으로 동작합니다.
+`GlobalLoading` 컴포넌트가 모든 Query/Mutation을 자동 감지하여 로딩 UI를 표시합니다.
 
 ```typescript
 // Query 로딩 자동 감지
@@ -326,13 +322,13 @@ const createPost = useCreatePost();
 await createPost.mutateAsync(data);
 ```
 
-### 동작 방식
+### 동작
 
 - `useIsFetching()`: 진행 중인 Query 감지
 - `useIsMutating()`: 진행 중인 Mutation 감지
-- 화면 전체 dim 처리 + 중앙 스피너 표시
+- 전체 화면 dim + 중앙 스피너 표시
 
-## 🏗️ Query 정의 패턴
+## Query 정의 패턴
 
 ### Query Keys Factory
 
@@ -422,7 +418,7 @@ export const postApi = {
 - 스키마 기반 문서화
 - 유효성 검사 실패 시 명확한 에러 메시지
 
-## 💡 Best Practices
+## Best Practices
 
 ### 1. Suspense 우선 사용
 
@@ -523,7 +519,7 @@ postKeys.list({ page: 1 }); // ['posts', 'list', { page: 1 }]
 postKeys.detail(5); // ['posts', 'detail', 5]
 ```
 
-## 📚 참고
+## 참고
 
 - [TanStack Query v5 공식 문서](https://tanstack.com/query/latest)
 - [React 19 공식 문서](https://react.dev)

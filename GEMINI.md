@@ -8,7 +8,7 @@
 
 ## 2. Tech Stack
 
-- **Framework:** Next.js 16.1.0 (App Router, Turbopack)
+- **Framework:** Next.js 16.1.1 (App Router, Turbopack)
 - **Core:** React 19.2.3 (Server Components, React Compiler)
 - **Language:** TypeScript 5.9.3 (Strict Mode)
 - **State Management:**
@@ -27,73 +27,75 @@ The project follows a layered architecture to separate concerns effectively.
 src/
 ├── app/          # Next.js App Router (Routing Only)
 │   ├── layout.tsx, page.tsx, error.tsx, not-found.tsx
-│   └── [routes]/
+│   └── [routes]/ # Route-specific page and layout files
 ├── core/         # Infrastructure & Shared Configuration
 │   ├── api/      # Fetch-based Client, Interceptors, Error handling
 │   ├── config/   # Environment variables, Constants
-│   ├── lib/      # Logger, Query Factories, Utils
+│   ├── lib/      # Logger, Query/Mutation Factories, PrefetchBoundary
 │   └── types/    # Core Type Definitions
 ├── domains/      # Business Logic (Domain-Driven)
 │   └── [domain]/
 │       ├── model/    # Logic (API, Types, Queries, Mutations, Stores)
-│       ├── ui/       # Presentation (Components, Hooks specific to domain)
+│       ├── hooks/    # View Logic (Custom Hooks bridging model and UI)
+│       ├── ui/       # Presentation (Components, Styles ONLY)
 │       └── index.ts  # Public API Barrier (Exports only what's needed)
 └── shared/       # Cross-cutting Concerns
     ├── ui/       # Reusable UI Components (Button, BottomSheet, VirtualList)
-    ├── hooks/    # Shared Hooks (useIntersectionObserver, etc.)
+    ├── hooks/    # Shared Hooks & Stores (useIntersectionObserver, useVirtualScrollStore, etc.)
     ├── providers/# Global Context Providers (QueryProvider, AuthProvider)
-    └── styles/   # Mixins, Variables, Reset, Fonts
+    └── assets/   # Static assets and global styles
+        ├── fonts/
+        └── styles/   # Mixins, Variables, Reset, Global styles
 ```
 
-> **Note:** New domains should strictly follow the `model` (logic) vs `ui` (view) separation.
+> **Note:** New domains must strictly follow the `model` -> `hooks` -> `ui` separation.
 
 ## 4. Key Patterns & Conventions
 
 ### Data Fetching (TanStack Query)
 
-- **Factory Pattern:** Use `createQuery`, `createInfiniteQuery`, and `createQueryKeys` from `@core/lib/query-factory` for type safety and consistency.
-- **Server Prefetching:** Prefetch on server (`QueryClient.prefetchQuery`) -> Dehydrate -> Hydrate on client for SEO and initial performance.
-- **Client-Side:** Use `useQuery` / `useInfiniteQuery` with the options factories.
+- **Factory Pattern:** Use `createQuery`, `createInfiniteQuery`, and `createQueryKeys` from `@core/lib/query-factory`.
+- **Server Prefetching:** Use `PrefetchBoundary` from `@core/lib` for a declarative approach to server-side prefetching.
+- **Client-Side:** Use custom hooks from `domains/[domain]/hooks` which wrap `useQuery` / `useInfiniteQuery`.
 
 ### API Client (`@core/api`)
 
 - **Custom Fetch Wrapper:** A robust `ApiClient` class wrapping native `fetch`.
 - **Features:**
-  - Automatic `Authorization` header injection (Server & Client).
+  - Automatic `Authorization` header injection (Server & Client compatible).
   - 401 Token Refresh mechanism.
-  - Timeout handling.
-  - Standardized `ApiError` throwing.
+  - Timeout and Abort handling.
+  - Standardized `ApiError` hierarchy.
 
 ### Error Handling
 
-- **Global:** `GlobalErrorHandler` catches unhandled promise rejections and boundary errors.
+- **Global:** `GlobalErrorHandler` catches unhandled promise rejections and boundary errors, displaying toasts.
 - **API Errors:**
   - `401`: Auto-refresh token.
-  - `5xx`: Trigger global error boundary or toast.
-  - `4xx`: Handled locally in components (e.g., form errors).
+  - `5xx`: Trigger global toast or error boundary.
+  - `4xx`: Handled locally (e.g., form validation) or via global toast.
 
 ### Component & Styling
 
 - **SCSS Modules:** `import styles from './Component.module.scss'`.
-- **Naming:** PascalCase for components, camelCase for logic/hooks.
-- **Headless UI:** Prefer `@base-ui/react` for accessible primitives, styled with SCSS.
+- **Naming:** PascalCase for components, camelCase for logic/hooks/styles.
+- **Headless UI:** Prefer `@base-ui/react` for accessible primitives, styled with custom SCSS.
 
 ## 5. Development Workflow
 
 ### Commands
 
 - **Install:** `pnpm install`
-- **Dev Server:** `pnpm dev` (http://localhost:3000)
-- **Build:** `pnpm build` (Static export by default in `next.config.ts`)
-- **Production Start:** `pnpm start`
-- **Lint & Type Check:** `pnpm lint`
-- **Format:** `pnpm format`
+- **Dev Server:** `pnpm dev`
+- **Build:** `pnpm build`
+- **Lint & Type Check:** `pnpm lint` (Runs `tsc` and `eslint`)
+- **Format:** `pnpm format` (Prettier)
+- **Analyze:** `pnpm analyze` (Bundle size analysis)
 - **Clean:** `pnpm clean:empty` (Removes empty directories)
 
 ### File Naming
 
-- **Pages:** `page.tsx`
-- **Layouts:** `layout.tsx`
+- **Pages/Layouts:** `page.tsx`, `layout.tsx`
 - **Components:** `PascalCase.tsx`
 - **Styles:** `Component.module.scss`
 - **Hooks:** `useHookName.ts`
@@ -102,11 +104,11 @@ src/
 ## 6. Implementation Guidelines for AI
 
 - **Domain Isolation:** Always check if a feature belongs to an existing domain. If new, create a new folder in `domains/`.
-- **Strict Logic Separation:**
-  - **Logic:** `domains/[domain]/model` (API calls, Zod schemas, Zustand stores, Query options).
-  - **UI:** `domains/[domain]/ui` (React components, view-specific hooks).
+- **Strict Layer Separation:**
+  - **Logic (`model`):** API calls, Zod schemas, Zustand stores, Query options.
+  - **View Logic (`hooks`):** Custom hooks bridging model and UI.
+  - **Presentation (`ui`):** React components and SCSS modules ONLY.
 - **Code Quality:**
-  - Use `pnpm lint` to verify changes.
-  - Prefer functional programming patterns.
-  - Avoid `any`; use strict typing.
-- **Documentation:** Check `docs/` for specific guides on Data Fetching, Error Handling, etc.
+  - Use `pnpm lint` to verify changes before completion.
+  - Prefer functional programming patterns and strict typing.
+- **Documentation:** Refer to `docs/` for detailed guides on specific features.

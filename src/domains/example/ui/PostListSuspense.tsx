@@ -1,8 +1,8 @@
 'use client';
 
+import { useSuspensePosts } from '../hooks/usePosts';
 import { PostCard } from './PostCard';
 import styles from './PostList.module.scss';
-import { useSuspensePosts } from './usePosts';
 
 /**
  * Suspense를 사용하는 게시글 목록 컴포넌트
