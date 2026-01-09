@@ -1,20 +1,22 @@
-import reactHooks from 'eslint-plugin-react-hooks';
+import nextVitals from 'eslint-config-next/core-web-vitals';
+import nextTs from 'eslint-config-next/typescript';
+import prettier from 'eslint-config-prettier/flat';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import tseslint from 'typescript-eslint';
 
-export default [
-  {
-    ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts', '*.config.*'],
-  },
-  ...tseslint.configs.recommended,
+const eslintConfig = [
+  ...nextVitals,
+  ...nextTs,
+  prettier,
   {
     plugins: {
       'simple-import-sort': simpleImportSort,
-      'react-hooks': reactHooks,
     },
     rules: {
+      // Import Sort
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
+
+      // TypeScript
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -31,10 +33,15 @@ export default [
         },
       ],
       '@typescript-eslint/no-explicit-any': 'warn',
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
+
+      // General
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prefer-const': 'error',
     },
   },
+  {
+    ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts', '*.config.*'],
+  },
 ];
+
+export default eslintConfig;

@@ -22,6 +22,11 @@ let nextConfig: NextConfig = {
   },
 
   reactCompiler: true,
+  typedRoutes: true,
+
+  experimental: {
+    typedEnv: true,
+  },
 
   async rewrites() {
     if (isDev && SERVER_CONFIG.API_TARGET_URL) {

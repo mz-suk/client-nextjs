@@ -12,10 +12,6 @@ export const APP_METADATA = {
   VERSION: '0.1.0',
 } as const;
 
-export const isAnalyze = env.ANALYZE;
-export const isDev = env.NODE_ENV === 'development';
-export const isDebug = env.FEATURE_DEBUG;
-
 export const SERVER_CONFIG = {
   API_TARGET_URL: env.API_TARGET_URL,
 } as const;
@@ -25,3 +21,7 @@ export const CACHE_CONFIG = {
   QUERY_STALE_TIME: 60000,
   QUERY_GC_TIME: 300000,
 } as const;
+
+export const isAnalyze = env.ANALYZE;
+export const isDev = env.NODE_ENV === 'development';
+export const isDebug = env.FEATURE_DEBUG;

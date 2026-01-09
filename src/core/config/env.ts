@@ -28,7 +28,9 @@ const envSchema = z.object({
     .transform(val => val === 'true'),
 });
 
-function parseEnv() {
+type EnvSchema = z.infer<typeof envSchema>;
+
+function validateEnv(): EnvSchema {
   try {
     return envSchema.parse({
       NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
@@ -41,23 +43,30 @@ function parseEnv() {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const missingVars = error.issues.map(err => `${err.path.join('.')}: ${err.message}`).join('\n');
-      throw new Error(`❌ 환경변수 검증 실패:\n${missingVars}`);
+      const errorMessages = error.issues.map(issue => `  ${issue.path.join('.')}: ${issue.message}`).join('\n');
+      throw new Error(`❌ 환경변수 검증 실패:\n\n${errorMessages}\n`);
     }
     throw error;
   }
 }
 
-const parsed = parseEnv();
+const parsed = validateEnv();
 
 const isServer = typeof window === 'undefined';
 
 export const env = {
+  // API 설정
   API_URL: parsed.NEXT_PUBLIC_API_URL,
   API_TIMEOUT: parsed.NEXT_PUBLIC_API_TIMEOUT,
-  FEATURE_DEBUG: parsed.NEXT_PUBLIC_FEATURE_DEBUG,
-  API_TARGET_URL: isServer ? parsed.API_TARGET_URL : undefined,
   API_ACCEPT_LANGUAGE: parsed.NEXT_PUBLIC_API_ACCEPT_LANGUAGE,
-  ANALYZE: parsed.ANALYZE,
+
+  // Feature Flags
+  FEATURE_DEBUG: parsed.NEXT_PUBLIC_FEATURE_DEBUG,
+
+  // Server-only
+  API_TARGET_URL: isServer ? parsed.API_TARGET_URL : undefined,
+
+  // Runtime
   NODE_ENV: parsed.NODE_ENV,
-};
+  ANALYZE: parsed.ANALYZE,
+} as const;

@@ -4,7 +4,7 @@ import { useJoinStore } from '@domains/join';
 import { JoinLayout } from '@domains/join/components';
 import { Button } from '@domains/join/components/Button';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import styles from './page.module.scss';
 
@@ -12,19 +12,19 @@ export default function JoinAuthCompletePage() {
   const router = useRouter();
   const { goToStep } = useJoinStore();
 
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     goToStep('account');
     router.push('/join/account');
-  }, [goToStep, router]);
+  };
 
   useEffect(() => {
-    // 자동으로 다음 단계로 이동 (3초 후)
     const timer = setTimeout(() => {
       handleNext();
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [handleNext]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <JoinLayout title="본인인증" showBackButton={false} showProgress currentStep={4} totalStep={10}>
