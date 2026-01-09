@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "pnpm build && next start --port 4000",
+    "start": "pnpm build && npx serve out -l 4000",
     "lint": "tsc --noEmit && eslint . --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,css,scss,md}\"",
     "prepare": "husky",
