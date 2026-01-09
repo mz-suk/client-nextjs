@@ -1,9 +1,16 @@
 html {
   overflow-wrap: break-word;
   word-break: keep-all;
-  font-family: var(--font-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  // text-rendering: optimizeLegibility;
+}
+
+body {
+  font-size: 1.3rem;
+  font-family: var(--font-base);
+  color: var(--gray100);
+  background-color: var(--base-white);
 }
 
 button,
@@ -14,16 +21,6 @@ select {
   // -webkit-appearance: none;
   border-radius: 0;
   // vertical-align: middle;
-}
-
-button {
-  user-select: none;
-  touch-action: manipulation;
-}
-
-a {
-  -webkit-user-drag: none;
-  text-decoration-skip-ink: auto;
 }
 
 img,
@@ -43,30 +40,10 @@ sub {
 }
 
 :focus-visible {
-  outline: 2px solid var(--brand70);
+  outline: 2px solid currentColor;
   outline-offset: 2px;
-}
-
-:focus-within {
-  scroll-behavior: smooth;
 }
 
 :target {
   scroll-margin-block: 5ex;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :focus-within {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-    transition: none;
-  }
 }
