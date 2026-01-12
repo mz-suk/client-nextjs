@@ -91,6 +91,127 @@ export function PostListSuspense() {
 - 클라이언트 실시간 업데이트
 - Suspense Streaming 지원
 
+### 1-1. SSG 동적 라우트 (generateStaticParams)
+
+동적 경로를 빌드 시점에 미리 생성하는 패턴입니다.
+
+**사용 시기:**
+
+- 블로그 포스트, 상품 상세 등 동적 경로가 필요한 경우
+- 경로 목록을 미리 알 수 있는 경우
+- SEO가 중요한 상세 페이지
+
+**타입 정의**
+
+```typescript
+// domains/example/model/ssg.types.ts
+import { z } from 'zod';
+
+export const SSGPostSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  content: z.string(),
+  createdAt: z.string(),
+});
+
+export type SSGPost = z.infer<typeof SSGPostSchema>;
+
+export type SSGPostParams = {
+  id: string;
+};
+```
+
+**데이터 레이어**
+
+```typescript
+// domains/example/model/ssg.data.ts
+import type { SSGPost, SSGPostParams } from './ssg.types';
+
+export const SSG_POSTS: SSGPost[] = [
+  {
+    id: '1',
+    title: 'Next.js 16의 새로운 기능',
+    description: 'App Router의 성능 개선과 새로운 API 소개',
+    content: '...',
+    createdAt: '2026-01-10T09:00:00Z',
+  },
+  // ...
+];
+
+export function getSSGPost(id: string): SSGPost | undefined {
+  return SSG_POSTS.find(post => post.id === id);
+}
+
+export function getSSGPostIds(): string[] {
+  return SSG_POSTS.map(post => post.id);
+}
+
+export function isValidSSGPostId(id: string): boolean {
+  return SSG_POSTS.some(post => post.id === id);
+}
+```
+
+**Page Component (동적 라우트)**
+
+```typescript
+// app/posts/[id]/page.tsx
+import { notFound } from 'next/navigation';
+import { getSSGPost, getSSGPostIds, isValidSSGPostId, type SSGPostParams } from '@domains/post';
+
+interface PageProps {
+  params: Promise<SSGPostParams>;
+}
+
+// 1. 정적 경로 생성 (빌드 타임)
+export async function generateStaticParams(): Promise<SSGPostParams[]> {
+  const ids = getSSGPostIds();
+
+  return ids.map(id => ({ id }));
+}
+
+// 2. 동적 파라미터 처리 전략
+export const dynamicParams = false; // generateStaticParams에 없는 경로는 404
+
+// 3. 페이지 컴포넌트
+export default async function PostDetailPage({ params }: PageProps) {
+  const { id } = await params;
+
+  // 유효성 검증
+  if (!isValidSSGPostId(id)) {
+    notFound();
+  }
+
+  // 데이터 조회
+  const post = getSSGPost(id);
+
+  if (!post) {
+    notFound();
+  }
+
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <p>{post.description}</p>
+      <div>{post.content}</div>
+    </article>
+  );
+}
+```
+
+**주요 개념:**
+
+- `generateStaticParams`: 빌드 시점에 생성할 경로 목록 반환
+- `dynamicParams`: 정의되지 않은 경로 처리 방식 (false 권장)
+- `params`: Promise로 래핑되어 있으므로 `await` 필요 (Next.js 15+)
+- 타입 안전성: `SSGPostParams` 타입으로 파라미터 타입 보장
+
+**Static Export 주의사항:**
+
+- `output: 'export'` 모드에서는 `generateStaticParams`가 반환하는 경로만 생성
+- `dynamicParams = true`는 Static Export에서 동작하지 않음
+- 빌드 시점에 모든 데이터가 준비되어야 함
+
 ### 2. CSR (Client-Side Rendering)
 
 클라이언트에서만 데이터를 패칭합니다.

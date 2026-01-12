@@ -122,17 +122,18 @@ API_TARGET_URL=http://backend:8080
 
 ## 예제
 
-| 경로                         | 설명                      |
-| ---------------------------- | ------------------------- |
-| `/example`                   | 예제 목록                 |
-| `/example/ssg`               | SSG + CSR 하이브리드 패턴 |
-| `/example/csr`               | 순수 CSR 패턴             |
-| `/example/mutation`          | Mutation & Optimistic     |
-| `/example/infinite-scroll`   | Infinite Scroll           |
-| `/example/virtual-scroll`    | Virtual Scroll            |
-| `/example/streaming`         | Suspense Streaming        |
-| `/example/parallel-fetching` | 병렬 데이터 패칭          |
-| `/example/features-demo`     | 전역 로딩/에러 처리       |
+| 경로                         | 설명                                   |
+| ---------------------------- | -------------------------------------- |
+| `/example`                   | 예제 목록                              |
+| `/example/ssg`               | SSG + CSR 하이브리드 패턴              |
+| `/example/ssg/[id]`          | SSG 동적 라우트 (generateStaticParams) |
+| `/example/csr`               | 순수 CSR 패턴                          |
+| `/example/mutation`          | Mutation & Optimistic                  |
+| `/example/infinite-scroll`   | Infinite Scroll                        |
+| `/example/virtual-scroll`    | Virtual Scroll                         |
+| `/example/streaming`         | Suspense Streaming                     |
+| `/example/parallel-fetching` | 병렬 데이터 패칭                       |
+| `/example/features-demo`     | 전역 로딩/에러 처리                    |
 
 ## 실제 페이지
 
@@ -148,6 +149,7 @@ API_TARGET_URL=http://backend:8080
 
 - [아키텍처 가이드](./docs/architecture.md) - FSD+DDD 아키텍처, 프로젝트 구조
 - [데이터 패칭 가이드](./docs/data-fetching.md) - TanStack Query, Factory 패턴
+- [SSG 가이드](./docs/ssg-guide.md) - Static Site Generation, generateStaticParams
 - [에러 처리 가이드](./docs/error-handling.md) - 계층별 에러 처리 전략
 - [Virtual Scroll 가이드](./docs/virtual-scroll.md) - TanStack Virtual 활용
 
