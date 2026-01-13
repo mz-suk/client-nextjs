@@ -1,7 +1,6 @@
 import { PrefetchBoundary } from '@core/lib';
-import { PostListSuspense, postQueries } from '@domains/example';
+import { ExampleLayout, InfoBox, PostListSuspense, postQueries } from '@domains/example';
 
-import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
 export default async function ParallelFetchingPage() {

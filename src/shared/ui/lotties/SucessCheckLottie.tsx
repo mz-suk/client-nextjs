@@ -1,8 +1,9 @@
 'use client';
 
-import successCheckJson from '@/shared/assets/lotties/success-check.json';
 import lottie, { type AnimationItem } from 'lottie-web';
 import { useEffect, useRef } from 'react';
+
+import successCheckJson from '@/shared/assets/lotties/success-check.json';
 
 interface SucessCheckLottieProps {
   width?: number; // 사용자가 눈으로 보고 싶은 실제 그림의 크기

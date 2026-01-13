@@ -12,19 +12,19 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: var(--spacing-sm);
-  color: var(--color-text-primary);
+  color: var(--gray100);
 }
 
 .description {
-  color: var(--color-text-secondary);
+  color: var(--gray70);
   line-height: 1.6;
 }
 
 .tip {
   margin-bottom: var(--spacing-xl);
   padding: var(--spacing-lg);
-  background: var(--yellow10);
+  background: var(--brand10);
   border-radius: var(--radius-lg);
   font-size: 0.9375rem;
-  color: var(--yellow100);
+  color: var(--brand100);
 }

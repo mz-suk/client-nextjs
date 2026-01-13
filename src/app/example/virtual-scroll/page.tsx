@@ -1,8 +1,8 @@
 'use client';
 
+import { ExampleLayout, InfoBox } from '@domains/example';
 import { VirtualList } from '@shared/ui';
 
-import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 import { useVirtualScrollList } from './useVirtualScrollList';
 

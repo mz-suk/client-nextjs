@@ -1,9 +1,8 @@
 'use client';
 
-import { PostCard, useInfinitePosts } from '@domains/example';
+import { ExampleLayout, InfoBox, PostCard, useInfinitePosts } from '@domains/example';
 import { useIntersectionObserver } from '@shared/hooks';
 
-import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
 /**

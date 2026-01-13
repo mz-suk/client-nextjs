@@ -19,9 +19,11 @@ pnpm-lock.yaml
 package-lock.json
 yarn.lock
 
-# Public assets (optional - usually we want to format these if they are code, but ignore binary)
-# public/
-
 # System
 .DS_Store
 .vercel
+
+# IDE
+.cursor
+.vscode
+.idea

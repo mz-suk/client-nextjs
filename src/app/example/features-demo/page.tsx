@@ -1,10 +1,9 @@
 'use client';
 
-import { postQueries } from '@domains/example';
+import { ExampleLayout, InfoBox, postQueries } from '@domains/example';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
 /**

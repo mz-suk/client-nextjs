@@ -1,6 +1,7 @@
-import { useVirtualScrollStore } from '@shared/stores/useVirtualScrollStore';
 import { usePathname } from 'next/navigation';
-import { useCallback, useMemo, useRef } from 'react';
+import { useState } from 'react';
+
+import { useVirtualScrollStore } from './useVirtualScrollStore';
 
 interface UseScrollRestorationOptions {
   key?: string;
@@ -35,41 +36,38 @@ export function useScrollRestoration(options: UseScrollRestorationOptions = {}) 
   const autoClear = options.autoClear ?? true;
 
   const { saveScrollState, getScrollState, clearScrollState } = useVirtualScrollStore();
-  const hasRestoredRef = useRef(false);
+  const [hasRestored, setHasRestored] = useState(false);
 
-  const savedState = useMemo(() => getScrollState(key), [getScrollState, key]);
+  const savedState = getScrollState(key);
 
-  const rememberIndex = useCallback(
-    (index: number, dataLength: number, offsetInItem = 0) => {
-      const state: ScrollState = {
-        startIndex: Math.max(0, index),
-        offsetInItem: Math.max(0, offsetInItem),
-        dataLength: Math.max(dataLength, index + 1),
-      };
-      saveScrollState(key, state);
-    },
-    [key, saveScrollState]
-  );
+  const rememberIndex = (index: number, dataLength: number, offsetInItem = 0) => {
+    const state: ScrollState = {
+      startIndex: Math.max(0, index),
+      offsetInItem: Math.max(0, offsetInItem),
+      dataLength: Math.max(dataLength, index + 1),
+    };
+    saveScrollState(key, state);
+  };
 
-  const markRestored = useCallback(() => {
-    if (hasRestoredRef.current || !savedState) return;
-    hasRestoredRef.current = true;
+  const markRestored = () => {
+    if (hasRestored || !savedState) return;
+    setHasRestored(true);
 
     if (autoClear) {
       clearScrollState(key);
     }
-  }, [autoClear, clearScrollState, key, savedState]);
+  };
 
-  const clearScroll = useCallback(() => {
+  const clearScroll = () => {
     clearScrollState(key);
-    hasRestoredRef.current = false;
-  }, [key, clearScrollState]);
+    setHasRestored(false);
+  };
 
   return {
     savedState,
     rememberIndex,
     markRestored,
     clearScroll,
-    isRestoring: !!savedState && !hasRestoredRef.current,
+    isRestoring: !!savedState && !hasRestored,
   };
 }

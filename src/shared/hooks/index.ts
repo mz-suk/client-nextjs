@@ -1,2 +1,3 @@
 export * from './useIntersectionObserver';
-export { useScrollRestoration } from './useScrollRestoration';
+export * from './useScrollRestoration';
+export * from './useVirtualScrollStore';

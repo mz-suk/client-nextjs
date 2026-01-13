@@ -5,7 +5,7 @@ import localFont from 'next/font/local';
  * @see https://github.com/orioncactus/pretendard
  */
 export const pretendard = localFont({
-  src: './fonts/PretendardVariable.woff2',
+  src: './PretendardVariable.woff2',
   variable: '--font-pretendard',
   weight: '100 900',
   display: 'swap',
@@ -19,7 +19,7 @@ export const pretendard = localFont({
  * @see https://sunn.us/suite
  */
 export const suite = localFont({
-  src: './fonts/SUITE-Variable.woff2',
+  src: './SUITE-Variable.woff2',
   variable: '--font-suite',
   weight: '300 900',
   display: 'swap',

@@ -7,6 +7,7 @@ import { FormInput } from '@/domains/join/components/FormInput';
 import { useJoinForm } from '@/domains/join/hooks/useJoinForm';
 import { stepTitles } from '@/domains/join/types';
 import { ArrowDownIcon } from '@/shared/ui';
+
 import styles from './page.module.scss';
 
 export default function JoinPage() {

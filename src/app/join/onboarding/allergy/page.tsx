@@ -1,11 +1,12 @@
 'use client';
 
-import { FullPopup } from '@/shared/ui/FullPopup';
 import { useJoinStore, validateAllergies } from '@domains/join';
 import { JoinLayout } from '@domains/join/components';
 import { Button } from '@domains/join/components/Button';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
+import { FullPopup } from '@/shared/ui/FullPopup';
 
 import styles from './page.module.scss';
 

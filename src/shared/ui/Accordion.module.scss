@@ -1,0 +1,85 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-top: 1px solid var(--gray30);
+}
+
+.item {
+  width: 100%;
+  border-bottom: 1px solid var(--gray30);
+}
+
+.header {
+  margin: 0;
+  display: flex;
+}
+
+.trigger {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--base-white);
+  color: var(--gray100);
+  font-size: 1.6rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-sizing: border-box;
+
+  // &:hover {
+  //   background-color: var(--gray10);
+  // }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    color: var(--gray40);
+    background-color: var(--gray20);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--brand70);
+    outline-offset: -2px;
+  }
+}
+
+.icon {
+  width: 2rem;
+  height: 2rem;
+  transition: transform 0.3s cubic-bezier(0.87, 0, 0.13, 1);
+  color: var(--gray70);
+  flex-shrink: 0;
+  margin-left: var(--spacing-md);
+
+  /* Using the attribute on the trigger (parent of icon) */
+  [data-panel-open] & {
+    transform: rotate(180deg);
+  }
+}
+
+.panel {
+  overflow: hidden;
+  background-color: var(--gray10);
+  color: var(--gray70);
+  font-size: 1.4rem;
+  line-height: 1.5;
+
+  /* Animation using Base UI css variable */
+  height: var(--accordion-panel-height);
+  transition:
+    height 0.3s cubic-bezier(0.87, 0, 0.13, 1),
+    opacity 0.3s cubic-bezier(0.87, 0, 0.13, 1);
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+.content {
+  padding: var(--spacing-md) var(--spacing-lg);
+}

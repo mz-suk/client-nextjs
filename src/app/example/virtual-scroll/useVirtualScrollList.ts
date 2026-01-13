@@ -1,7 +1,7 @@
 import { useInfinitePosts } from '@domains/example';
 import { useScrollRestoration } from '@shared/hooks';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 const SCROLL_STATE_KEY = 'virtual-scroll-example';
 
@@ -15,17 +15,14 @@ export function useVirtualScrollList() {
     key: SCROLL_STATE_KEY,
   });
 
-  const posts = useMemo(() => data?.pages.flatMap(page => page) ?? [], [data]);
+  const posts = data?.pages.flatMap(page => page) ?? [];
 
-  const navigateToDetail = useCallback(
-    (postId: number, index: number) => {
-      rememberIndex(index, posts.length);
-      router.push(`/example/virtual-scroll/detail?id=${postId}`);
-    },
-    [posts.length, rememberIndex, router]
-  );
+  const navigateToDetail = (postId: number, index: number) => {
+    rememberIndex(index, posts.length);
+    router.push(`/example/virtual-scroll/detail?id=${postId}`);
+  };
 
-  const restoreState = useMemo(() => {
+  const restoreState = (() => {
     if (!savedState || !isRestoring) return null;
 
     const requiredLength = Math.max(savedState.dataLength, savedState.startIndex + 1);
@@ -35,7 +32,7 @@ export function useVirtualScrollList() {
       startIndex: savedState.startIndex,
       offsetInItem: 0,
     };
-  }, [savedState, isRestoring, posts.length, hasNextPage]);
+  })();
 
   // 복원 시 필요한 데이터 자동 로드
   useEffect(() => {

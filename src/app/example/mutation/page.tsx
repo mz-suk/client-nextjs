@@ -1,9 +1,8 @@
 'use client';
 
-import { useCreatePost, useDeletePost, useUpdatePost } from '@domains/example';
+import { ExampleLayout, InfoBox, useCreatePost, useDeletePost, useUpdatePost } from '@domains/example';
 import { useState } from 'react';
 
-import { ExampleLayout, InfoBox } from '../_components';
 import styles from './page.module.scss';
 
 /**

@@ -30,14 +30,14 @@
 .card {
   display: block;
   padding: var(--spacing-xl);
-  border: 2px solid var(--color-border-light);
+  border: 2px solid var(--gray20);
   border-radius: var(--radius-xl);
   text-decoration: none;
   transition: all 0.2s;
-  background: var(--color-bg-base);
+  background: var(--base-white);
 
   &:hover {
-    border-color: var(--blue50);
+    border-color: var(--brand50);
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
@@ -50,7 +50,7 @@
   }
 
   p {
-    color: var(--color-text-secondary);
+    color: var(--gray70);
     margin-bottom: var(--spacing-lg);
     line-height: 1.6;
   }
@@ -64,8 +64,8 @@
 
 .tag {
   padding: 4px 12px;
-  background: var(--blue10);
-  color: var(--blue70);
+  background: var(--brand10);
+  color: var(--brand70);
   border-radius: 12px;
   font-size: 0.875rem;
   font-weight: 500;
@@ -74,7 +74,7 @@
 .guide {
   margin-top: 64px;
   padding: var(--spacing-xl);
-  background: var(--color-bg-sub);
+  background: var(--gray10);
   border-radius: var(--radius-xl);
 
   h3 {
@@ -85,7 +85,7 @@
 
   ol {
     line-height: 2;
-    color: var(--color-text-secondary);
+    color: var(--gray70);
     padding-left: var(--spacing-xl);
   }
 }

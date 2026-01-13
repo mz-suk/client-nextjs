@@ -10,25 +10,31 @@ class Logger {
   }
 
   private shouldLog(level: LogLevel): boolean {
-    return this.enabled || level === 'error';
+    return level === 'error' || this.enabled;
+  }
+
+  private formatMessage(level: LogLevel, args: unknown[]): string {
+    const timestamp = new Date().toISOString();
+    const prefix = `[${level.toUpperCase()}]`;
+    const argsStr = args.map(arg => (typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg))).join(' ');
+    return `${prefix} ${timestamp} ${argsStr}`;
   }
 
   private log(level: LogLevel, ...args: unknown[]) {
     if (!this.shouldLog(level)) return;
 
-    const timestamp = new Date().toISOString();
-    const prefix = `[${level.toUpperCase()}]`;
+    const message = this.formatMessage(level, args);
 
     /* eslint-disable no-console */
     switch (level) {
       case 'error':
-        console.error(prefix, timestamp, ...args);
+        console.error(message);
         break;
       case 'warn':
-        console.warn(prefix, timestamp, ...args);
+        console.warn(message);
         break;
       default:
-        console.log(prefix, timestamp, ...args);
+        console.log(message);
     }
     /* eslint-enable no-console */
   }

@@ -1,17 +1,19 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+
 import { useJoinStore } from '@/domains/join';
 import { JoinLayout } from '@/domains/join/components';
 import { Button } from '@/domains/join/components/Button';
 import { GroupMatchingView } from '@/domains/join/components/GroupMatchingView';
 import { useGroupPageAnimation } from '@/domains/join/hooks/useGroupPageAnimation';
-import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+
 import styles from './page.module.scss';
 
 export default function OnboardingGroupPage() {
   const router = useRouter();
-  const { goToStep } = useJoinStore();
+  const { goToStep: _goToStep } = useJoinStore();
   const [isMatching, setIsMatching] = useState(false);
   const isMounted = useRef(false);
 

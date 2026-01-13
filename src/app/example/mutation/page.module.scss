@@ -14,7 +14,7 @@
   }
 
   p {
-    color: var(--color-text-secondary);
+    color: var(--gray70);
     line-height: 1.6;
   }
 }
@@ -48,7 +48,7 @@
 .section {
   margin-bottom: 32px;
   padding: 24px;
-  border: 2px solid var(--color-border-base);
+  border: 2px solid var(--gray30);
   border-radius: 8px;
 
   h3 {
@@ -89,31 +89,31 @@
   transition: opacity 0.2s;
 
   &:disabled {
-    background: var(--color-bg-disabled) !important;
+    background: var(--gray20) !important;
     cursor: not-allowed;
   }
 
   &.primary {
-    background: var(--color-secondary);
+    background: var(--brand70);
 
     &:hover:not(:disabled) {
-      background: var(--color-secondary-hover);
+      background: var(--brand80);
     }
   }
 
   &.success {
-    background: var(--color-success);
+    background: var(--success);
 
     &:hover:not(:disabled) {
-      background: var(--color-success);
+      background: var(--success);
     }
   }
 
   &.danger {
-    background: var(--color-error);
+    background: var(--danger);
 
     &:hover:not(:disabled) {
-      background: var(--color-error);
+      background: var(--danger);
     }
   }
 }
@@ -138,14 +138,14 @@
   }
 
   &.error {
-    background: var(--orange10);
-    color: var(--orange100);
+    background: var(--brand10);
+    color: var(--brand100);
   }
 }
 
 .guide {
   padding: 20px;
-  background: var(--blue10);
+  background: var(--brand10);
   border-radius: 8px;
 
   h3 {
@@ -156,7 +156,6 @@
 
   ol {
     line-height: 1.8;
-    color: var(--blue90);
+    color: var(--brand90);
   }
 }
-

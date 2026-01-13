@@ -19,26 +19,21 @@ export interface VerificationConfirmResponse {
 }
 
 export const requestVerification = async (data: { name: string; carrier: string; phoneNumber: string }): Promise<VerificationResponse> => {
-  const response = await apiClient.post<VerificationResponse>('/join/verify', data);
-  return response.data;
+  return apiClient.post<VerificationResponse>('/join/verify', data);
 };
 
 export const confirmVerification = async (data: { verificationId: string; verificationCode: string }): Promise<VerificationConfirmResponse> => {
-  const response = await apiClient.post<VerificationConfirmResponse>('/join/verify/confirm', data);
-  return response.data;
+  return apiClient.post<VerificationConfirmResponse>('/join/verify/confirm', data);
 };
 
 export const createAccount = async (data: Partial<JoinFormData>): Promise<JoinResponse> => {
-  const response = await apiClient.post<JoinResponse>('/join/account', data);
-  return response.data;
+  return apiClient.post<JoinResponse>('/join/account', data);
 };
 
 export const checkUserIdAvailable = async (userId: string): Promise<{ available: boolean }> => {
-  const response = await apiClient.get<{ available: boolean }>('/join/check-userid', { params: { userId } });
-  return response.data;
+  return apiClient.get<{ available: boolean }>('/join/check-userid', { params: { userId } });
 };
 
 export const validateReferralCode = async (code: string): Promise<{ valid: boolean; referrerName?: string }> => {
-  const response = await apiClient.get<{ valid: boolean; referrerName?: string }>('/join/referral', { params: { code } });
-  return response.data;
+  return apiClient.get<{ valid: boolean; referrerName?: string }>('/join/referral', { params: { code } });
 };

@@ -1,7 +1,6 @@
 'use client';
 
 import { useIsFetching, useIsMutating } from '@tanstack/react-query';
-import { useMemo } from 'react';
 
 import styles from './GlobalLoading.module.scss';
 
@@ -21,7 +20,7 @@ export function GlobalLoading() {
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
 
-  const isLoading = useMemo(() => isFetching > 0 || isMutating > 0, [isFetching, isMutating]);
+  const isLoading = isFetching > 0 || isMutating > 0;
 
   if (!isLoading) return null;
 

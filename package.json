@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "pnpm build && next start --port 4000",
+    "start": "pnpm build && npx serve out -l 4000",
     "lint": "tsc --noEmit && eslint . --fix",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,css,scss,md}\"",
     "prepare": "husky",
     "analyze": "ANALYZE=true next build",
     "gf": "git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -d",
@@ -26,30 +26,24 @@
     "next": "16.1.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-hook-form": "^7.69.0",
-    "zod": "^4.2.1",
+    "react-hook-form": "^7.71.0",
+    "zod": "^4.3.5",
     "zustand": "^5.0.9"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.3",
-    "@next/bundle-analyzer": "16.1.0",
-    "@types/node": "^24.10.4",
-    "@types/react": "19.2.7",
+    "@next/bundle-analyzer": "16.1.1",
+    "@types/node": "^25.0.6",
+    "@types/react": "19.2.8",
     "@types/react-dom": "19.2.3",
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^9.39.2",
-    "eslint-config-next": "15.5.6",
+    "eslint-config-next": "16.1.1",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
-    "sass": "^1.97.1",
+    "sass": "^1.97.2",
     "typescript": "^5.9.3"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx,json,css,md}": [
-      "prettier --write"
-    ]
   },
   "engines": {
     "node": ">=20.9.0",

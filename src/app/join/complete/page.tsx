@@ -9,7 +9,7 @@ import styles from './page.module.scss';
 
 export default function JoinCompletePage() {
   const router = useRouter();
-  const { formData, goToStep, resetForm } = useJoinStore();
+  const { formData: _formData, goToStep, resetForm } = useJoinStore();
 
   const handleStartOnboarding = () => {
     goToStep('onboarding-group');

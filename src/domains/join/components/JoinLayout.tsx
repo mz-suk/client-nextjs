@@ -23,10 +23,10 @@ export function JoinLayout({
   showProgress = false,
   currentStep = 1,
   totalStep: _totalStep = 10,
-  onBack,
+  onBack: _onBack,
 }: JoinLayoutProps) {
   const router = useRouter();
-  const { goBack, canGoBack, previousProgress, setPreviousProgress } = useJoinStore();
+  const { goBack: _goBack, canGoBack: _canGoBack, previousProgress, setPreviousProgress } = useJoinStore();
 
   // 프로필 작성(Step 7 이상)일 때만 프로그레스 계산
   const isProfileStep = currentStep >= 7;

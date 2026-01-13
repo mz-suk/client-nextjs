@@ -1,7 +1,7 @@
 'use client';
 
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import styles from './VirtualList.module.scss';
 
@@ -113,16 +113,13 @@ export function VirtualList<T>({
     }
   }, [hasMore, onLoadMore, data.length, virtualItems]);
 
-  const defaultLoader = useCallback(
-    ({ hasMore, isLoadingMore }: LoaderRenderProps) => (
-      <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-        {isLoadingMore ? 'Loading more...' : hasMore ? 'Scroll to load more' : 'No more items'}
-      </div>
-    ),
-    []
+  const defaultLoader = ({ hasMore, isLoadingMore }: LoaderRenderProps) => (
+    <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
+      {isLoadingMore ? 'Loading more...' : hasMore ? 'Scroll to load more' : 'No more items'}
+    </div>
   );
 
-  const containerClassName = useMemo(() => (className ? `${styles.scrollContainer} ${className}` : styles.scrollContainer), [className]);
+  const containerClassName = className ? `${styles.scrollContainer} ${className}` : styles.scrollContainer;
 
   return (
     <div ref={parentRef} className={containerClassName} role="list" aria-busy={isLoadingMore}>

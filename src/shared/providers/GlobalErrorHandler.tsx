@@ -5,7 +5,7 @@ import { ApiError } from '@core/api/error';
 import { logger } from '@core/lib';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { type ReactNode, useCallback, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
 import styles from './GlobalErrorHandler.module.scss';
 
@@ -46,41 +46,38 @@ export function GlobalErrorHandler({ children, loginPath = '/login' }: GlobalErr
   /**
    * 전역으로 처리해야 하는 에러인지 판단하고 처리
    */
-  const handleGlobalError = useCallback(
-    (error: Error) => {
-      // ApiError인 경우
-      if (error instanceof ApiError) {
-        // 전역으로 처리해야 하는 에러만 토스트 표시
-        if (error.shouldHandleGlobally()) {
-          logger.error('Global Error Detected:', error);
-          setErrorState({ error, timestamp: Date.now() });
-
-          // 403 에러는 로그인 페이지로 리다이렉트
-          if (error.status === 403) {
-            setTimeout(() => {
-              router.push(loginPath);
-            }, 2000); // 2초 후 리다이렉트 (에러 메시지를 먼저 표시)
-          }
-        } else {
-          // 로컬에서 처리해야 하는 에러는 로그만 남김
-          logger.debug('Local Error (handled by component):', error);
-        }
-      }
-      // AuthError인 경우 (client.ts에서 발생)
-      else if (error instanceof AuthError) {
-        logger.error('Auth Error Detected:', error);
-        // AuthError는 이미 client.ts에서 처리되었으므로 추가 처리 불필요
-        // 필요시 로그인 페이지로 리다이렉트
-        router.push(loginPath);
-      }
-      // 일반 Error인 경우
-      else {
-        logger.error('Unknown Error Detected:', error);
+  const handleGlobalError = (error: Error) => {
+    // ApiError인 경우
+    if (error instanceof ApiError) {
+      // 전역으로 처리해야 하는 에러만 토스트 표시
+      if (error.shouldHandleGlobally()) {
+        logger.error('Global Error Detected:', error);
         setErrorState({ error, timestamp: Date.now() });
+
+        // 403 에러는 로그인 페이지로 리다이렉트
+        if (error.status === 403) {
+          setTimeout(() => {
+            router.push(loginPath);
+          }, 2000); // 2초 후 리다이렉트 (에러 메시지를 먼저 표시)
+        }
+      } else {
+        // 로컬에서 처리해야 하는 에러는 로그만 남김
+        logger.debug('Local Error (handled by component):', error);
       }
-    },
-    [router, loginPath]
-  );
+    }
+    // AuthError인 경우 (client.ts에서 발생)
+    else if (error instanceof AuthError) {
+      logger.error('Auth Error Detected:', error);
+      // AuthError는 이미 client.ts에서 처리되었으므로 추가 처리 불필요
+      // 필요시 로그인 페이지로 리다이렉트
+      router.push(loginPath);
+    }
+    // 일반 Error인 경우
+    else {
+      logger.error('Unknown Error Detected:', error);
+      setErrorState({ error, timestamp: Date.now() });
+    }
+  };
 
   useEffect(() => {
     // Query Cache 에러 구독
@@ -106,7 +103,8 @@ export function GlobalErrorHandler({ children, loginPath = '/login' }: GlobalErr
       unsubscribeQuery();
       unsubscribeMutation();
     };
-  }, [queryClient, handleGlobalError]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryClient]);
 
   // 에러 자동 해제 (5초 후)
   useEffect(() => {

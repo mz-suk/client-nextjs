@@ -1,9 +1,11 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import { Button } from '@/domains/join';
 import { JoinLayout } from '@/domains/join/components';
 import SucessCheckLottie from '@/shared/ui/lotties/SucessCheckLottie';
-import { useRouter } from 'next/navigation';
+
 import styles from './page.module.scss';
 
 export default function OnboardingGroupCompletePage() {

@@ -1,23 +1,23 @@
 # 아키텍처 가이드
 
-FSD(Feature-Sliced Design)와 DDD(Domain-Driven Design)를 혼합한 아키텍처로, 확장 가능하고 유지보수하기 쉬운 구조를 제공합니다.
+FSD(Feature-Sliced Design)와 DDD(Domain-Driven Design)를 혼합한 아키텍처입니다.
 
 ## 프로젝트 구조
 
 ```
 src/
 ├── app/          # Next.js App Router (페이지, 레이아웃, 에러 처리)
-├── core/         # 공통 환경 (API, Config, Logger)
+├── core/         # 공통 환경 (API, Config, Logger, Factory)
 ├── domains/      # 비즈니스 로직 (도메인별 분리)
-└── shared/       # 공용 컴포넌트 (UI, Providers, Styles)
+└── shared/       # 공용 컴포넌트 (UI, Providers, Hooks, Stores)
 ```
 
 ### 계층별 역할
 
-- **app/**: 라우팅과 페이지 구성만 담당, 비즈니스 로직은 domains에 위임
-- **core/**: 프로젝트 전반에 사용되는 인프라 레벨 코드
-- **domains/**: 비즈니스 도메인별로 격리된 로직과 UI
-- **shared/**: 도메인에 독립적인 재사용 가능한 컴포넌트
+- **app/**: 라우팅과 페이지 구성, 비즈니스 로직은 domains에 위임
+- **core/**: API 클라이언트, 환경 설정, Query/Mutation Factory, 로거
+- **domains/**: 비즈니스 도메인별로 격리된 로직 (model, ui, hooks, components)
+- **shared/**: 도메인 독립적인 재사용 가능한 UI, Hooks, Stores
 
 ## Core (공통 환경)
 
@@ -26,9 +26,21 @@ src/
 ```typescript
 import { apiClient } from '@core/api';
 
-// 기본 사용
-const { data } = await apiClient.get<User>('/users/me');
+// GET
+const user = await apiClient.get<User>('/users/me');
+
+// POST
 await apiClient.post('/users', { name: 'John' });
+
+// PUT / PATCH
+await apiClient.put('/users/1', { name: 'John' });
+await apiClient.patch('/users/1', { name: 'John' });
+
+// DELETE
+await apiClient.delete('/users/1');
+
+// File Upload
+await apiClient.upload('/files', { file: fileObject });
 
 // 인터셉터
 apiClient.addRequestInterceptor(async config => {
@@ -39,10 +51,12 @@ apiClient.addRequestInterceptor(async config => {
 
 **주요 기능:**
 
-- 자동 토큰 갱신 (401 에러 자동 처리)
+- 자동 토큰 갱신 (401 에러 시 자동 refresh 및 재시도)
 - 요청/응답 인터셉터
-- 타임아웃 처리
-- 타입 안전성
+- 타임아웃 처리 (기본 30초)
+- 타입 안전성 (TypeScript 완벽 지원)
+- 서버/클라이언트 환경 자동 처리
+- FormData 자동 처리 (upload)
 
 ### 환경 변수
 
@@ -79,23 +93,31 @@ logger.debug('디버그 정보');
 
 ### 구조
 
-각 도메인은 model(비즈니스 로직)과 ui(프레젠테이션)로 분리됩니다:
+각 도메인은 비즈니스 로직에 따라 자유롭게 구성하되, 외부 노출은 `index.ts`를 통해서만:
 
 ```
 domains/{domain}/
-├── model/                    # 비즈니스 로직 레이어
-│   ├── {entity}.types.ts    # 타입 정의
-│   ├── {entity}.api.ts      # API 호출 함수
-│   ├── {entity}.queries.ts  # TanStack Query 정의
-│   └── {entity}.mutations.ts # Mutation 정의
-├── ui/                       # 프레젠테이션 레이어
-│   ├── {Component}.tsx       # React 컴포넌트
-│   ├── {Component}.module.scss # 스타일
-│   └── use{Entity}.ts        # Custom Hooks
-└── index.ts                  # Public API (외부 노출 인터페이스)
+├── model/                      # 비즈니스 로직 (API, Types, Queries, Mutations)
+│   ├── {entity}.types.ts      # 타입 정의
+│   ├── {entity}.api.ts        # API 호출 함수
+│   ├── {entity}.queries.ts    # Query 정의
+│   └── {entity}.mutations.ts  # Mutation 정의
+├── ui/                         # 프레젠테이션 컴포넌트
+│   ├── {Component}.tsx
+│   └── {Component}.module.scss
+├── hooks/                      # Custom Hooks
+│   └── use{Entity}.ts
+├── components/                 # 도메인 전용 컴포넌트
+├── stores/                     # Zustand Store (도메인 전용)
+├── schemas/                    # Zod 스키마
+├── services/                   # 비즈니스 서비스 로직
+└── index.ts                    # Public API
 ```
 
-**중요**: 각 도메인은 `index.ts`를 통해서만 외부에 노출되어야 합니다.
+**규칙**:
+
+- 각 도메인은 `index.ts`를 통해서만 외부에 노출
+- 도메인 간 직접 참조 금지 (index.ts를 통해서만)
 
 ### 예시
 
@@ -118,16 +140,21 @@ export const postApi = {
 import { createQuery, createQueryKeys } from '@core/lib';
 
 export const postKeys = createQueryKeys('posts', {
+  all: null,
   lists: null,
   list: (params?: PostListParams) => params,
+  details: null,
+  detail: (id: number) => id,
 });
 
 export const postQueries = {
-  list: createQuery(postKeys.lists(), (params?: PostListParams) => postApi.getPosts(params), { staleTime: 60000 }),
+  list: createQuery<Post[], PostListParams | undefined>(postKeys.lists(), params => postApi.getPosts(params), { staleTime: 60000 }),
+  detail: createQuery<Post, number>(postKeys.details(), id => postApi.getPost(id), { staleTime: 300000 }),
 };
 
-// ui/usePosts.ts
+// hooks/usePosts.ts
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { postQueries } from '../model';
 
 export const useSuspensePosts = (params?: PostListParams) => {
   return useSuspenseQuery(postQueries.list(params));
@@ -139,24 +166,35 @@ export const useSuspensePosts = (params?: PostListParams) => {
 ### UI 컴포넌트
 
 ```typescript
-import { BottomSheet, GlobalLoading } from '@shared/ui';
+import { VirtualList, BottomSheet, Accordion, GlobalLoading } from '@shared/ui';
 ```
 
 ### Providers
 
 ```typescript
-import { QueryProvider } from '@shared/providers';
+import { QueryProvider, AuthProvider } from '@shared/providers';
 
-<QueryProvider>
-  {children}
-</QueryProvider>
+<AuthProvider>
+  <QueryProvider>{children}</QueryProvider>
+</AuthProvider>
+```
+
+### Hooks
+
+```typescript
+import { useScrollRestoration, useIntersectionObserver } from '@shared/hooks';
+```
+
+### Stores
+
+```typescript
+import { useVirtualScrollStore } from '@shared/hooks';
 ```
 
 ### Styles
 
 ```scss
-@use '@shared/styles/mixins' as *;
-@use '@shared/styles/variables' as *;
+@use '@shared/assets/styles/base/variables' as *;
 ```
 
 ## 참고

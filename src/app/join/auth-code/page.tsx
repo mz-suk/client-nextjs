@@ -4,7 +4,7 @@ import { useJoinStore } from '@domains/join';
 import { JoinLayout } from '@domains/join/components';
 import { Button } from '@domains/join/components/Button';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import styles from './page.module.scss';
 
@@ -12,7 +12,7 @@ const AUTH_TIME_LIMIT = 180; // 3분
 
 export default function JoinAuthCodePage() {
   const router = useRouter();
-  const { formData, setFormData, goToStep } = useJoinStore();
+  const { formData: _formData, setFormData, goToStep } = useJoinStore();
 
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
@@ -24,6 +24,7 @@ export default function JoinAuthCodePage() {
 
   useEffect(() => {
     // 타이머 시작
+    console.log(error);
     timerRef.current = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -72,33 +73,30 @@ export default function JoinAuthCodePage() {
     alert('인증번호가 재발송되었습니다.');
   };
 
-  const verifyCode = useCallback(
-    async (codeToVerify: string) => {
-      if (isVerifying) return;
-      setIsVerifying(true);
+  const verifyCode = async (codeToVerify: string) => {
+    if (isVerifying) return;
+    setIsVerifying(true);
 
-      // 시간 만료 시 검증 중단
-      if (timeLeft === 0) {
-        setError('인증 시간이 만료되었습니다. 인증번호를 재발송해주세요.');
-        setIsVerifying(false);
-        return;
-      }
-
-      // 인증번호 확인 API 호출 (Mock)
-      await new Promise(resolve => setTimeout(resolve, 300)); // UX 지연 최소화
-
-      if (codeToVerify === '123456') {
-        setFormData({ verificationCode: codeToVerify, isVerified: true });
-        goToStep('auth-complete');
-        router.push('/join/auth-complete');
-      } else {
-        setError('인증번호가 일치하지 않습니다.');
-      }
-
+    // 시간 만료 시 검증 중단
+    if (timeLeft === 0) {
+      setError('인증 시간이 만료되었습니다. 인증번호를 재발송해주세요.');
       setIsVerifying(false);
-    },
-    [goToStep, router, setFormData, timeLeft, isVerifying]
-  );
+      return;
+    }
+
+    // 인증번호 확인 API 호출 (Mock)
+    await new Promise(resolve => setTimeout(resolve, 300)); // UX 지연 최소화
+
+    if (codeToVerify === '123456') {
+      setFormData({ verificationCode: codeToVerify, isVerified: true });
+      goToStep('auth-complete');
+      router.push('/join/auth-complete');
+    } else {
+      setError('인증번호가 일치하지 않습니다.');
+    }
+
+    setIsVerifying(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
