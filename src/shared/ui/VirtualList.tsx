@@ -64,6 +64,7 @@ export function VirtualList<T>({
   const hasLoaderRow = hasMore || isLoadingMore;
   const itemCount = hasLoaderRow ? data.length + 1 : data.length;
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     count: itemCount,
     getScrollElement: () => parentRef.current,

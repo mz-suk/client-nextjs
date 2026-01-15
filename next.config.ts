@@ -35,6 +35,7 @@ let nextConfig: NextConfig = {
   experimental: {
     typedEnv: true,
     // serverComponentsHmrCache: true,
+    scrollRestoration: true,
     optimizePackageImports: ['@tanstack/react-query', '@tanstack/react-virtual', '@base-ui/react', 'zustand', 'react-hook-form', 'zod'],
   },
 
